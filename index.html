@@ -3,1064 +3,368 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Генератор юзернеймов</title>
+  <title>Генератор ников</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
       --bg-deep: #070614;
       --bg-mid: #100d2b;
-      --orb-violet: rgba(114, 86, 255, 0.38);
-      --orb-gold: rgba(255, 206, 59, 0.18);
-      --orb-cyan: rgba(56, 189, 248, 0.16);
-
-      --glass-surface: rgba(255, 255, 255, 0.06);
-      --glass-surface-strong: rgba(255, 255, 255, 0.11);
-      --glass-recessed: rgba(6, 5, 18, 0.52);
-      --glass-border: rgba(255, 255, 255, 0.16);
-      --glass-highlight: rgba(255, 255, 255, 0.32);
-      --glass-gold-border: rgba(255, 210, 63, 0.5);
-
-      --text-main: #ffffff;
-      --text-sec: rgba(226, 224, 255, 0.68);
+      --orb-violet: rgba(114, 86, 255, 0.36);
+      --orb-gold: rgba(255, 206, 59, 0.16);
+      --glass: rgba(255, 255, 255, 0.07);
+      --glass-strong: rgba(255, 255, 255, 0.12);
+      --recessed: rgba(6, 5, 18, 0.56);
+      --border: rgba(255, 255, 255, 0.16);
+      --gold-border: rgba(255, 210, 63, 0.48);
+      --text: #ffffff;
+      --sec: rgba(226, 224, 255, 0.68);
       --gold: #ffd23f;
       --gold-ink: #120f24;
       --green: #34d399;
-      --green-soft: rgba(52, 211, 153, 0.16);
-
-      --ios-spring: cubic-bezier(0.22, 1.16, 0.36, 1);
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
       margin: 0;
-      padding: 14px 14px 38px;
+      padding: 16px 14px 44px;
       min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+      color: var(--text);
       background-color: var(--bg-deep);
       background-image:
-        radial-gradient(circle at 14% 8%, var(--orb-violet) 0%, transparent 46%),
+        radial-gradient(circle at 15% 8%, var(--orb-violet) 0%, transparent 46%),
         radial-gradient(circle at 88% 14%, var(--orb-gold) 0%, transparent 42%),
-        radial-gradient(circle at 50% 78%, var(--orb-cyan) 0%, transparent 52%),
         linear-gradient(180deg, var(--bg-mid) 0%, var(--bg-deep) 100%);
       background-attachment: fixed;
-      -webkit-font-smoothing: antialiased;
     }
 
-    .top-bar {
+    .wrap { max-width: 520px; margin: 0 auto; }
+
+    .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      margin-bottom: 12px;
-      padding: 0 2px;
+      margin-bottom: 14px;
     }
 
-    .brand-title {
-      margin: 0;
-      font-size: 23px;
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      line-height: 1.15;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
-    }
+    .title { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+    .sub { margin: 2px 0 0; font-size: 12px; color: var(--sec); }
 
-    .brand-sub {
-      margin: 2px 0 0;
-      font-size: 12px;
-      color: var(--text-sec);
-    }
-
-    .gold-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 6px 12px;
+    .badge {
+      padding: 6px 11px;
       border-radius: 999px;
-      background: linear-gradient(135deg, rgba(255, 210, 63, 0.24), rgba(255, 255, 255, 0.08));
-      backdrop-filter: blur(20px) saturate(190%);
-      -webkit-backdrop-filter: blur(20px) saturate(190%);
-      border: 1px solid var(--glass-gold-border);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.38),
-        0 6px 18px rgba(0, 0, 0, 0.28);
+      font-size: 11px;
+      font-weight: 800;
       color: var(--gold);
-      font-size: 12px;
-      font-weight: 700;
+      background: rgba(255, 210, 63, 0.15);
+      border: 1px solid var(--gold-border);
       flex-shrink: 0;
     }
 
-    /* Liquid Glass рекламный блок вверху */
-    .ad-banner {
-      position: relative;
-      display: block;
-      text-decoration: none;
-      color: var(--text-main);
-      background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.15) 0%,
-        rgba(124, 92, 255, 0.13) 48%,
-        rgba(255, 210, 63, 0.13) 100%
-      );
-      backdrop-filter: blur(26px) saturate(195%);
-      -webkit-backdrop-filter: blur(26px) saturate(195%);
-      border: 1px solid var(--glass-gold-border);
-      border-radius: 22px;
-      padding: 14px 15px;
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(22px) saturate(180%);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 14px;
       margin-bottom: 14px;
-      box-shadow:
-        inset 0 1px 0 var(--glass-highlight),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.07),
-        0 12px 28px rgba(0, 0, 0, 0.38);
-      overflow: hidden;
-      transition: transform 0.22s var(--ios-spring), border-color 0.2s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 10px 24px rgba(0, 0, 0, 0.32);
+    }
+
+    .row-opts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .select, .input {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--recessed);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      padding: 11px 12px;
+      border-radius: 12px;
+      outline: none;
+    }
+
+    .select:focus, .input:focus { border-color: var(--gold); }
+
+    .btn-gold {
+      width: 100%;
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      background: linear-gradient(150deg, #ffe270, var(--gold));
+      color: var(--gold-ink);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 13px;
+      border-radius: 14px;
       cursor: pointer;
     }
 
-    .ad-banner::before {
-      content: "";
-      position: absolute;
-      top: -48%;
-      left: -25%;
-      width: 150%;
-      height: 88%;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
-      transform: rotate(-4deg);
-      pointer-events: none;
+    .nick-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .ad-banner:active {
-      transform: scale(0.98);
+    .nick-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 13px;
+      border-radius: 14px;
+      background: var(--recessed);
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .nick-item:active { border-color: var(--gold); }
+    .nick-text { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; word-break: break-all; }
+    .nick-copy { font-size: 11px; font-weight: 700; color: var(--gold); flex-shrink: 0; }
+
+    .toast {
+      min-height: 18px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    /* Рекламный баннер из ad.json */
+    .ad-banner {
+      display: none;
+      text-decoration: none;
+      color: var(--text);
+      background: linear-gradient(145deg, rgba(255, 210, 63, 0.14), rgba(114, 86, 255, 0.14));
+      border: 1px solid var(--gold-border);
+      border-radius: 20px;
+      padding: 12px;
+      margin-bottom: 14px;
+      overflow: hidden;
     }
 
     .ad-top {
-      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .ad-tag {
       font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.07em;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: rgba(255, 210, 63, 0.18);
-      border: 1px solid rgba(255, 210, 63, 0.38);
-      color: var(--gold);
-    }
-
-    .ad-link-hint {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--gold);
-    }
-
-    .ad-headline {
-      position: relative;
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: -0.015em;
-      line-height: 1.25;
-    }
-
-    .ad-desc {
-      position: relative;
-      margin-top: 3px;
-      font-size: 12px;
-      color: var(--text-sec);
-      line-height: 1.35;
-    }
-
-    .section-label {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      color: var(--text-sec);
-      margin: 0 0 7px 4px;
-    }
-
-    .card {
-      background: var(--glass-surface);
-      backdrop-filter: blur(24px) saturate(185%);
-      -webkit-backdrop-filter: blur(24px) saturate(185%);
-      border: 1px solid var(--glass-border);
-      border-radius: 22px;
-      padding: 13px;
-      margin-bottom: 14px;
-      box-shadow:
-        inset 0 1px 0 var(--glass-highlight),
-        0 10px 26px rgba(0, 0, 0, 0.34);
-    }
-
-    .field-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-sec);
-      margin: 11px 0 6px;
-    }
-
-    .field-label:first-child {
-      margin-top: 0;
-    }
-
-    /* Трек сегментированного переключателя со скользящим стеклянным рубильником */
-    .seg-control {
-      position: relative;
-      display: grid;
-      gap: 4px;
-      background: var(--glass-recessed);
-      backdrop-filter: blur(18px) saturate(160%);
-      -webkit-backdrop-filter: blur(18px) saturate(160%);
-      padding: 3px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.11);
-      box-shadow:
-        inset 0 2px 6px rgba(0, 0, 0, 0.42),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    }
-
-    .seg-modes {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .seg-counts {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .seg-lengths {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
-
-    .glass-thumb {
-      position: absolute;
-      top: 3px;
-      bottom: 3px;
-      left: 3px;
-      width: 0;
-      border-radius: 11px;
-      background: linear-gradient(
-        155deg,
-        rgba(255, 232, 128, 0.94) 0%,
-        rgba(255, 210, 63, 0.88) 55%,
-        rgba(255, 255, 255, 0.55) 100%
-      );
-      backdrop-filter: blur(14px) saturate(200%);
-      -webkit-backdrop-filter: blur(14px) saturate(200%);
-      border: 1px solid rgba(255, 255, 255, 0.72);
-      box-shadow:
-        inset 0 1.5px 1px rgba(255, 255, 255, 0.85),
-        inset 0 -1px 2px rgba(140, 95, 0, 0.25),
-        0 4px 16px rgba(255, 210, 63, 0.34);
-      pointer-events: none;
-      z-index: 1;
-      transition: transform 0.34s var(--ios-spring), width 0.34s var(--ios-spring);
-      will-change: transform, width;
-    }
-
-    .glass-thumb::after {
-      content: "";
-      position: absolute;
-      inset: 1px;
-      border-radius: 10px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 60%);
-      pointer-events: none;
-    }
-
-    .seg-btn {
-      position: relative;
-      z-index: 2;
-      appearance: none;
-      border: none;
-      background: transparent;
-      color: var(--text-sec);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 8px 4px;
-      border-radius: 11px;
-      cursor: pointer;
-      transition: transform 0.2s var(--ios-spring), color 0.2s ease;
-    }
-
-    .seg-btn:active {
-      transform: scale(0.94);
-    }
-
-    .seg-btn.active {
+      letter-spacing: 0.05em;
       color: var(--gold-ink);
-    }
-
-    .toggles-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 11px;
-    }
-
-    .toggle-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 10px 11px;
-      border-radius: 16px;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
-      backdrop-filter: blur(18px) saturate(180%);
-      -webkit-backdrop-filter: blur(18px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.26),
-        0 6px 16px rgba(0, 0, 0, 0.22);
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.22s var(--ios-spring);
-    }
-
-    .toggle-card:active {
-      transform: scale(0.97);
-    }
-
-    .toggle-title {
-      font-size: 13px;
-      font-weight: 700;
-      line-height: 1.2;
-    }
-
-    .toggle-sub {
-      font-size: 11px;
-      color: var(--text-sec);
-      margin-top: 2px;
-    }
-
-    /* Стеклянный iOS-рубильник с плавным переездом */
-    .ios-switch {
-      position: relative;
-      width: 44px;
-      height: 25px;
-      flex-shrink: 0;
-    }
-
-    .ios-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .switch-slider {
-      position: absolute;
-      inset: 0;
-      background: rgba(12, 10, 30, 0.58);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.45);
+      background: var(--gold);
+      padding: 3px 8px;
       border-radius: 999px;
-      transition: background-color 0.26s ease, border-color 0.26s ease, box-shadow 0.26s ease;
     }
 
-    .switch-slider::before {
-      content: "";
-      position: absolute;
-      width: 19px;
-      height: 19px;
-      left: 2px;
-      top: 2px;
-      background: linear-gradient(155deg, rgba(255, 255, 255, 0.98), rgba(235, 232, 255, 0.78));
-      border: 1px solid rgba(255, 255, 255, 0.85);
-      border-radius: 50%;
-      box-shadow:
-        inset 0 1px 1px rgba(255, 255, 255, 0.9),
-        0 3px 8px rgba(0, 0, 0, 0.42);
-      transition: transform 0.34s var(--ios-spring), background 0.25s ease, box-shadow 0.25s ease;
-      will-change: transform;
-    }
-
-    .ios-switch input:checked + .switch-slider {
-      background: rgba(255, 210, 63, 0.34);
-      border-color: rgba(255, 224, 110, 0.72);
-      box-shadow:
-        inset 0 1px 3px rgba(255, 210, 63, 0.35),
-        0 0 14px rgba(255, 210, 63, 0.24);
-    }
-
-    .ios-switch input:checked + .switch-slider::before {
-      transform: translateX(19px);
-      background: linear-gradient(155deg, #fff2a6, var(--gold));
-      box-shadow:
-        inset 0 1px 1px rgba(255, 255, 255, 0.95),
-        0 3px 10px rgba(255, 210, 63, 0.45);
-    }
-
-    .input-wrap {
-      margin-top: 11px;
-    }
-
-    .ios-input {
+    .ad-title { font-size: 15px; font-weight: 800; margin: 0 0 4px; }
+    .ad-desc { font-size: 12px; color: var(--sec); margin: 0; line-height: 1.4; }
+    .ad-media {
       width: 100%;
-      appearance: none;
-      border: 1px solid var(--glass-border);
-      background: var(--glass-recessed);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      color: var(--text-main);
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 11px 13px;
-      border-radius: 14px;
-      box-shadow:
-        inset 0 1px 4px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .ios-input::placeholder {
-      color: var(--text-sec);
-    }
-
-    .ios-input:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(255, 210, 63, 0.18);
-    }
-
-    .btn-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .main-btn {
-      appearance: none;
-      border: 1px solid rgba(255, 255, 255, 0.65);
-      background: linear-gradient(150deg, rgba(255, 235, 130, 0.95), rgba(255, 210, 63, 0.88));
-      backdrop-filter: blur(16px) saturate(190%);
-      -webkit-backdrop-filter: blur(16px) saturate(190%);
-      color: var(--gold-ink);
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 800;
-      padding: 12px 14px;
-      border-radius: 15px;
-      cursor: pointer;
-      box-shadow:
-        inset 0 1.5px 1px rgba(255, 255, 255, 0.8),
-        0 8px 22px rgba(255, 210, 63, 0.3);
-      transition: transform 0.22s var(--ios-spring), filter 0.18s ease;
-    }
-
-    .main-btn:active {
-      transform: scale(0.965);
-      filter: brightness(0.95);
-    }
-
-    .ghost-btn {
-      appearance: none;
-      border: 1px solid var(--glass-gold-border);
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
-      backdrop-filter: blur(18px) saturate(180%);
-      -webkit-backdrop-filter: blur(18px) saturate(180%);
-      color: var(--gold);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 12px 14px;
-      border-radius: 15px;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.28),
-        0 6px 16px rgba(0, 0, 0, 0.22);
-      cursor: pointer;
-      transition: transform 0.22s var(--ios-spring), opacity 0.18s ease;
-    }
-
-    .ghost-btn:active {
-      transform: scale(0.965);
-      opacity: 0.82;
-    }
-
-    .toast-line {
-      min-height: 20px;
-      padding: 0 4px;
-      margin-bottom: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--green);
-    }
-
-    .results-card {
-      background: var(--glass-surface);
-      backdrop-filter: blur(24px) saturate(185%);
-      -webkit-backdrop-filter: blur(24px) saturate(185%);
-      border: 1px solid var(--glass-border);
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow:
-        inset 0 1px 0 var(--glass-highlight),
-        0 10px 26px rgba(0, 0, 0, 0.34);
-    }
-
-    .nick-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
-      transition: background-color 0.22s ease;
-    }
-
-    .nick-row:last-child {
-      border-bottom: none;
-    }
-
-    .nick-row.is-copied {
-      background: var(--green-soft);
-    }
-
-    .nick-clickable {
-      appearance: none;
-      border: none;
-      background: transparent;
-      padding: 2px 0;
-      margin: 0;
-      text-align: left;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      color: var(--gold);
-      cursor: pointer;
-      word-break: break-all;
-      transition: transform 0.2s var(--ios-spring), opacity 0.16s ease;
-    }
-
-    .nick-clickable:active {
-      transform: scale(0.97);
-      opacity: 0.7;
-    }
-
-    .copy-btn {
-      appearance: none;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.06));
-      backdrop-filter: blur(14px) saturate(180%);
-      -webkit-backdrop-filter: blur(14px) saturate(180%);
-      color: var(--text-main);
-      font-family: inherit;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 7px 13px;
-      border-radius: 999px;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.28),
-        0 4px 12px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: transform 0.2s var(--ios-spring), background 0.22s ease, color 0.22s ease, border-color 0.22s ease;
-    }
-
-    .copy-btn:active {
-      transform: scale(0.93);
-    }
-
-    .copy-btn.copied {
-      background: linear-gradient(145deg, rgba(110, 231, 183, 0.95), var(--green));
-      border-color: rgba(255, 255, 255, 0.6);
-      color: #071711;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="top-bar">
-    <div>
-      <h1 class="brand-title">Юзернеймы</h1>
-      <p class="brand-sub">Тап на @ник — проверка внутри TG</p>
-    </div>
-    <div class="gold-pill" id="countBadge">10 шт</div>
-  </div>
-
-  <!-- Liquid Glass рекламный блок вверху -->
-  <a class="ad-banner" id="adBanner" href="https://t.me/telegram">
-    <div class="ad-top">
-      <span class="ad-tag">Реклама</span>
-      <span class="ad-link-hint">Открыть →</span>
-    </div>
-    <div class="ad-headline" id="adTitle">Место под рекламу или твой канал</div>
-    <div class="ad-desc" id="adDesc">Здесь можно разместить промо-пост, спонсора или ссылку на основной канал</div>
-  </a>
-
-  <div class="section-label">Параметры</div>
-  <div class="card">
-    <div class="field-label">Режим</div>
-    <div class="seg-control seg-modes" id="modeGroup">
-      <span class="glass-thumb" aria-hidden="true"></span>
-      <button type="button" class="seg-btn active" data-mode="unique">Уникальные</button>
-      <button type="button" class="seg-btn" data-mode="random">Случайные</button>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <h1 class="title">Генератор ников</h1>
+        <p class="sub">Идеи для Telegram, игр и соцсетей</p>
+      </div>
+      <div class="badge">NICUP</div>
     </div>
 
-    <div class="field-label">Количество вариантов</div>
-    <div class="seg-control seg-counts" id="countGroup">
-      <span class="glass-thumb" aria-hidden="true"></span>
-      <button type="button" class="seg-btn" data-count="1">1</button>
-      <button type="button" class="seg-btn" data-count="5">5</button>
-      <button type="button" class="seg-btn active" data-count="10">10</button>
-      <button type="button" class="seg-btn" data-count="20">20</button>
+    <!-- Баннер, управляемый через админ-панель (ad.json) -->
+    <a id="adBanner" class="ad-banner" href="#" target="_blank" rel="noopener noreferrer">
+      <div class="ad-top">
+        <span class="ad-tag" id="adTag">Реклама</span>
+        <span style="font-size:11px;color:var(--gold);font-weight:700;">Открыть →</span>
+      </div>
+      <img id="adImg" class="ad-media" alt="Баннер" />
+      <video id="adVideo" class="ad-media" autoplay muted loop playsinline></video>
+      <h2 class="ad-title" id="adTitle"></h2>
+      <p class="ad-desc" id="adDesc"></p>
+    </a>
+
+    <div class="card">
+      <div class="row-opts">
+        <select id="styleSelect" class="select">
+          <option value="cool">Дерзкий / Игровой</option>
+          <option value="clean">Минимализм</option>
+          <option value="cyber">Неон / Кибер</option>
+          <option value="myth">Мифология / Темный</option>
+        </select>
+        <input id="seedWord" class="input" type="text" placeholder="Слово (необязательно)" maxlength="16" />
+      </div>
+
+      <button type="button" class="btn-gold" id="genBtn">Сгенерировать ники</button>
+      <div class="toast" id="toast">Нажми на ник, чтобы скопировать</div>
     </div>
 
-    <div class="field-label">Количество символов</div>
-    <div class="seg-control seg-lengths" id="lengthGroup">
-      <span class="glass-thumb" aria-hidden="true"></span>
-      <button type="button" class="seg-btn active" data-len="auto">Любое</button>
-      <button type="button" class="seg-btn" data-len="5">5</button>
-      <button type="button" class="seg-btn" data-len="6">6</button>
-      <button type="button" class="seg-btn" data-len="8">8</button>
-      <button type="button" class="seg-btn" data-len="10">10</button>
-    </div>
-
-    <div class="toggles-row">
-      <label class="toggle-card" for="digitsToggle">
-        <div>
-          <div class="toggle-title">Цифры</div>
-          <div class="toggle-sub">0–9 в нике</div>
-        </div>
-        <span class="ios-switch">
-          <input type="checkbox" id="digitsToggle" checked />
-          <span class="switch-slider"></span>
-        </span>
-      </label>
-
-      <label class="toggle-card" for="underscoreToggle">
-        <div>
-          <div class="toggle-title">Подчёркивание</div>
-          <div class="toggle-sub">символ _</div>
-        </div>
-        <span class="ios-switch">
-          <input type="checkbox" id="underscoreToggle" checked />
-          <span class="switch-slider"></span>
-        </span>
-      </label>
-    </div>
-
-    <div class="input-wrap" id="baseWordWrap">
-      <input
-        type="text"
-        id="baseWord"
-        class="ios-input"
-        placeholder="Слово-основа (необязательно)"
-        maxlength="16"
-        autocomplete="off"
-        autocapitalize="none"
-      />
-    </div>
-
-    <div class="btn-row">
-      <button type="button" class="main-btn" id="genBtn">Сгенерировать</button>
-      <button type="button" class="ghost-btn" id="copyAllBtn">Копировать все</button>
+    <div class="card">
+      <div class="nick-list" id="nickList"></div>
     </div>
   </div>
-
-  <div class="toast-line" id="toastLine"></div>
-
-  <div class="section-label">Список вариантов</div>
-  <div class="results-card" id="resultsList"></div>
 
   <script>
     (function () {
-      try {
-        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-        if (tg) {
-          tg.ready();
-          tg.expand();
-        }
-
-        // Настройки рекламного блока
-        const AD_URL = "https://t.me/telegram";
-
-        let mode = "unique";
-        let count = 10;
-        let targetLen = "auto";
-        let useDigits = true;
-        let useUnderscore = true;
-        let generated = [];
-
-        const prefixes = [
-          "pure", "dark", "neo", "zero", "void", "raw", "lost", "true",
-          "cold", "wild", "soft", "high", "deep", "next", "solo", "real"
-        ];
-        const roots = [
-          "flux", "echo", "wave", "drift", "pulse", "spark", "mint", "wolf",
-          "nova", "core", "vibe", "shade", "frost", "loom", "rift", "zen",
-          "glow", "path", "myth", "bolt", "crest", "haven", "cipher", "ember"
-        ];
-        const suffixes = [
-          "lab", "hub", "zone", "mode", "x", "ly", "io", "hq",
-          "way", "box", "den", "craft", "works", "line", "spot", "club"
-        ];
-
-        const letters = "abcdefghijklmnopqrstuvwxyz";
-        const digits = "0123456789";
-
-        function pick(arr) {
-          return arr[Math.floor(Math.random() * arr.length)];
-        }
-
-        function randInt(min, max) {
-          return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-
-        function getCharPool() {
-          const arr = letters.split("");
-          if (useDigits) arr.push.apply(arr, digits.split(""));
-          if (useUnderscore) arr.push("_");
-          return arr;
-        }
-
-        function fitLength(raw, desiredLen) {
-          let s = (raw || "").toLowerCase().replace(/[^a-z0-9_]/g, "");
-          if (!useDigits) s = s.replace(/[0-9]/g, "");
-          if (!useUnderscore) s = s.replace(/_/g, "");
-          s = s.replace(/__+/g, "_").replace(/^_|_$/g, "");
-
-          if (!/[a-z]/.test(s)) {
-            s = pick(letters.split("")) + s;
-          }
-
-          if (desiredLen === "auto") {
-            return s.slice(0, 32);
-          }
-
-          const len = Number(desiredLen);
-          const pool = getCharPool();
-
-          if (s.length > len) {
-            s = s.slice(0, len).replace(/_$/g, "");
-          }
-          while (s.length < len) {
-            const ch = pick(pool);
-            if (ch === "_" && (s.length === 0 || s.length === len - 1 || s.endsWith("_"))) {
-              s += pick(letters.split(""));
-            } else {
-              s += ch;
-            }
-          }
-          if (!/[a-z]/.test(s)) {
-            const pos = randInt(0, len - 1);
-            s = s.slice(0, pos) + pick(letters.split("")) + s.slice(pos + 1);
-          }
-          return s;
-        }
-
-        // Логика строки по ключевым словам сохранена без изменений
-        function buildUnique(customWord) {
-          const clean = (customWord || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-          const sep = useUnderscore ? "_" : "";
-
-          if (clean.length >= 2) {
-            const templates = [
-              function () { return pick(prefixes) + sep + clean; },
-              function () { return clean + sep + pick(suffixes); },
-              function () { return clean + pick(roots); },
-              function () { return pick(roots) + sep + clean; }
-            ];
-            if (useDigits) {
-              templates.push(function () { return clean + randInt(10, 99); });
-            }
-            return fitLength(pick(templates)(), targetLen);
-          }
-
-          const templates = [
-            function () { return pick(prefixes) + sep + pick(roots); },
-            function () { return pick(roots) + sep + pick(suffixes); },
-            function () { return pick(prefixes) + pick(roots); },
-            function () { return pick(roots) + pick(suffixes); }
-          ];
-          if (useDigits) {
-            templates.push(function () { return pick(roots) + (useUnderscore ? "_" : "") + randInt(10, 999); });
-          }
-          return fitLength(pick(templates)(), targetLen);
-        }
-
-        function buildRandom() {
-          const len = targetLen === "auto" ? randInt(5, 6) : Number(targetLen);
-          const pool = getCharPool();
-          let str = "";
-
-          for (let i = 0; i < len; i++) {
-            let ch = pick(pool);
-            if (ch === "_" && (i === 0 || i === len - 1 || str.endsWith("_"))) {
-              ch = pick(letters.split(""));
-            }
-            str += ch;
-          }
-
-          if (!/[a-z]/.test(str)) {
-            const idx = randInt(0, len - 1);
-            str = str.slice(0, idx) + pick(letters.split("")) + str.slice(idx + 1);
-          }
-
-          if (useDigits && len >= 2 && !/[0-9]/.test(str)) {
-            const candidates = [];
-            for (let i = 0; i < len; i++) {
-              if (str[i] !== "_") candidates.push(i);
-            }
-            if (candidates.length) {
-              const idx = pick(candidates);
-              str = str.slice(0, idx) + pick(digits.split("")) + str.slice(idx + 1);
-            }
-          }
-
-          return str;
-        }
-
-        function isValidNick(nick) {
-          if (!/^[a-z0-9_]{5,32}$/.test(nick) || /^_|_$|__/.test(nick) || !/[a-z]/.test(nick)) {
-            return false;
-          }
-          if (!useDigits && /[0-9]/.test(nick)) return false;
-          if (!useUnderscore && nick.includes("_")) return false;
-          if (targetLen !== "auto" && nick.length !== Number(targetLen)) return false;
-          return true;
-        }
-
-        function showToast(msg) {
-          const el = document.getElementById("toastLine");
-          if (!el) return;
-          el.textContent = msg;
-          clearTimeout(showToast._timer);
-          showToast._timer = setTimeout(function () {
-            el.textContent = "";
-          }, 1800);
-        }
-
-        async function writeClipboard(text) {
-          try {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-              await navigator.clipboard.writeText(text);
-              return true;
-            }
-          } catch (_) {}
-
-          const area = document.createElement("textarea");
-          area.value = text;
-          area.style.position = "fixed";
-          area.style.opacity = "0";
-          document.body.appendChild(area);
-          area.focus();
-          area.select();
-          let ok = false;
-          try {
-            ok = document.execCommand("copy");
-          } catch (_) {
-            ok = false;
-          }
-          document.body.removeChild(area);
-          return ok;
-        }
-
-        function haptic(style) {
-          if (tg && tg.HapticFeedback) {
-            try {
-              tg.HapticFeedback.impactOccurred(style || "light");
-            } catch (_) {}
-          }
-        }
-
-        function openInsideTelegram(url) {
-          if (tg && typeof tg.openTelegramLink === "function" && url.indexOf("https://t.me/") === 0) {
-            tg.openTelegramLink(url);
-            return;
-          }
-          if (tg && typeof tg.openLink === "function") {
-            tg.openLink(url);
-            return;
-          }
-          window.open(url, "_blank", "noopener,noreferrer");
-        }
-
-        // Плавное перемещение стеклянного бегунка под активной кнопкой
-        function syncThumb(groupEl, instant) {
-          if (!groupEl) return;
-          const thumb = groupEl.querySelector(".glass-thumb");
-          const activeBtn = groupEl.querySelector(".seg-btn.active");
-          if (!thumb || !activeBtn) return;
-
-          if (instant) {
-            thumb.style.transition = "none";
-          } else {
-            thumb.style.transition = "";
-          }
-
-          const offsetLeft = activeBtn.offsetLeft - 3;
-          const width = activeBtn.offsetWidth;
-          thumb.style.width = width + "px";
-          thumb.style.transform = "translateX(" + offsetLeft + "px)";
-
-          if (instant) {
-            void thumb.offsetWidth;
-            thumb.style.transition = "";
-          }
-        }
-
-        function syncAllThumbs(instant) {
-          document.querySelectorAll(".seg-control").forEach(function (group) {
-            syncThumb(group, Boolean(instant));
-          });
-        }
-
-        function renderList() {
-          const badge = document.getElementById("countBadge");
-          if (badge) badge.textContent = count + " шт";
-
-          const baseInput = document.getElementById("baseWord");
-          const customWord = baseInput ? baseInput.value.trim() : "";
-          const uniqueSet = new Set();
-          let guard = 0;
-
-          while (uniqueSet.size < count && guard < 800) {
-            guard++;
-            const candidate = mode === "unique" ? buildUnique(customWord) : buildRandom();
-            if (isValidNick(candidate)) {
-              uniqueSet.add(candidate);
-            }
-          }
-
-          generated = Array.from(uniqueSet);
-          const container = document.getElementById("resultsList");
-          container.innerHTML = "";
-
-          generated.forEach(function (nick) {
-            const row = document.createElement("div");
-            row.className = "nick-row";
-
-            const nickBtn = document.createElement("button");
-            nickBtn.type = "button";
-            nickBtn.className = "nick-clickable";
-            nickBtn.textContent = "@" + nick;
-            nickBtn.addEventListener("click", function () {
-              haptic();
-              openInsideTelegram("https://t.me/" + nick);
-            });
-
-            const copyBtn = document.createElement("button");
-            copyBtn.type = "button";
-            copyBtn.className = "copy-btn";
-            copyBtn.textContent = "Копировать";
-            copyBtn.addEventListener("click", async function () {
-              await writeClipboard("@" + nick);
-              haptic();
-
-              copyBtn.classList.add("copied");
-              row.classList.add("is-copied");
-              copyBtn.textContent = "Готово";
-              showToast("Скопировано @" + nick);
-
-              setTimeout(function () {
-                copyBtn.classList.remove("copied");
-                row.classList.remove("is-copied");
-                copyBtn.textContent = "Копировать";
-              }, 1500);
-            });
-
-            row.appendChild(nickBtn);
-            row.appendChild(copyBtn);
-            container.appendChild(row);
-          });
-        }
-
-        document.getElementById("adBanner").addEventListener("click", function (e) {
-          e.preventDefault();
-          haptic();
-          openInsideTelegram(AD_URL);
-        });
-
-        document.querySelectorAll("#modeGroup .seg-btn").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            const group = document.getElementById("modeGroup");
-            group.querySelectorAll(".seg-btn").forEach(function (b) { b.classList.remove("active"); });
-            btn.classList.add("active");
-            mode = btn.dataset.mode;
-            document.getElementById("baseWordWrap").style.display = mode === "unique" ? "block" : "none";
-            haptic();
-            syncThumb(group, false);
-            renderList();
-          });
-        });
-
-        document.querySelectorAll("#countGroup .seg-btn").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            const group = document.getElementById("countGroup");
-            group.querySelectorAll(".seg-btn").forEach(function (b) { b.classList.remove("active"); });
-            btn.classList.add("active");
-            count = Number(btn.dataset.count);
-            haptic();
-            syncThumb(group, false);
-            renderList();
-          });
-        });
-
-        document.querySelectorAll("#lengthGroup .seg-btn").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            const group = document.getElementById("lengthGroup");
-            group.querySelectorAll(".seg-btn").forEach(function (b) { b.classList.remove("active"); });
-            btn.classList.add("active");
-            targetLen = btn.dataset.len;
-            haptic();
-            syncThumb(group, false);
-            renderList();
-          });
-        });
-
-        document.getElementById("digitsToggle").addEventListener("change", function (e) {
-          useDigits = Boolean(e.target.checked);
-          haptic();
-          renderList();
-        });
-
-        document.getElementById("underscoreToggle").addEventListener("change", function (e) {
-          useUnderscore = Boolean(e.target.checked);
-          haptic();
-          renderList();
-        });
-
-        document.getElementById("genBtn").addEventListener("click", function () {
-          haptic();
-          renderList();
-          showToast("Сгенерировано вариантов: " + generated.length);
-        });
-
-        document.getElementById("baseWord").addEventListener("input", function () {
-          if (mode === "unique") {
-            renderList();
-          }
-        });
-
-        document.getElementById("copyAllBtn").addEventListener("click", async function () {
-          if (!generated.length) return;
-          const text = generated.map(function (n) { return "@" + n; }).join("\n");
-          await writeClipboard(text);
-          haptic();
-          showToast("Скопировано списком (" + generated.length + ")");
-        });
-
-        window.addEventListener("resize", function () {
-          syncAllThumbs(true);
-        });
-
-        renderList();
-        requestAnimationFrame(function () {
-          syncAllThumbs(true);
-        });
-      } catch (err) {
-        document.body.innerHTML = "<div style='padding:20px;font-family:sans-serif;color:#fff;background:#111;'>Ошибка запуска: " + (err && err.message ? err.message : err) + "</div>";
+      const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+      if (tg) {
+        tg.ready();
+        tg.expand();
       }
+
+      const prefixes = {
+        cool: ["vex", "krx", "zav", "drk", "rzn", "kray", "volt", "blitz", "grim", "onyx"],
+        clean: ["mori", "lumen", "solis", "kairo", "nova", "aire", "verve", "nord", "soren", "talen"],
+        cyber: ["neon", "sync", "byte", "glch", "hex", "zero", "flux", "node", "kiber", "pulse"],
+        myth: ["abyss", "nyx", "kron", "valk", "moros", "draco", "ereb", "astra", "rune", "titan"]
+      };
+
+      const suffixes = {
+        cool: ["x", "z", "ix", "on", "ex", "kov", "rage", "core"],
+        clean: ["o", "a", "is", "en", "el", "io", "ur", "yn"],
+        cyber: ["99", "0x", "bot", "net", "exe", "ai", "v2", "link"],
+        myth: ["os", "is", "ar", "on", "um", "or", "ath", "ek"]
+      };
+
+      function pick(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function cleanWord(str) {
+        return (str || "").toLowerCase().replace(/[^a-zа-яё0-9]/gi, "").slice(0, 12);
+      }
+
+      function makeNick(style, word) {
+        const pList = prefixes[style] || prefixes.cool;
+        const sList = suffixes[style] || suffixes.cool;
+        const p = pick(pList);
+        const s = pick(sList);
+        const num = Math.random() < 0.45 ? String(Math.floor(10 + Math.random() * 890)) : "";
+
+        if (word) {
+          const mode = Math.floor(Math.random() * 3);
+          if (mode === 0) return p + "_" + word + (Math.random() < 0.4 ? num : "");
+          if (mode === 1) return word + "_" + s + (Math.random() < 0.4 ? num : "");
+          return word + s;
+        }
+
+        const sep = Math.random() < 0.35 ? "_" : "";
+        return p + sep + s + num;
+      }
+
+      const nickListEl = document.getElementById("nickList");
+      const toastEl = document.getElementById("toast");
+
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(function () {
+          toastEl.textContent = "Нажми на ник, чтобы скопировать";
+        }, 1800);
+      }
+
+      function renderNicks() {
+        const style = document.getElementById("styleSelect").value;
+        const word = cleanWord(document.getElementById("seedWord").value);
+        nickListEl.innerHTML = "";
+
+        for (let i = 0; i < 8; i++) {
+          const nick = makeNick(style, word);
+          const item = document.createElement("div");
+          item.className = "nick-item";
+          item.innerHTML = '<span class="nick-text"></span><span class="nick-copy">Копировать</span>';
+          item.querySelector(".nick-text").textContent = nick;
+
+          item.addEventListener("click", async function () {
+            try {
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(nick);
+              } else {
+                const ta = document.createElement("textarea");
+                ta.value = nick;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand("copy");
+                document.body.removeChild(ta);
+              }
+              showToast("Скопировано: " + nick);
+            } catch (_) {
+              showToast("Ник: " + nick);
+            }
+          });
+
+          nickListEl.appendChild(item);
+        }
+      }
+
+      document.getElementById("genBtn").addEventListener("click", renderNicks);
+      document.getElementById("styleSelect").addEventListener("change", renderNicks);
+      renderNicks();
+
+      // Загрузка баннера ad.json из этого же репозитория
+      fetch("./ad.json?v=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (cfg) {
+          if (!cfg || cfg.enabled === false) return;
+          const banner = document.getElementById("adBanner");
+          const tagEl = document.getElementById("adTag");
+          const titleEl = document.getElementById("adTitle");
+          const descEl = document.getElementById("adDesc");
+          const imgEl = document.getElementById("adImg");
+          const vidEl = document.getElementById("adVideo");
+
+          if (cfg.tag) tagEl.textContent = cfg.tag;
+          if (cfg.title) titleEl.textContent = cfg.title;
+          if (cfg.desc) descEl.textContent = cfg.desc;
+          if (cfg.url) banner.href = cfg.url;
+
+          if (cfg.media_type === "image" && cfg.media_url) {
+            imgEl.src = cfg.media_url;
+            imgEl.style.display = "block";
+          } else if (cfg.media_type === "video" && cfg.media_url) {
+            vidEl.src = cfg.media_url;
+            vidEl.style.display = "block";
+            vidEl.play().catch(function () {});
+          }
+
+          if (cfg.title || cfg.desc || cfg.media_url) {
+            banner.style.display = "block";
+          }
+        })
+        .catch(function () {});
+    })();
+  </script>
+
+  <!-- Счётчик открытий приложения -->
+  <script>
+    (function () {
+      const API_URL = "https://api.counterapi.dev/v1/nicup_app_kovalev/opens_total/up";
+      const now = Date.now();
+      if (now - Number(sessionStorage.getItem("nicup_open_ts") || 0) < 1500) return;
+      sessionStorage.setItem("nicup_open_ts", String(now));
+      fetch(API_URL, { cache: "no-store" }).catch(function () {});
     })();
   </script>
 </body>
