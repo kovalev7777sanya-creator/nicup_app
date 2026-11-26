@@ -6,163 +6,179 @@
   <title>Генератор юзернеймов</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
+    :root {
+      --bg: var(--tg-theme-bg-color, #0f1115);
+      --sec-bg: var(--tg-theme-secondary-bg-color, #1a1d24);
+      --text: var(--tg-theme-text-color, #f3f4f6);
+      --hint: var(--tg-theme-hint-color, #9ca3af);
+      --btn: var(--tg-theme-button-color, #2ea6ff);
+      --btn-text: var(--tg-theme-button-text-color, #ffffff);
+      --accent: #22c55e;
+    }
+    * {
+      box-sizing: border-box;
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--tg-theme-bg-color, #ffffff);
-      color: var(--tg-theme-text-color, #000000);
+      background-color: var(--bg);
+      color: var(--text);
       margin: 0;
-      padding: 16px;
+      padding: 14px;
     }
-    h2 {
+    h1 {
       margin: 0 0 12px;
-      font-size: 20px;
+      font-size: 19px;
+      font-weight: 700;
     }
-    .controls {
+    .panel {
       display: flex;
       flex-direction: column;
       gap: 10px;
       margin-bottom: 14px;
     }
-    input, select, button {
-      width: 100%;
-      padding: 12px;
+    .label {
+      font-size: 12px;
+      color: var(--hint);
+      margin-bottom: 4px;
+    }
+    .seg-group {
+      display: grid;
+      gap: 6px;
+    }
+    .seg-modes {
+      grid-template-columns: 1fr 1fr;
+    }
+    .seg-counts {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .seg-btn {
+      padding: 10px 8px;
       border-radius: 10px;
-      font-size: 15px;
-      box-sizing: border-box;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: var(--sec-bg);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s ease;
     }
-    input, select {
-      border: 1px solid rgba(128, 128, 128, 0.35);
-      background-color: var(--tg-theme-secondary-bg-color, #f2f3f5);
-      color: var(--tg-theme-text-color, #000000);
+    .seg-btn.active {
+      background: var(--btn);
+      color: var(--btn-text);
+      border-color: var(--btn);
     }
-    button.main-btn {
-      background-color: var(--tg-theme-button-color, #2481cc);
-      color: var(--tg-theme-button-text-color, #ffffff);
+    input {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: var(--sec-bg);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus {
+      border-color: var(--btn);
+    }
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+    .primary-btn {
+      padding: 12px 14px;
+      border-radius: 10px;
       border: none;
+      background: var(--btn);
+      color: var(--btn-text);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .secondary-btn {
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: var(--sec-bg);
+      color: var(--text);
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
     }
     .list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
     }
-    .row {
+    .item {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 10px 12px;
       border-radius: 10px;
-      background-color: var(--tg-theme-secondary-bg-color, #f2f3f5);
+      background: var(--sec-bg);
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .item:active {
+      transform: scale(0.99);
+    }
+    .item.copied {
+      border-color: var(--accent);
     }
     .nick {
-      font-weight: 500;
-      user-select: all;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
     }
-    .copy-btn {
-      width: auto;
-      padding: 6px 12px;
-      font-size: 13px;
-      border: none;
-      border-radius: 8px;
-      background-color: var(--tg-theme-button-color, #2481cc);
-      color: var(--tg-theme-button-text-color, #ffffff);
-      cursor: pointer;
+    .copy-tag {
+      font-size: 12px;
+      color: var(--hint);
+      font-weight: 600;
+    }
+    .item.copied .copy-tag {
+      color: var(--accent);
+    }
+    .status-bar {
+      min-height: 18px;
+      font-size: 12px;
+      color: var(--accent);
+      margin-bottom: 6px;
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
-  <h2>Генератор 10 юзернеймов</h2>
+  <h1>Генератор ников</h1>
 
-  <div class="controls">
-    <input id="word" type="text" placeholder="Слово для основы (необязательно, например: max)" />
-    <select id="mode">
-      <option value="mixed">Смешанный стиль</option>
-      <option value="short">Короткие и чистые</option>
-      <option value="brand">Под проект / канал</option>
-    </select>
-    <button class="main-btn" id="genBtn">Сгенерировать 10</button>
+  <div class="panel">
+    <div>
+      <div class="label">Режим</div>
+      <div class="seg-group seg-modes">
+        <button type="button" class="seg-btn active" data-mode="unique">Уникальные</button>
+        <button type="button" class="seg-btn" data-mode="random">Случайные (5–6)</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="label">Количество</div>
+      <div class="seg-group seg-counts">
+        <button type="button" class="seg-btn" data-count="1">1</button>
+        <button type="button" class="seg-btn" data-count="5">5</button>
+        <button type="button" class="seg-btn active" data-count="10">10</button>
+        <button type="button" class="seg-btn" data-count="20">20</button>
+      </div>
+    </div>
+
+    <div id="baseWordWrap">
+      <div class="label">Своя основа для «Уникальных» (опционально)</div>
+      <input id="baseWord" type="text" placeholder="Например: void, neon, frost..." maxlength="16" />
+    </div>
+
+    <div class="actions">
+      <button type="button" class="primary-btn" id="generateBtn">Сгенерировать</button>
+      <button type="button" class="secondary-btn" id="copyAllBtn">Копировать все</button>
+    </div>
   </div>
 
-  <div class="list" id="resultList"></div>
-
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-
-    const prefixes = ["pro", "mr", "the", "its", "real", "hey", "neo", "top", "go", "my"];
-    const suffixes = ["hub", "lab", "dev", "ly", "io", "one", "max", "way", "drop", "box"];
-    const chars = "abcdefghijklmnopqrstuvwxyz";
-
-    function randStr(len) {
-      let out = "";
-      for (let i = 0; i < len; i++) {
-        out += chars[Math.floor(Math.random() * chars.length)];
-      }
-      return out;
-    }
-
-    function buildUsername(baseWord, mode) {
-      const clean = baseWord.toLowerCase().replace(/[^a-z0-9_]/g, "");
-      const p = prefixes[Math.floor(Math.random() * prefixes.length)];
-      const s = suffixes[Math.floor(Math.random() * suffixes.length)];
-      const num = Math.floor(10 + Math.random() * 899);
-
-      if (clean.length >= 2) {
-        const templates = [
-          `${clean}_${s}`,
-          `${p}_${clean}`,
-          `${clean}${randStr(2)}`,
-          `${clean}_${num}`,
-          `${p}${clean}`
-        ];
-        return templates[Math.floor(Math.random() * templates.length)];
-      }
-
-      if (mode === "short") return `${randStr(4)}_${randStr(3)}`;
-      if (mode === "brand") return `${randStr(5)}${s}`;
-      return `${p}_${randStr(4)}${Math.floor(10 + Math.random() * 89)}`;
-    }
-
-    function generateTen() {
-      const baseWord = document.getElementById("word").value.trim();
-      const mode = document.getElementById("mode").value;
-      const list = document.getElementById("resultList");
-      list.innerHTML = "";
-
-      const set = new Set();
-      let guard = 0;
-
-      while (set.size < 10 && guard < 100) {
-        guard++;
-        const candidate = buildUsername(baseWord, mode);
-        if (candidate.length >= 5 && candidate.length <= 32) {
-          set.add(candidate);
-        }
-      }
-
-      set.forEach((nick) => {
-        const row = document.createElement("div");
-        row.className = "row";
-        row.innerHTML = `
-          <span class="nick">@${nick}</span>
-          <button class="copy-btn">Копировать</button>
-        `;
-        row.querySelector("button").addEventListener("click", () => {
-          navigator.clipboard.writeText("@" + nick);
-          tg.showPopup({
-            title: "Скопировано",
-            message: `@${nick} в буфере обмена`,
-            buttons: [{ type: "ok" }]
-          });
-        });
-        list.appendChild(row);
-      });
-    }
-
-    document.getElementById("genBtn").addEventListener("click", generateTen);
-    generateTen();
-  </script>
-</body>
-</html>
+  <div class="status
