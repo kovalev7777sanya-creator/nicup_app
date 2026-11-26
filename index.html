@@ -85,6 +85,17 @@
       margin-bottom: 16px;
     }
 
+    .field-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-sec);
+      margin: 10px 0 6px;
+    }
+
+    .field-label:first-child {
+      margin-top: 0;
+    }
+
     .seg-control {
       display: grid;
       gap: 4px;
@@ -101,6 +112,10 @@
       grid-template-columns: repeat(4, 1fr);
     }
 
+    .seg-lengths {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
     .seg-btn {
       appearance: none;
       border: none;
@@ -109,7 +124,7 @@
       font-family: inherit;
       font-size: 13px;
       font-weight: 600;
-      padding: 8px 6px;
+      padding: 8px 4px;
       border-radius: 8px;
       cursor: pointer;
       transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease;
@@ -123,6 +138,79 @@
       background-color: var(--bg-card);
       color: var(--text-main);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+    }
+
+    .toggles-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .toggle-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 11px;
+      border-radius: 11px;
+      background-color: var(--bg-fill);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .toggle-title {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .toggle-sub {
+      font-size: 11px;
+      color: var(--text-sec);
+      margin-top: 2px;
+    }
+
+    .ios-switch {
+      position: relative;
+      width: 42px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .ios-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .switch-slider {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(120, 120, 128, 0.36);
+      border-radius: 999px;
+      transition: background-color 0.2s ease;
+    }
+
+    .switch-slider::before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 2px;
+      top: 2px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s ease;
+    }
+
+    .ios-switch input:checked + .switch-slider {
+      background-color: var(--ios-green);
+    }
+
+    .ios-switch input:checked + .switch-slider::before {
+      transform: translateX(18px);
     }
 
     .input-wrap {
@@ -307,11 +395,6 @@
       color: var(--text-sec);
     }
 
-    .modal-status.taken {
-      background-color: rgba(255, 69, 58, 0.16);
-      color: var(--ios-red);
-    }
-
     .modal-status.check {
       background-color: rgba(255, 159, 10, 0.16);
       color: var(--ios-orange);
@@ -382,18 +465,51 @@
 
   <div class="section-label">Параметры</div>
   <div class="card">
+    <div class="field-label">Режим</div>
     <div class="seg-control seg-modes" id="modeGroup">
       <button type="button" class="seg-btn active" data-mode="unique">Уникальные</button>
-      <button type="button" class="seg-btn" data-mode="random">Случайные (5–6)</button>
+      <button type="button" class="seg-btn" data-mode="random">Случайные</button>
     </div>
 
-    <div style="margin-top: 10px;">
-      <div class="seg-control seg-counts" id="countGroup">
-        <button type="button" class="seg-btn" data-count="1">1</button>
-        <button type="button" class="seg-btn" data-count="5">5</button>
-        <button type="button" class="seg-btn active" data-count="10">10</button>
-        <button type="button" class="seg-btn" data-count="20">20</button>
-      </div>
+    <div class="field-label">Количество вариантов</div>
+    <div class="seg-control seg-counts" id="countGroup">
+      <button type="button" class="seg-btn" data-count="1">1</button>
+      <button type="button" class="seg-btn" data-count="5">5</button>
+      <button type="button" class="seg-btn active" data-count="10">10</button>
+      <button type="button" class="seg-btn" data-count="20">20</button>
+    </div>
+
+    <div class="field-label">Количество символов</div>
+    <div class="seg-control seg-lengths" id="lengthGroup">
+      <button type="button" class="seg-btn active" data-len="auto">Любое</button>
+      <button type="button" class="seg-btn" data-len="5">5</button>
+      <button type="button" class="seg-btn" data-len="6">6</button>
+      <button type="button" class="seg-btn" data-len="8">8</button>
+      <button type="button" class="seg-btn" data-len="10">10</button>
+    </div>
+
+    <div class="toggles-row">
+      <label class="toggle-card" for="digitsToggle">
+        <div>
+          <div class="toggle-title">Цифры</div>
+          <div class="toggle-sub">0–9 в нике</div>
+        </div>
+        <span class="ios-switch">
+          <input type="checkbox" id="digitsToggle" checked />
+          <span class="switch-slider"></span>
+        </span>
+      </label>
+
+      <label class="toggle-card" for="underscoreToggle">
+        <div>
+          <div class="toggle-title">Подчёркивание</div>
+          <div class="toggle-sub">символ _</div>
+        </div>
+        <span class="ios-switch">
+          <input type="checkbox" id="underscoreToggle" checked />
+          <span class="switch-slider"></span>
+        </span>
+      </label>
     </div>
 
     <div class="input-wrap" id="baseWordWrap">
@@ -443,6 +559,9 @@
 
         let mode = "unique";
         let count = 10;
+        let targetLen = "auto";
+        let useDigits = true;
+        let useUnderscore = true;
         let generated = [];
         let activeNick = "";
 
@@ -461,7 +580,7 @@
         ];
 
         const letters = "abcdefghijklmnopqrstuvwxyz";
-        const alphaNum = "abcdefghijklmnopqrstuvwxyz0123456789";
+        const digits = "0123456789";
 
         function pick(arr) {
           return arr[Math.floor(Math.random() * arr.length)];
@@ -471,44 +590,118 @@
           return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
+        function fitLength(raw, desiredLen) {
+          let s = (raw || "").toLowerCase().replace(/[^a-z0-9_]/g, "");
+          if (!useDigits) s = s.replace(/[0-9]/g, "");
+          if (!useUnderscore) s = s.replace(/_/g, "");
+          s = s.replace(/__+/g, "_").replace(/^_|_$/g, "");
+
+          if (!/[a-z]/.test(s)) {
+            s = pick(letters.split("")) + s;
+          }
+
+          if (desiredLen === "auto") {
+            return s.slice(0, 32);
+          }
+
+          const len = Number(desiredLen);
+          const pool = getCharPool();
+
+          if (s.length > len) {
+            s = s.slice(0, len).replace(/_$/g, "");
+          }
+          while (s.length < len) {
+            const ch = pick(pool);
+            if (ch === "_" && (s.length === 0 || s.length === len - 1 || s.endsWith("_"))) {
+              s += pick(letters.split(""));
+            } else {
+              s += ch;
+            }
+          }
+          if (!/[a-z]/.test(s)) {
+            const pos = randInt(0, len - 1);
+            s = s.slice(0, pos) + pick(letters.split("")) + s.slice(pos + 1);
+          }
+          return s;
+        }
+
+        function getCharPool() {
+          const arr = letters.split("");
+          if (useDigits) arr.push.apply(arr, digits.split(""));
+          if (useUnderscore) arr.push("_");
+          return arr;
+        }
+
+        // Логика строки по ключевым словам сохранена без изменений
         function buildUnique(customWord) {
           const clean = (customWord || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+          const sep = useUnderscore ? "_" : "";
+
           if (clean.length >= 2) {
             const templates = [
-              function () { return pick(prefixes) + "_" + clean; },
-              function () { return clean + "_" + pick(suffixes); },
+              function () { return pick(prefixes) + sep + clean; },
+              function () { return clean + sep + pick(suffixes); },
               function () { return clean + pick(roots); },
-              function () { return pick(roots) + "_" + clean; },
-              function () { return clean + randInt(10, 99); }
+              function () { return pick(roots) + sep + clean; }
             ];
-            return pick(templates)();
+            if (useDigits) {
+              templates.push(function () { return clean + randInt(10, 99); });
+            }
+            return fitLength(pick(templates)(), targetLen);
           }
 
           const templates = [
-            function () { return pick(prefixes) + "_" + pick(roots); },
-            function () { return pick(roots) + "_" + pick(suffixes); },
+            function () { return pick(prefixes) + sep + pick(roots); },
+            function () { return pick(roots) + sep + pick(suffixes); },
             function () { return pick(prefixes) + pick(roots); },
-            function () { return pick(roots) + pick(suffixes); },
-            function () { return pick(roots) + "_" + randInt(10, 999); }
+            function () { return pick(roots) + pick(suffixes); }
           ];
-          return pick(templates)();
+          if (useDigits) {
+            templates.push(function () { return pick(roots) + (useUnderscore ? "_" : "") + randInt(10, 999); });
+          }
+          return fitLength(pick(templates)(), targetLen);
         }
 
-        function buildRandom5to6() {
-          const len = randInt(5, 6);
+        function buildRandom() {
+          const len = targetLen === "auto" ? randInt(5, 6) : Number(targetLen);
+          const pool = getCharPool();
           let str = "";
+
           for (let i = 0; i < len; i++) {
-            str += alphaNum[Math.floor(Math.random() * alphaNum.length)];
+            let ch = pick(pool);
+            if (ch === "_" && (i === 0 || i === len - 1 || str.endsWith("_"))) {
+              ch = pick(letters.split(""));
+            }
+            str += ch;
           }
+
           if (!/[a-z]/.test(str)) {
             const idx = randInt(0, len - 1);
             str = str.slice(0, idx) + pick(letters.split("")) + str.slice(idx + 1);
           }
+
+          if (useDigits && len >= 2 && !/[0-9]/.test(str)) {
+            const candidates = [];
+            for (let i = 0; i < len; i++) {
+              if (str[i] !== "_") candidates.push(i);
+            }
+            if (candidates.length) {
+              const idx = pick(candidates);
+              str = str.slice(0, idx) + pick(digits.split("")) + str.slice(idx + 1);
+            }
+          }
+
           return str;
         }
 
         function isValidNick(nick) {
-          return /^[a-z0-9_]{5,32}$/.test(nick) && !/^_|_$|__/.test(nick) && /[a-z]/.test(nick);
+          if (!/^[a-z0-9_]{5,32}$/.test(nick) || /^_|_$|__/.test(nick) || !/[a-z]/.test(nick)) {
+            return false;
+          }
+          if (!useDigits && /[0-9]/.test(nick)) return false;
+          if (!useUnderscore && nick.includes("_")) return false;
+          if (targetLen !== "auto" && nick.length !== Number(targetLen)) return false;
+          return true;
         }
 
         function showToast(msg) {
@@ -576,9 +769,9 @@
           const uniqueSet = new Set();
           let guard = 0;
 
-          while (uniqueSet.size < count && guard < 500) {
+          while (uniqueSet.size < count && guard < 800) {
             guard++;
-            const candidate = mode === "unique" ? buildUnique(customWord) : buildRandom5to6();
+            const candidate = mode === "unique" ? buildUnique(customWord) : buildRandom();
             if (isValidNick(candidate)) {
               uniqueSet.add(candidate);
             }
@@ -646,6 +839,28 @@
             haptic();
             renderList();
           });
+        });
+
+        document.querySelectorAll("#lengthGroup .seg-btn").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            document.querySelectorAll("#lengthGroup .seg-btn").forEach(function (b) { b.classList.remove("active"); });
+            btn.classList.add("active");
+            targetLen = btn.dataset.len;
+            haptic();
+            renderList();
+          });
+        });
+
+        document.getElementById("digitsToggle").addEventListener("change", function (e) {
+          useDigits = Boolean(e.target.checked);
+          haptic();
+          renderList();
+        });
+
+        document.getElementById("underscoreToggle").addEventListener("change", function (e) {
+          useUnderscore = Boolean(e.target.checked);
+          haptic();
+          renderList();
         });
 
         document.getElementById("genBtn").addEventListener("click", function () {
