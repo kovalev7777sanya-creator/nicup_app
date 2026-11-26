@@ -7,18 +7,23 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-top: #18143e;
-      --bg-mid: #100e29;
-      --bg-bot: #090818;
-      --card-bg: rgba(27, 23, 66, 0.86);
-      --card-elevated: rgba(36, 31, 86, 0.92);
-      --fill-bg: rgba(12, 10, 32, 0.72);
-      --border-subtle: rgba(145, 134, 255, 0.22);
-      --border-gold: rgba(255, 210, 63, 0.55);
+      --bg-deep: #070614;
+      --bg-mid: #100d2b;
+      --orb-violet: rgba(114, 86, 255, 0.34);
+      --orb-gold: rgba(255, 206, 59, 0.16);
+      --orb-cyan: rgba(56, 189, 248, 0.14);
+
+      --glass-surface: rgba(255, 255, 255, 0.065);
+      --glass-surface-strong: rgba(255, 255, 255, 0.11);
+      --glass-recessed: rgba(6, 5, 18, 0.46);
+      --glass-border: rgba(255, 255, 255, 0.16);
+      --glass-highlight: rgba(255, 255, 255, 0.28);
+      --glass-gold-border: rgba(255, 210, 63, 0.45);
+
       --text-main: #ffffff;
-      --text-sec: #a6a3c9;
+      --text-sec: rgba(226, 224, 255, 0.66);
       --gold: #ffd23f;
-      --gold-soft: rgba(255, 210, 63, 0.16);
+      --gold-ink: #120f24;
       --green: #34d399;
       --green-soft: rgba(52, 211, 153, 0.16);
     }
@@ -30,11 +35,17 @@
 
     body {
       margin: 0;
-      padding: 14px 14px 36px;
+      padding: 14px 14px 38px;
       min-height: 100vh;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-      background: radial-gradient(circle at 50% 0%, var(--bg-top) 0%, var(--bg-mid) 48%, var(--bg-bot) 100%);
       color: var(--text-main);
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(circle at 15% 8%, var(--orb-violet) 0%, transparent 46%),
+        radial-gradient(circle at 88% 14%, var(--orb-gold) 0%, transparent 42%),
+        radial-gradient(circle at 50% 78%, var(--orb-cyan) 0%, transparent 52%),
+        linear-gradient(180deg, var(--bg-mid) 0%, var(--bg-deep) 100%);
+      background-attachment: fixed;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -49,10 +60,11 @@
 
     .brand-title {
       margin: 0;
-      font-size: 22px;
+      font-size: 23px;
       font-weight: 800;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.025em;
       line-height: 1.15;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
     }
 
     .brand-sub {
@@ -65,36 +77,66 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 6px 11px;
+      padding: 6px 12px;
       border-radius: 999px;
-      background: var(--card-elevated);
-      border: 1px solid var(--border-gold);
+      background: linear-gradient(135deg, rgba(255, 210, 63, 0.22), rgba(255, 255, 255, 0.08));
+      backdrop-filter: blur(18px) saturate(180%);
+      -webkit-backdrop-filter: blur(18px) saturate(180%);
+      border: 1px solid var(--glass-gold-border);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 6px 18px rgba(0, 0, 0, 0.28);
       color: var(--gold);
       font-size: 12px;
       font-weight: 700;
       flex-shrink: 0;
     }
 
-    /* Верхний рекламный блок в стиле карточки-баннера */
+    /* Liquid Glass рекламный блок вверху */
     .ad-banner {
+      position: relative;
       display: block;
       text-decoration: none;
       color: var(--text-main);
-      background: linear-gradient(145deg, rgba(46, 36, 112, 0.92), rgba(22, 18, 56, 0.95));
-      border: 1px solid var(--border-gold);
-      border-radius: 18px;
-      padding: 13px 14px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.14) 0%,
+        rgba(124, 92, 255, 0.12) 48%,
+        rgba(255, 210, 63, 0.12) 100%
+      );
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border: 1px solid var(--glass-gold-border);
+      border-radius: 22px;
+      padding: 14px 15px;
       margin-bottom: 14px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-      transition: transform 0.12s ease, border-color 0.15s ease;
+      box-shadow:
+        inset 0 1px 0 var(--glass-highlight),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+        0 12px 28px rgba(0, 0, 0, 0.38);
+      overflow: hidden;
+      transition: transform 0.14s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       cursor: pointer;
     }
 
+    .ad-banner::before {
+      content: "";
+      position: absolute;
+      top: -45%;
+      left: -25%;
+      width: 150%;
+      height: 85%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
+      transform: rotate(-4deg);
+      pointer-events: none;
+    }
+
     .ad-banner:active {
-      transform: scale(0.985);
+      transform: scale(0.982);
     }
 
     .ad-top {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -106,20 +148,22 @@
       font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 3px 8px;
+      letter-spacing: 0.07em;
+      padding: 3px 9px;
       border-radius: 999px;
-      background: var(--gold-soft);
+      background: rgba(255, 210, 63, 0.18);
+      border: 1px solid rgba(255, 210, 63, 0.35);
       color: var(--gold);
     }
 
     .ad-link-hint {
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--gold);
     }
 
     .ad-headline {
+      position: relative;
       font-size: 16px;
       font-weight: 800;
       letter-spacing: -0.015em;
@@ -127,6 +171,7 @@
     }
 
     .ad-desc {
+      position: relative;
       margin-top: 3px;
       font-size: 12px;
       color: var(--text-sec);
@@ -142,12 +187,16 @@
     }
 
     .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-subtle);
-      border-radius: 18px;
-      padding: 12px;
+      background: var(--glass-surface);
+      backdrop-filter: blur(22px) saturate(180%);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: 22px;
+      padding: 13px;
       margin-bottom: 14px;
-      backdrop-filter: blur(10px);
+      box-shadow:
+        inset 0 1px 0 var(--glass-highlight),
+        0 10px 26px rgba(0, 0, 0, 0.32);
     }
 
     .field-label {
@@ -164,10 +213,13 @@
     .seg-control {
       display: grid;
       gap: 4px;
-      background: var(--fill-bg);
+      background: var(--glass-recessed);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       padding: 3px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.35);
     }
 
     .seg-modes {
@@ -184,26 +236,29 @@
 
     .seg-btn {
       appearance: none;
-      border: none;
+      border: 1px solid transparent;
       background: transparent;
       color: var(--text-sec);
       font-family: inherit;
       font-size: 13px;
       font-weight: 700;
       padding: 8px 4px;
-      border-radius: 9px;
+      border-radius: 11px;
       cursor: pointer;
-      transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease;
+      transition: transform 0.12s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
     }
 
     .seg-btn:active {
-      transform: scale(0.96);
+      transform: scale(0.95);
     }
 
     .seg-btn.active {
-      background: var(--gold);
-      color: #141129;
-      box-shadow: 0 2px 10px rgba(255, 210, 63, 0.28);
+      background: linear-gradient(145deg, #ffe066, var(--gold));
+      color: var(--gold-ink);
+      border-color: rgba(255, 255, 255, 0.55);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        0 4px 14px rgba(255, 210, 63, 0.32);
     }
 
     .toggles-row {
@@ -218,10 +273,13 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 9px 11px;
-      border-radius: 13px;
-      background: var(--fill-bg);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 10px 11px;
+      border-radius: 15px;
+      background: var(--glass-surface-strong);
+      backdrop-filter: blur(16px) saturate(170%);
+      -webkit-backdrop-filter: blur(16px) saturate(170%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
       cursor: pointer;
       user-select: none;
     }
@@ -254,31 +312,33 @@
     .switch-slider {
       position: absolute;
       inset: 0;
-      background-color: rgba(166, 163, 201, 0.28);
+      background-color: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 999px;
-      transition: background-color 0.2s ease;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
     .switch-slider::before {
       content: "";
       position: absolute;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       left: 2px;
       top: 2px;
       background-color: #ffffff;
       border-radius: 50%;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
-      transition: transform 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s ease, background-color 0.2s ease;
     }
 
     .ios-switch input:checked + .switch-slider {
       background-color: var(--gold);
+      border-color: rgba(255, 255, 255, 0.5);
     }
 
     .ios-switch input:checked + .switch-slider::before {
       transform: translateX(18px);
-      background-color: #141129;
+      background-color: var(--gold-ink);
     }
 
     .input-wrap {
@@ -288,15 +348,19 @@
     .ios-input {
       width: 100%;
       appearance: none;
-      border: 1px solid var(--border-subtle);
-      background: var(--fill-bg);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-recessed);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       color: var(--text-main);
       font-family: inherit;
       font-size: 14px;
       font-weight: 500;
       padding: 11px 13px;
-      border-radius: 12px;
+      border-radius: 14px;
+      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
       outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
     .ios-input::placeholder {
@@ -305,6 +369,7 @@
 
     .ios-input:focus {
       border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(255, 210, 63, 0.16);
     }
 
     .btn-row {
@@ -316,17 +381,19 @@
 
     .main-btn {
       appearance: none;
-      border: none;
-      background: var(--gold);
-      color: #141129;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      background: linear-gradient(145deg, #ffe270, var(--gold));
+      color: var(--gold-ink);
       font-family: inherit;
       font-size: 15px;
       font-weight: 800;
       padding: 12px 14px;
-      border-radius: 13px;
+      border-radius: 15px;
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(255, 210, 63, 0.22);
-      transition: transform 0.1s ease, filter 0.15s ease;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.75),
+        0 8px 22px rgba(255, 210, 63, 0.28);
+      transition: transform 0.12s ease, filter 0.16s ease;
     }
 
     .main-btn:active {
@@ -336,21 +403,24 @@
 
     .ghost-btn {
       appearance: none;
-      border: 1px solid var(--border-subtle);
-      background: var(--fill-bg);
+      border: 1px solid var(--glass-gold-border);
+      background: var(--glass-surface-strong);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       color: var(--gold);
       font-family: inherit;
       font-size: 13px;
       font-weight: 700;
-      padding: 12px 13px;
-      border-radius: 13px;
+      padding: 12px 14px;
+      border-radius: 15px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
       cursor: pointer;
-      transition: transform 0.1s ease, opacity 0.15s ease;
+      transition: transform 0.12s ease, opacity 0.16s ease;
     }
 
     .ghost-btn:active {
       transform: scale(0.97);
-      opacity: 0.75;
+      opacity: 0.8;
     }
 
     .toast-line {
@@ -363,10 +433,15 @@
     }
 
     .results-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-subtle);
-      border-radius: 18px;
+      background: var(--glass-surface);
+      backdrop-filter: blur(22px) saturate(180%);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: 22px;
       overflow: hidden;
+      box-shadow:
+        inset 0 1px 0 var(--glass-highlight),
+        0 10px 26px rgba(0, 0, 0, 0.32);
     }
 
     .nick-row {
@@ -375,7 +450,8 @@
       justify-content: space-between;
       gap: 10px;
       padding: 12px 14px;
-      border-bottom: 1px solid rgba(145, 134, 255, 0.14);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+      transition: background-color 0.18s ease;
     }
 
     .nick-row:last-child {
@@ -408,17 +484,20 @@
 
     .copy-btn {
       appearance: none;
-      border: 1px solid rgba(255, 210, 63, 0.35);
-      background: var(--fill-bg);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: var(--glass-surface-strong);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       color: var(--text-main);
       font-family: inherit;
       font-size: 12px;
       font-weight: 700;
-      padding: 7px 12px;
+      padding: 7px 13px;
       border-radius: 999px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
       cursor: pointer;
       flex-shrink: 0;
-      transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      transition: transform 0.12s ease, background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
     }
 
     .copy-btn:active {
@@ -427,8 +506,8 @@
 
     .copy-btn.copied {
       background: var(--green);
-      border-color: var(--green);
-      color: #091712;
+      border-color: rgba(255, 255, 255, 0.45);
+      color: #071711;
     }
   </style>
 </head>
@@ -441,7 +520,7 @@
     <div class="gold-pill" id="countBadge">10 шт</div>
   </div>
 
-  <!-- Рекламный блок вверху (поменяй текст и ссылку при необходимости) -->
+  <!-- Liquid Glass рекламный блок вверху -->
   <a class="ad-banner" id="adBanner" href="https://t.me/telegram">
     <div class="ad-top">
       <span class="ad-tag">Реклама</span>
