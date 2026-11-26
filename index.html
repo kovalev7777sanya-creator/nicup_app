@@ -7,33 +7,20 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-page: #000000;
-      --bg-card: #1c1c1e;
-      --bg-fill: #2c2c2e;
+      --bg-top: #18143e;
+      --bg-mid: #100e29;
+      --bg-bot: #090818;
+      --card-bg: rgba(27, 23, 66, 0.86);
+      --card-elevated: rgba(36, 31, 86, 0.92);
+      --fill-bg: rgba(12, 10, 32, 0.72);
+      --border-subtle: rgba(145, 134, 255, 0.22);
+      --border-gold: rgba(255, 210, 63, 0.55);
       --text-main: #ffffff;
-      --text-sec: #98989d;
-      --separator: rgba(84, 84, 88, 0.36);
-      --ios-blue: #0a84ff;
-      --ios-blue-active: #0066cc;
-      --ios-green: #30d158;
-      --ios-orange: #ff9f0a;
-      --ios-red: #ff453a;
-    }
-
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg-page: #f2f2f7;
-        --bg-card: #ffffff;
-        --bg-fill: #e5e5ea;
-        --text-main: #000000;
-        --text-sec: #6e6e73;
-        --separator: rgba(60, 60, 67, 0.14);
-        --ios-blue: #007aff;
-        --ios-blue-active: #005ecb;
-        --ios-green: #34c759;
-        --ios-orange: #ff9500;
-        --ios-red: #ff3b30;
-      }
+      --text-sec: #a6a3c9;
+      --gold: #ffd23f;
+      --gold-soft: rgba(255, 210, 63, 0.16);
+      --green: #34d399;
+      --green-soft: rgba(52, 211, 153, 0.16);
     }
 
     * {
@@ -43,51 +30,129 @@
 
     body {
       margin: 0;
-      padding: 16px 16px 36px;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg-page);
+      padding: 14px 14px 36px;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at 50% 0%, var(--bg-top) 0%, var(--bg-mid) 48%, var(--bg-bot) 100%);
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
     }
 
-    .header {
-      margin-bottom: 14px;
-      padding: 0 4px;
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 0 2px;
     }
 
-    .title {
+    .brand-title {
       margin: 0;
-      font-size: 26px;
-      font-weight: 700;
+      font-size: 22px;
+      font-weight: 800;
       letter-spacing: -0.02em;
-      line-height: 1.2;
+      line-height: 1.15;
     }
 
-    .subtitle {
-      margin: 4px 0 0;
-      font-size: 13px;
+    .brand-sub {
+      margin: 2px 0 0;
+      font-size: 12px;
       color: var(--text-sec);
+    }
+
+    .gold-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: var(--card-elevated);
+      border: 1px solid var(--border-gold);
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Верхний рекламный блок в стиле карточки-баннера */
+    .ad-banner {
+      display: block;
+      text-decoration: none;
+      color: var(--text-main);
+      background: linear-gradient(145deg, rgba(46, 36, 112, 0.92), rgba(22, 18, 56, 0.95));
+      border: 1px solid var(--border-gold);
+      border-radius: 18px;
+      padding: 13px 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      transition: transform 0.12s ease, border-color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .ad-banner:active {
+      transform: scale(0.985);
+    }
+
+    .ad-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .ad-tag {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--gold-soft);
+      color: var(--gold);
+    }
+
+    .ad-link-hint {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .ad-headline {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+    }
+
+    .ad-desc {
+      margin-top: 3px;
+      font-size: 12px;
+      color: var(--text-sec);
+      line-height: 1.35;
     }
 
     .section-label {
       font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
+      font-weight: 700;
+      letter-spacing: 0.02em;
       color: var(--text-sec);
-      margin: 0 0 7px 6px;
+      margin: 0 0 7px 4px;
     }
 
     .card {
-      background-color: var(--bg-card);
-      border-radius: 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
       padding: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(10px);
     }
 
     .field-label {
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text-sec);
       margin: 10px 0 6px;
     }
@@ -99,9 +164,10 @@
     .seg-control {
       display: grid;
       gap: 4px;
-      background-color: var(--bg-fill);
+      background: var(--fill-bg);
       padding: 3px;
-      border-radius: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .seg-modes {
@@ -120,14 +186,14 @@
       appearance: none;
       border: none;
       background: transparent;
-      color: var(--text-main);
+      color: var(--text-sec);
       font-family: inherit;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 8px 4px;
-      border-radius: 8px;
+      border-radius: 9px;
       cursor: pointer;
-      transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease;
     }
 
     .seg-btn:active {
@@ -135,9 +201,9 @@
     }
 
     .seg-btn.active {
-      background-color: var(--bg-card);
-      color: var(--text-main);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+      background: var(--gold);
+      color: #141129;
+      box-shadow: 0 2px 10px rgba(255, 210, 63, 0.28);
     }
 
     .toggles-row {
@@ -153,16 +219,17 @@
       justify-content: space-between;
       gap: 8px;
       padding: 9px 11px;
-      border-radius: 11px;
-      background-color: var(--bg-fill);
+      border-radius: 13px;
+      background: var(--fill-bg);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       cursor: pointer;
       user-select: none;
     }
 
     .toggle-title {
       font-size: 13px;
-      font-weight: 600;
-      line-height: 1.25;
+      font-weight: 700;
+      line-height: 1.2;
     }
 
     .toggle-sub {
@@ -187,7 +254,7 @@
     .switch-slider {
       position: absolute;
       inset: 0;
-      background-color: rgba(120, 120, 128, 0.36);
+      background-color: rgba(166, 163, 201, 0.28);
       border-radius: 999px;
       transition: background-color 0.2s ease;
     }
@@ -201,32 +268,34 @@
       top: 2px;
       background-color: #ffffff;
       border-radius: 50%;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
       transition: transform 0.2s ease;
     }
 
     .ios-switch input:checked + .switch-slider {
-      background-color: var(--ios-green);
+      background-color: var(--gold);
     }
 
     .ios-switch input:checked + .switch-slider::before {
       transform: translateX(18px);
+      background-color: #141129;
     }
 
     .input-wrap {
-      margin-top: 12px;
+      margin-top: 11px;
     }
 
     .ios-input {
       width: 100%;
       appearance: none;
-      border: 1px solid var(--separator);
-      background-color: var(--bg-fill);
+      border: 1px solid var(--border-subtle);
+      background: var(--fill-bg);
       color: var(--text-main);
       font-family: inherit;
-      font-size: 15px;
+      font-size: 14px;
+      font-weight: 500;
       padding: 11px 13px;
-      border-radius: 11px;
+      border-radius: 12px;
       outline: none;
     }
 
@@ -235,7 +304,7 @@
     }
 
     .ios-input:focus {
-      border-color: var(--ios-blue);
+      border-color: var(--gold);
     }
 
     .btn-row {
@@ -248,32 +317,33 @@
     .main-btn {
       appearance: none;
       border: none;
-      background-color: var(--ios-blue);
-      color: #ffffff;
+      background: var(--gold);
+      color: #141129;
       font-family: inherit;
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 800;
       padding: 12px 14px;
-      border-radius: 12px;
+      border-radius: 13px;
       cursor: pointer;
-      transition: transform 0.1s ease, background-color 0.15s ease;
+      box-shadow: 0 4px 16px rgba(255, 210, 63, 0.22);
+      transition: transform 0.1s ease, filter 0.15s ease;
     }
 
     .main-btn:active {
       transform: scale(0.97);
-      background-color: var(--ios-blue-active);
+      filter: brightness(0.95);
     }
 
     .ghost-btn {
       appearance: none;
-      border: none;
-      background-color: var(--bg-fill);
-      color: var(--ios-blue);
+      border: 1px solid var(--border-subtle);
+      background: var(--fill-bg);
+      color: var(--gold);
       font-family: inherit;
       font-size: 13px;
-      font-weight: 600;
-      padding: 12px 12px;
-      border-radius: 12px;
+      font-weight: 700;
+      padding: 12px 13px;
+      border-radius: 13px;
       cursor: pointer;
       transition: transform 0.1s ease, opacity 0.15s ease;
     }
@@ -285,16 +355,17 @@
 
     .toast-line {
       min-height: 20px;
-      padding: 0 6px;
+      padding: 0 4px;
       margin-bottom: 8px;
       font-size: 13px;
-      font-weight: 500;
-      color: var(--ios-green);
+      font-weight: 600;
+      color: var(--green);
     }
 
     .results-card {
-      background-color: var(--bg-card);
-      border-radius: 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
       overflow: hidden;
     }
 
@@ -304,7 +375,7 @@
       justify-content: space-between;
       gap: 10px;
       padding: 12px 14px;
-      border-bottom: 1px solid var(--separator);
+      border-bottom: 1px solid rgba(145, 134, 255, 0.14);
     }
 
     .nick-row:last-child {
@@ -312,7 +383,7 @@
     }
 
     .nick-row.is-copied {
-      background-color: rgba(48, 209, 88, 0.1);
+      background: var(--green-soft);
     }
 
     .nick-clickable {
@@ -324,9 +395,9 @@
       text-align: left;
       font-family: inherit;
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: -0.01em;
-      color: var(--ios-blue);
+      color: var(--gold);
       cursor: pointer;
       word-break: break-all;
     }
@@ -337,17 +408,17 @@
 
     .copy-btn {
       appearance: none;
-      border: none;
-      background-color: var(--bg-fill);
-      color: var(--ios-blue);
+      border: 1px solid rgba(255, 210, 63, 0.35);
+      background: var(--fill-bg);
+      color: var(--text-main);
       font-family: inherit;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 7px 12px;
       border-radius: 999px;
       cursor: pointer;
       flex-shrink: 0;
-      transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease;
+      transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
 
     .copy-btn:active {
@@ -355,113 +426,30 @@
     }
 
     .copy-btn.copied {
-      background-color: var(--ios-green);
-      color: #ffffff;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 100;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal-card {
-      width: 100%;
-      max-width: 340px;
-      background-color: var(--bg-card);
-      border-radius: 18px;
-      padding: 18px 16px 14px;
-      text-align: center;
-      border: 1px solid var(--separator);
-    }
-
-    .modal-status {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 999px;
-      margin-bottom: 10px;
-      background-color: var(--bg-fill);
-      color: var(--text-sec);
-    }
-
-    .modal-status.check {
-      background-color: rgba(255, 159, 10, 0.16);
-      color: var(--ios-orange);
-    }
-
-    .modal-nick {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      word-break: break-all;
-    }
-
-    .modal-owner {
-      font-size: 13px;
-      color: var(--text-sec);
-      min-height: 20px;
-      margin-bottom: 16px;
-      word-break: break-word;
-    }
-
-    .modal-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .modal-btn {
-      appearance: none;
-      border: none;
-      border-radius: 11px;
-      padding: 10px 12px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .modal-btn.primary {
-      background-color: var(--ios-blue);
-      color: #ffffff;
-    }
-
-    .modal-btn.secondary {
-      background-color: var(--bg-fill);
-      color: var(--text-main);
-    }
-
-    .modal-close {
-      margin-top: 8px;
-      width: 100%;
-      appearance: none;
-      border: none;
-      background: transparent;
-      color: var(--text-sec);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 600;
-      padding: 8px;
-      cursor: pointer;
+      background: var(--green);
+      border-color: var(--green);
+      color: #091712;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1 class="title">Юзернеймы</h1>
-    <p class="subtitle">Нажми на @ник — откроется внутри Telegram</p>
+  <div class="top-bar">
+    <div>
+      <h1 class="brand-title">Юзернеймы</h1>
+      <p class="brand-sub">Тап на @ник — проверка внутри TG</p>
+    </div>
+    <div class="gold-pill" id="countBadge">10 шт</div>
   </div>
+
+  <!-- Рекламный блок вверху (поменяй текст и ссылку при необходимости) -->
+  <a class="ad-banner" id="adBanner" href="https://t.me/telegram">
+    <div class="ad-top">
+      <span class="ad-tag">Реклама</span>
+      <span class="ad-link-hint">Открыть →</span>
+    </div>
+    <div class="ad-headline" id="adTitle">Место под рекламу или твой канал</div>
+    <div class="ad-desc" id="adDesc">Здесь можно разместить промо-пост, спонсора или ссылку на основной канал</div>
+  </a>
 
   <div class="section-label">Параметры</div>
   <div class="card">
@@ -535,19 +523,6 @@
   <div class="section-label">Список вариантов</div>
   <div class="results-card" id="resultsList"></div>
 
-  <div class="modal-backdrop" id="modalBackdrop">
-    <div class="modal-card">
-      <div class="modal-status check" id="modalStatus">Проверка</div>
-      <div class="modal-nick" id="modalNick">@username</div>
-      <div class="modal-owner" id="modalOwner">Открытие внутри Telegram без браузера</div>
-      <div class="modal-actions">
-        <button type="button" class="modal-btn secondary" id="modalCopyBtn">Копировать</button>
-        <button type="button" class="modal-btn primary" id="modalOpenTgBtn">Открыть в TG</button>
-      </div>
-      <button type="button" class="modal-close" id="modalCloseBtn">Закрыть</button>
-    </div>
-  </div>
-
   <script>
     (function () {
       try {
@@ -557,13 +532,15 @@
           tg.expand();
         }
 
+        // Настройки рекламного блока
+        const AD_URL = "https://t.me/telegram";
+
         let mode = "unique";
         let count = 10;
         let targetLen = "auto";
         let useDigits = true;
         let useUnderscore = true;
         let generated = [];
-        let activeNick = "";
 
         const prefixes = [
           "pure", "dark", "neo", "zero", "void", "raw", "lost", "true",
@@ -588,6 +565,13 @@
 
         function randInt(min, max) {
           return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getCharPool() {
+          const arr = letters.split("");
+          if (useDigits) arr.push.apply(arr, digits.split(""));
+          if (useUnderscore) arr.push("_");
+          return arr;
         }
 
         function fitLength(raw, desiredLen) {
@@ -623,13 +607,6 @@
             s = s.slice(0, pos) + pick(letters.split("")) + s.slice(pos + 1);
           }
           return s;
-        }
-
-        function getCharPool() {
-          const arr = letters.split("");
-          if (useDigits) arr.push.apply(arr, digits.split(""));
-          if (useUnderscore) arr.push("_");
-          return arr;
         }
 
         // Логика строки по ключевым словам сохранена без изменений
@@ -747,23 +724,22 @@
           }
         }
 
-        function openInsideTelegram(nick) {
-          const httpsUrl = "https://t.me/" + nick;
-          const tgSchemeUrl = "tg://resolve?domain=" + nick;
-
-          if (tg && typeof tg.openTelegramLink === "function") {
-            tg.openTelegramLink(httpsUrl);
+        function openInsideTelegram(url) {
+          if (tg && typeof tg.openTelegramLink === "function" && url.indexOf("https://t.me/") === 0) {
+            tg.openTelegramLink(url);
             return;
           }
-
-          window.location.href = tgSchemeUrl;
-        }
-
-        function closeModal() {
-          document.getElementById("modalBackdrop").classList.remove("open");
+          if (tg && typeof tg.openLink === "function") {
+            tg.openLink(url);
+            return;
+          }
+          window.open(url, "_blank", "noopener,noreferrer");
         }
 
         function renderList() {
+          const badge = document.getElementById("countBadge");
+          if (badge) badge.textContent = count + " шт";
+
           const baseInput = document.getElementById("baseWord");
           const customWord = baseInput ? baseInput.value.trim() : "";
           const uniqueSet = new Set();
@@ -791,7 +767,7 @@
             nickBtn.textContent = "@" + nick;
             nickBtn.addEventListener("click", function () {
               haptic();
-              openInsideTelegram(nick);
+              openInsideTelegram("https://t.me/" + nick);
             });
 
             const copyBtn = document.createElement("button");
@@ -819,6 +795,12 @@
             container.appendChild(row);
           });
         }
+
+        document.getElementById("adBanner").addEventListener("click", function (e) {
+          e.preventDefault();
+          haptic();
+          openInsideTelegram(AD_URL);
+        });
 
         document.querySelectorAll("#modeGroup .seg-btn").forEach(function (btn) {
           btn.addEventListener("click", function () {
@@ -881,24 +863,6 @@
           await writeClipboard(text);
           haptic();
           showToast("Скопировано списком (" + generated.length + ")");
-        });
-
-        document.getElementById("modalCopyBtn").addEventListener("click", async function () {
-          if (!activeNick) return;
-          await writeClipboard("@" + activeNick);
-          haptic();
-          showToast("Скопировано @" + activeNick);
-        });
-
-        document.getElementById("modalOpenTgBtn").addEventListener("click", function () {
-          if (!activeNick) return;
-          haptic();
-          openInsideTelegram(activeNick);
-        });
-
-        document.getElementById("modalCloseBtn").addEventListener("click", closeModal);
-        document.getElementById("modalBackdrop").addEventListener("click", function (e) {
-          if (e.target && e.target.id === "modalBackdrop") closeModal();
         });
 
         renderList();
