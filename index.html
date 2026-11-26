@@ -193,4 +193,547 @@
     }
 
     .ghost-btn:active {
-      transform: scale(0.9
+      transform: scale(0.97);
+      opacity: 0.75;
+    }
+
+    .toast-line {
+      min-height: 20px;
+      padding: 0 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ios-green);
+    }
+
+    .results-card {
+      background-color: var(--bg-card);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .nick-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--separator);
+      transition: background-color 0.15s ease;
+    }
+
+    .nick-row:last-child {
+      border-bottom: none;
+    }
+
+    .nick-row.is-copied {
+      background-color: rgba(52, 199, 89, 0.08);
+    }
+
+    .nick-clickable {
+      appearance: none;
+      border: none;
+      background: transparent;
+      padding: 2px 0;
+      margin: 0;
+      text-align: left;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--ios-blue);
+      cursor: pointer;
+      word-break: break-all;
+    }
+
+    .nick-clickable:active {
+      opacity: 0.65;
+    }
+
+    .copy-btn {
+      appearance: none;
+      border: none;
+      background-color: var(--bg-fill);
+      color: var(--ios-blue);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .copy-btn:active {
+      transform: scale(0.94);
+    }
+
+    .copy-btn.copied {
+      background-color: var(--ios-green);
+      color: #ffffff;
+    }
+
+    /* Модальное окно проверки */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.48);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 340px;
+      background-color: var(--bg-card);
+      border-radius: 18px;
+      padding: 18px 16px 16px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+      text-align: center;
+    }
+
+    .modal-status {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+      background-color: var(--bg-fill);
+      color: var(--text-sec);
+    }
+
+    .modal-status.taken {
+      background-color: rgba(255, 59, 48, 0.14);
+      color: var(--ios-red);
+    }
+
+    .modal-status.free {
+      background-color: rgba(52, 199, 89, 0.15);
+      color: var(--ios-green);
+    }
+
+    .modal-status.check {
+      background-color: rgba(255, 149, 0, 0.15);
+      color: var(--ios-orange);
+    }
+
+    .modal-nick {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+      word-break: break-all;
+    }
+
+    .modal-owner {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-sec);
+      min-height: 20px;
+      margin-bottom: 16px;
+      word-break: break-word;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .modal-btn {
+      appearance: none;
+      border: none;
+      border-radius: 11px;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal-btn.primary {
+      background-color: var(--ios-blue);
+      color: #ffffff;
+    }
+
+    .modal-btn.secondary {
+      background-color: var(--bg-fill);
+      color: var(--text-main);
+    }
+
+    .modal-close {
+      margin-top: 8px;
+      width: 100%;
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--text-sec);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 class="title">Юзернеймы</h1>
+    <p class="subtitle">Нажми на @ник, чтобы открыть окно проверки</p>
+  </div>
+
+  <div class="section-label">Параметры</div>
+  <div class="card">
+    <div class="seg-control seg-modes" id="modeGroup">
+      <button type="button" class="seg-btn active" data-mode="unique">Уникальные</button>
+      <button type="button" class="seg-btn" data-mode="random">Случайные (5–6)</button>
+    </div>
+
+    <div style="margin-top: 10px;">
+      <div class="seg-control seg-counts" id="countGroup">
+        <button type="button" class="seg-btn" data-count="1">1</button>
+        <button type="button" class="seg-btn" data-count="5">5</button>
+        <button type="button" class="seg-btn active" data-count="10">10</button>
+        <button type="button" class="seg-btn" data-count="20">20</button>
+      </div>
+    </div>
+
+    <div class="input-wrap" id="baseWordWrap">
+      <input
+        type="text"
+        id="baseWord"
+        class="ios-input"
+        placeholder="Слово-основа (необязательно)"
+        maxlength="16"
+        autocomplete="off"
+        autocapitalize="none"
+      />
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="main-btn" id="genBtn">Сгенерировать</button>
+      <button type="button" class="ghost-btn" id="copyAllBtn">Копировать все</button>
+    </div>
+  </div>
+
+  <div class="toast-line" id="toastLine"></div>
+
+  <div class="section-label">Список вариантов</div>
+  <div class="results-card" id="resultsList"></div>
+
+  <!-- Модальное окно -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal-card" id="modalCard">
+      <div class="modal-status check" id="modalStatus">Проверяем...</div>
+      <div class="modal-nick" id="modalNick">@username</div>
+      <div class="modal-owner" id="modalOwner">Узнаём статус юзернейма</div>
+      <div class="modal-actions">
+        <button type="button" class="modal-btn secondary" id="modalCopyBtn">Копировать</button>
+        <button type="button" class="modal-btn primary" id="modalOpenTgBtn">Открыть в TG</button>
+      </div>
+      <button type="button" class="modal-close" id="modalCloseBtn">Закрыть</button>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
+    let mode = "unique";
+    let count = 10;
+    let generated = [];
+    let activeNick = "";
+
+    const prefixes = [
+      "pure", "dark", "neo", "zero", "void", "raw", "lost", "true",
+      "cold", "wild", "soft", "high", "deep", "next", "solo", "real"
+    ];
+    const roots = [
+      "flux", "echo", "wave", "drift", "pulse", "spark", "mint", "wolf",
+      "nova", "core", "vibe", "shade", "frost", "loom", "rift", "zen",
+      "glow", "path", "myth", "bolt", "crest", "haven", "cipher", "ember"
+    ];
+    const suffixes = [
+      "lab", "hub", "zone", "mode", "x", "ly", "io", "hq",
+      "way", "box", "den", "craft", "works", "line", "spot", "club"
+    ];
+
+    const letters = "abcdefghijklmnopqrstuvwxyz";
+    const alphaNum = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function randInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function buildUnique(customWord) {
+      const clean = customWord.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (clean.length >= 2) {
+        const templates = [
+          () => `${pick(prefixes)}_${clean}`,
+          () => `${clean}_${pick(suffixes)}`,
+          () => `${clean}${pick(roots)}`,
+          () => `${pick(roots)}_${clean}`,
+          () => `${clean}${randInt(10, 99)}`
+        ];
+        return pick(templates)();
+      }
+
+      const templates = [
+        () => `${pick(prefixes)}_${pick(roots)}`,
+        () => `${pick(roots)}_${pick(suffixes)}`,
+        () => `${pick(prefixes)}${pick(roots)}`,
+        () => `${pick(roots)}${pick(suffixes)}`,
+        () => `${pick(roots)}_${randInt(10, 999)}`
+      ];
+      return pick(templates)();
+    }
+
+    function buildRandom5to6() {
+      const len = randInt(5, 6);
+      let str = "";
+      for (let i = 0; i < len; i++) {
+        str += alphaNum[Math.floor(Math.random() * alphaNum.length)];
+      }
+      if (!/[a-z]/.test(str)) {
+        const idx = randInt(0, len - 1);
+        str = str.slice(0, idx) + pick(letters.split("")) + str.slice(idx + 1);
+      }
+      return str;
+    }
+
+    function isValidNick(nick) {
+      return /^[a-z0-9_]{5,32}$/.test(nick) && !/^_|_$|__/.test(nick) && /[a-z]/.test(nick);
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("toastLine");
+      el.textContent = msg;
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => {
+        el.textContent = "";
+      }, 1800);
+    }
+
+    async function writeClipboard(text) {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      } catch (_) {}
+
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.focus();
+      area.select();
+      let ok = false;
+      try {
+        ok = document.execCommand("copy");
+      } catch (_) {
+        ok = false;
+      }
+      document.body.removeChild(area);
+      return ok;
+    }
+
+    function haptic(style = "light") {
+      if (tg && tg.HapticFeedback) {
+        try {
+          tg.HapticFeedback.impactOccurred(style);
+        } catch (_) {}
+      }
+    }
+
+    function openTelegramUsername(nick) {
+      const url = `https://t.me/${nick}`;
+      if (tg && tg.openLink) {
+        tg.openLink(url);
+      } else {
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+    }
+
+    async function inspectNickModal(nick) {
+      activeNick = nick;
+      const backdrop = document.getElementById("modalBackdrop");
+      const statusEl = document.getElementById("modalStatus");
+      const nickEl = document.getElementById("modalNick");
+      const ownerEl = document.getElementById("modalOwner");
+
+      nickEl.textContent = "@" + nick;
+      statusEl.className = "modal-status check";
+      statusEl.textContent = "Проверяем...";
+      ownerEl.textContent = "Смотрим публичную страницу TG";
+      backdrop.classList.add("open");
+
+      // Пробуем через читаемый текстовый прокси r.jina.ai (если доступен в сети)
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 3200);
+        const res = await fetch(`https://r.jina.ai/http://t.me/${nick}`, { signal: controller.signal });
+        clearTimeout(timer);
+
+        if (res.ok) {
+          const text = await res.text();
+          const titleMatch = text.match(/Title:\s*(.+)/i);
+          const title = titleMatch ? titleMatch[1].trim() : "";
+
+          if (title && !/Telegram:\s*Contact|Telegram:\s*Launch/i.test(title) && !/If you have Telegram/i.test(text)) {
+            statusEl.className = "modal-status taken";
+            statusEl.textContent = "Юз занят";
+            ownerEl.textContent = title.replace(/^Telegram:\s*/i, "");
+            return;
+          }
+        }
+      } catch (_) {}
+
+      // Если браузер/прокси не дал точный ответ — показываем нейтральный статус для быстрой сверки
+      statusEl.className = "modal-status check";
+      statusEl.textContent = "Нужна сверка";
+      ownerEl.textContent = "Нажмите «Открыть в TG», чтобы точно увидеть статус и имя";
+    }
+
+    function closeModal() {
+      document.getElementById("modalBackdrop").classList.remove("open");
+    }
+
+    function renderList() {
+      const customWord = document.getElementById("baseWord").value.trim();
+      const uniqueSet = new Set();
+      let guard = 0;
+
+      while (uniqueSet.size < count && guard < 500) {
+        guard++;
+        const candidate = mode === "unique" ? buildUnique(customWord) : buildRandom5to6();
+        if (isValidNick(candidate)) {
+          uniqueSet.add(candidate);
+        }
+      }
+
+      generated = Array.from(uniqueSet);
+      const container = document.getElementById("resultsList");
+      container.innerHTML = "";
+
+      generated.forEach((nick) => {
+        const row = document.createElement("div");
+        row.className = "nick-row";
+
+        const nickBtn = document.createElement("button");
+        nickBtn.type = "button";
+        nickBtn.className = "nick-clickable";
+        nickBtn.textContent = "@" + nick;
+        nickBtn.addEventListener("click", () => {
+          haptic();
+          inspectNickModal(nick);
+        });
+
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "copy-btn";
+        copyBtn.textContent = "Копировать";
+        copyBtn.addEventListener("click", async () => {
+          await writeClipboard("@" + nick);
+          haptic();
+
+          copyBtn.classList.add("copied");
+          row.classList.add("is-copied");
+          copyBtn.textContent = "Готово";
+          showToast(`Скопировано @${nick}`);
+
+          setTimeout(() => {
+            copyBtn.classList.remove("copied");
+            row.classList.remove("is-copied");
+            copyBtn.textContent = "Копировать";
+          }, 1500);
+        });
+
+        row.appendChild(nickBtn);
+        row.appendChild(copyBtn);
+        container.appendChild(row);
+      });
+    }
+
+    document.querySelectorAll("#modeGroup .seg-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#modeGroup .seg-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        mode = btn.dataset.mode;
+        document.getElementById("baseWordWrap").style.display = mode === "unique" ? "block" : "none";
+        haptic();
+        renderList();
+      });
+    });
+
+    document.querySelectorAll("#countGroup .seg-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#countGroup .seg-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        count = Number(btn.dataset.count);
+        haptic();
+        renderList();
+      });
+    });
+
+    document.getElementById("genBtn").addEventListener("click", () => {
+      haptic();
+      renderList();
+      showToast(`Сгенерировано вариантов: ${generated.length}`);
+    });
+
+    document.getElementById("baseWord").addEventListener("input", () => {
+      if (mode === "unique") {
+        renderList();
+      }
+    });
+
+    document.getElementById("copyAllBtn").addEventListener("click", async () => {
+      if (!generated.length) return;
+      const text = generated.map((n) => "@" + n).join("\n");
+      await writeClipboard(text);
+      haptic();
+      showToast(`Скопировано списком (${generated.length})`);
+    });
+
+    document.getElementById("modalCopyBtn").addEventListener("click", async () => {
+      if (!activeNick) return;
+      await writeClipboard("@" + activeNick);
+      haptic();
+      showToast(`Скопировано @${activeNick}`);
+    });
+
+    document.getElementById("modalOpenTgBtn").addEventListener("click", () => {
+      if (!activeNick) return;
+      haptic();
+      openTelegramUsername(activeNick);
+    });
+
+    document.getElementById("modalCloseBtn").addEventListener("click", closeModal);
+    document.getElementById("modalBackdrop").addEventListener("click", (e) => {
+      if (e.target.id === "modalBackdrop") closeModal();
+    });
+
+    renderList();
+  </script>
+</body>
+</html>
