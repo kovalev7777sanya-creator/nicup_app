@@ -16,6 +16,8 @@
       --ios-blue: #007aff;
       --ios-blue-active: #005ecb;
       --ios-green: #34c759;
+      --ios-orange: #ff9500;
+      --ios-red: #ff3b30;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -29,6 +31,8 @@
         --ios-blue: #0a84ff;
         --ios-blue-active: #0066cc;
         --ios-green: #30d158;
+        --ios-orange: #ff9f0a;
+        --ios-red: #ff453a;
       }
     }
 
@@ -39,7 +43,7 @@
 
     body {
       margin: 0;
-      padding: 16px 16px 32px;
+      padding: 16px 16px 36px;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg-page);
       color: var(--text-main);
@@ -47,7 +51,7 @@
     }
 
     .header {
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       padding: 0 4px;
     }
 
@@ -137,7 +141,7 @@
       padding: 11px 13px;
       border-radius: 11px;
       outline: none;
-      transition: border-color 0.15s ease, background-color 0.15s ease;
+      transition: border-color 0.15s ease;
     }
 
     .ios-input::placeholder {
@@ -151,7 +155,7 @@
     .btn-row {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 10px;
+      gap: 8px;
       margin-top: 12px;
     }
 
@@ -163,10 +167,10 @@
       font-family: inherit;
       font-size: 15px;
       font-weight: 600;
-      padding: 12px 16px;
+      padding: 12px 14px;
       border-radius: 12px;
       cursor: pointer;
-      transition: transform 0.1s ease, background-color 0.15s ease, opacity 0.15s ease;
+      transition: transform 0.1s ease, background-color 0.15s ease;
     }
 
     .main-btn:active {
@@ -180,9 +184,9 @@
       background-color: var(--bg-fill);
       color: var(--ios-blue);
       font-family: inherit;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
-      padding: 12px 14px;
+      padding: 12px 12px;
       border-radius: 12px;
       cursor: pointer;
       transition: transform 0.1s ease, opacity 0.15s ease;
@@ -191,6 +195,27 @@
     .ghost-btn:active {
       transform: scale(0.97);
       opacity: 0.75;
+    }
+
+    .check-all-btn {
+      width: 100%;
+      margin-top: 8px;
+      appearance: none;
+      border: 1px solid var(--separator);
+      background-color: transparent;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 12px;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: transform 0.1s ease, background-color 0.15s ease;
+    }
+
+    .check-all-btn:active {
+      transform: scale(0.98);
+      background-color: var(--bg-fill);
     }
 
     .toast-line {
@@ -213,8 +238,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding: 12px 14px;
+      gap: 8px;
+      padding: 11px 12px;
       border-bottom: 1px solid var(--separator);
       transition: background-color 0.15s ease;
     }
@@ -227,42 +252,83 @@
       background-color: rgba(52, 199, 89, 0.08);
     }
 
-    .nick-text {
-      font-size: 15px;
-      font-weight: 500;
-      letter-spacing: -0.01em;
-      word-break: break-all;
+    .nick-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
     }
 
-    .copy-btn {
+    .nick-link {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      text-decoration: none;
+      word-break: break-all;
+      cursor: pointer;
+    }
+
+    .status-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sec);
+    }
+
+    .status-badge.free-hint {
+      color: var(--ios-green);
+    }
+
+    .status-badge.manual {
+      color: var(--ios-orange);
+    }
+
+    .status-badge.taken-hint {
+      color: var(--ios-red);
+    }
+
+    .row-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .mini-btn {
       appearance: none;
       border: none;
       background-color: var(--bg-fill);
       color: var(--ios-blue);
       font-family: inherit;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
-      padding: 7px 12px;
+      padding: 7px 10px;
       border-radius: 999px;
       cursor: pointer;
-      flex-shrink: 0;
       transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease;
     }
 
-    .copy-btn:active {
+    .mini-btn:active {
       transform: scale(0.94);
     }
 
-    .copy-btn.copied {
+    .mini-btn.copied {
       background-color: var(--ios-green);
       color: #ffffff;
+    }
+
+    .footnote {
+      margin: 10px 4px 0;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--text-sec);
     }
   </style>
 </head>
 <body>
   <div class="header">
     <h1 class="title">Юзернеймы</h1>
-    <p class="subtitle">Подбор вариантов для канала и профиля</p>
+    <p class="subtitle">Генерация, быстрая проверка и копирование для канала</p>
   </div>
 
   <div class="section-label">Параметры</div>
@@ -297,12 +363,18 @@
       <button type="button" class="main-btn" id="genBtn">Сгенерировать</button>
       <button type="button" class="ghost-btn" id="copyAllBtn">Копировать все</button>
     </div>
+
+    <button type="button" class="check-all-btn" id="checkAllBtn">Проверить все в списке</button>
   </div>
 
   <div class="toast-line" id="toastLine"></div>
 
   <div class="section-label">Список вариантов</div>
   <div class="results-card" id="resultsList"></div>
+
+  <p class="footnote">
+    Нажми на <b>@ник</b>, чтобы открыть <code>t.me/ник</code> и сразу увидеть в Telegram, свободен ли он. Кнопка <b>Проверить</b> делает быстрый сетевой запрос и подсказывает статус, но точный ответ всегда даёт сам Telegram.
+  </p>
 
   <script>
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
@@ -386,7 +458,7 @@
       clearTimeout(showToast._timer);
       showToast._timer = setTimeout(() => {
         el.textContent = "";
-      }, 1700);
+      }, 1900);
     }
 
     async function writeClipboard(text) {
@@ -414,11 +486,42 @@
       return ok;
     }
 
-    function haptic() {
+    function haptic(style = "light") {
       if (tg && tg.HapticFeedback) {
         try {
-          tg.HapticFeedback.impactOccurred("light");
+          tg.HapticFeedback.impactOccurred(style);
         } catch (_) {}
+      }
+    }
+
+    function openTelegramUsername(nick) {
+      const url = `https://t.me/${nick}`;
+      if (tg && tg.openLink) {
+        tg.openLink(url);
+      } else {
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+    }
+
+    async function probeUsername(nick, badgeEl) {
+      badgeEl.className = "status-badge";
+      badgeEl.textContent = "Проверяем...";
+
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 3500);
+        await fetch(`https://t.me/${nick}`, {
+          mode: "no-cors",
+          cache: "no-store",
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+
+        badgeEl.className = "status-badge manual";
+        badgeEl.textContent = "Запрос прошёл · сверь по @ник";
+      } catch (_) {
+        badgeEl.className = "status-badge taken-hint";
+        badgeEl.textContent = "Таймаут / блок · проверь @ник";
       }
     }
 
@@ -443,33 +546,63 @@
         const row = document.createElement("div");
         row.className = "nick-row";
 
-        const label = document.createElement("span");
-        label.className = "nick-text";
-        label.textContent = "@" + nick;
+        const left = document.createElement("div");
+        left.className = "nick-left";
 
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "copy-btn";
-        btn.textContent = "Скопировать";
+        const link = document.createElement("a");
+        link.className = "nick-link";
+        link.textContent = "@" + nick;
+        link.href = `https://t.me/${nick}`;
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          haptic();
+          openTelegramUsername(nick);
+        });
 
-        btn.addEventListener("click", async () => {
+        const badge = document.createElement("span");
+        badge.className = "status-badge";
+        badge.textContent = "Не проверен";
+
+        left.appendChild(link);
+        left.appendChild(badge);
+
+        const actions = document.createElement("div");
+        actions.className = "row-actions";
+
+        const checkBtn = document.createElement("button");
+        checkBtn.type = "button";
+        checkBtn.className = "mini-btn";
+        checkBtn.textContent = "Проверить";
+        checkBtn.addEventListener("click", async () => {
+          haptic();
+          await probeUsername(nick, badge);
+        });
+
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "mini-btn";
+        copyBtn.textContent = "Копировать";
+        copyBtn.addEventListener("click", async () => {
           await writeClipboard("@" + nick);
           haptic();
 
-          btn.classList.add("copied");
+          copyBtn.classList.add("copied");
           row.classList.add("is-copied");
-          btn.textContent = "Скопировано";
+          copyBtn.textContent = "Готово";
           showToast(`Скопировано @${nick}`);
 
           setTimeout(() => {
-            btn.classList.remove("copied");
+            copyBtn.classList.remove("copied");
             row.classList.remove("is-copied");
-            btn.textContent = "Скопировать";
+            copyBtn.textContent = "Копировать";
           }, 1500);
         });
 
-        row.appendChild(label);
-        row.appendChild(btn);
+        actions.appendChild(checkBtn);
+        actions.appendChild(copyBtn);
+
+        row.appendChild(left);
+        row.appendChild(actions);
         container.appendChild(row);
       });
     }
@@ -498,7 +631,7 @@
     document.getElementById("genBtn").addEventListener("click", () => {
       haptic();
       renderList();
-      showToast(`Обновлено вариантов: ${generated.length}`);
+      showToast(`Сгенерировано вариантов: ${generated.length}`);
     });
 
     document.getElementById("baseWord").addEventListener("input", () => {
@@ -513,6 +646,21 @@
       await writeClipboard(text);
       haptic();
       showToast(`Скопировано списком (${generated.length})`);
+    });
+
+    document.getElementById("checkAllBtn").addEventListener("click", async () => {
+      const rows = Array.from(document.querySelectorAll("#resultsList .nick-row"));
+      if (!rows.length) return;
+      haptic("medium");
+      showToast("Проверяем список...");
+
+      for (const row of rows) {
+        const nick = row.querySelector(".nick-link").textContent.replace(/^@/, "");
+        const badge = row.querySelector(".status-badge");
+        await probeUsername(nick, badge);
+      }
+
+      showToast("Проверка списка завершена");
     });
 
     renderList();
