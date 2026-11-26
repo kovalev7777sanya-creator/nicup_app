@@ -7,32 +7,32 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-page: #f2f2f7;
-      --bg-card: #ffffff;
-      --bg-fill: #e5e5ea;
-      --text-main: #000000;
-      --text-sec: #6e6e73;
-      --separator: rgba(60, 60, 67, 0.14);
-      --ios-blue: #007aff;
-      --ios-blue-active: #005ecb;
-      --ios-green: #34c759;
-      --ios-orange: #ff9500;
-      --ios-red: #ff3b30;
+      --bg-page: #000000;
+      --bg-card: #1c1c1e;
+      --bg-fill: #2c2c2e;
+      --text-main: #ffffff;
+      --text-sec: #98989d;
+      --separator: rgba(84, 84, 88, 0.36);
+      --ios-blue: #0a84ff;
+      --ios-blue-active: #0066cc;
+      --ios-green: #30d158;
+      --ios-orange: #ff9f0a;
+      --ios-red: #ff453a;
     }
 
-    @media (prefers-color-scheme: dark) {
+    @media (prefers-color-scheme: light) {
       :root {
-        --bg-page: #000000;
-        --bg-card: #1c1c1e;
-        --bg-fill: #2c2c2e;
-        --text-main: #ffffff;
-        --text-sec: #98989d;
-        --separator: rgba(84, 84, 88, 0.36);
-        --ios-blue: #0a84ff;
-        --ios-blue-active: #0066cc;
-        --ios-green: #30d158;
-        --ios-orange: #ff9f0a;
-        --ios-red: #ff453a;
+        --bg-page: #f2f2f7;
+        --bg-card: #ffffff;
+        --bg-fill: #e5e5ea;
+        --text-main: #000000;
+        --text-sec: #6e6e73;
+        --separator: rgba(60, 60, 67, 0.14);
+        --ios-blue: #007aff;
+        --ios-blue-active: #005ecb;
+        --ios-green: #34c759;
+        --ios-orange: #ff9500;
+        --ios-red: #ff3b30;
       }
     }
 
@@ -83,7 +83,6 @@
       border-radius: 14px;
       padding: 12px;
       margin-bottom: 16px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     }
 
     .seg-control {
@@ -113,7 +112,7 @@
       padding: 8px 6px;
       border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     .seg-btn:active {
@@ -123,7 +122,7 @@
     .seg-btn.active {
       background-color: var(--bg-card);
       color: var(--text-main);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
     }
 
     .input-wrap {
@@ -141,7 +140,6 @@
       padding: 11px 13px;
       border-radius: 11px;
       outline: none;
-      transition: border-color 0.15s ease;
     }
 
     .ios-input::placeholder {
@@ -210,7 +208,6 @@
       background-color: var(--bg-card);
       border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     }
 
     .nick-row {
@@ -220,7 +217,6 @@
       gap: 10px;
       padding: 12px 14px;
       border-bottom: 1px solid var(--separator);
-      transition: background-color 0.15s ease;
     }
 
     .nick-row:last-child {
@@ -228,7 +224,7 @@
     }
 
     .nick-row.is-copied {
-      background-color: rgba(52, 199, 89, 0.08);
+      background-color: rgba(48, 209, 88, 0.1);
     }
 
     .nick-clickable {
@@ -275,12 +271,10 @@
       color: #ffffff;
     }
 
-    /* Модальное окно проверки */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.48);
-      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.55);
       display: none;
       align-items: center;
       justify-content: center;
@@ -297,9 +291,9 @@
       max-width: 340px;
       background-color: var(--bg-card);
       border-radius: 18px;
-      padding: 18px 16px 16px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+      padding: 18px 16px 14px;
       text-align: center;
+      border: 1px solid var(--separator);
     }
 
     .modal-status {
@@ -314,31 +308,24 @@
     }
 
     .modal-status.taken {
-      background-color: rgba(255, 59, 48, 0.14);
+      background-color: rgba(255, 69, 58, 0.16);
       color: var(--ios-red);
     }
 
-    .modal-status.free {
-      background-color: rgba(52, 199, 89, 0.15);
-      color: var(--ios-green);
-    }
-
     .modal-status.check {
-      background-color: rgba(255, 149, 0, 0.15);
+      background-color: rgba(255, 159, 10, 0.16);
       color: var(--ios-orange);
     }
 
     .modal-nick {
       font-size: 20px;
       font-weight: 700;
-      letter-spacing: -0.02em;
       margin-bottom: 6px;
       word-break: break-all;
     }
 
     .modal-owner {
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 13px;
       color: var(--text-sec);
       min-height: 20px;
       margin-bottom: 16px;
@@ -390,7 +377,7 @@
 <body>
   <div class="header">
     <h1 class="title">Юзернеймы</h1>
-    <p class="subtitle">Нажми на @ник, чтобы открыть окно проверки</p>
+    <p class="subtitle">Нажми на @ник — откроется внутри Telegram</p>
   </div>
 
   <div class="section-label">Параметры</div>
@@ -432,12 +419,11 @@
   <div class="section-label">Список вариантов</div>
   <div class="results-card" id="resultsList"></div>
 
-  <!-- Модальное окно -->
-  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
-    <div class="modal-card" id="modalCard">
-      <div class="modal-status check" id="modalStatus">Проверяем...</div>
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal-card">
+      <div class="modal-status check" id="modalStatus">Проверка</div>
       <div class="modal-nick" id="modalNick">@username</div>
-      <div class="modal-owner" id="modalOwner">Узнаём статус юзернейма</div>
+      <div class="modal-owner" id="modalOwner">Открытие внутри Telegram без браузера</div>
       <div class="modal-actions">
         <button type="button" class="modal-btn secondary" id="modalCopyBtn">Копировать</button>
         <button type="button" class="modal-btn primary" id="modalOpenTgBtn">Открыть в TG</button>
@@ -447,293 +433,264 @@
   </div>
 
   <script>
-    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-    if (tg) {
-      tg.ready();
-      tg.expand();
-    }
-
-    let mode = "unique";
-    let count = 10;
-    let generated = [];
-    let activeNick = "";
-
-    const prefixes = [
-      "pure", "dark", "neo", "zero", "void", "raw", "lost", "true",
-      "cold", "wild", "soft", "high", "deep", "next", "solo", "real"
-    ];
-    const roots = [
-      "flux", "echo", "wave", "drift", "pulse", "spark", "mint", "wolf",
-      "nova", "core", "vibe", "shade", "frost", "loom", "rift", "zen",
-      "glow", "path", "myth", "bolt", "crest", "haven", "cipher", "ember"
-    ];
-    const suffixes = [
-      "lab", "hub", "zone", "mode", "x", "ly", "io", "hq",
-      "way", "box", "den", "craft", "works", "line", "spot", "club"
-    ];
-
-    const letters = "abcdefghijklmnopqrstuvwxyz";
-    const alphaNum = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-    function pick(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function randInt(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    function buildUnique(customWord) {
-      const clean = customWord.toLowerCase().replace(/[^a-z0-9]/g, "");
-      if (clean.length >= 2) {
-        const templates = [
-          () => `${pick(prefixes)}_${clean}`,
-          () => `${clean}_${pick(suffixes)}`,
-          () => `${clean}${pick(roots)}`,
-          () => `${pick(roots)}_${clean}`,
-          () => `${clean}${randInt(10, 99)}`
-        ];
-        return pick(templates)();
-      }
-
-      const templates = [
-        () => `${pick(prefixes)}_${pick(roots)}`,
-        () => `${pick(roots)}_${pick(suffixes)}`,
-        () => `${pick(prefixes)}${pick(roots)}`,
-        () => `${pick(roots)}${pick(suffixes)}`,
-        () => `${pick(roots)}_${randInt(10, 999)}`
-      ];
-      return pick(templates)();
-    }
-
-    function buildRandom5to6() {
-      const len = randInt(5, 6);
-      let str = "";
-      for (let i = 0; i < len; i++) {
-        str += alphaNum[Math.floor(Math.random() * alphaNum.length)];
-      }
-      if (!/[a-z]/.test(str)) {
-        const idx = randInt(0, len - 1);
-        str = str.slice(0, idx) + pick(letters.split("")) + str.slice(idx + 1);
-      }
-      return str;
-    }
-
-    function isValidNick(nick) {
-      return /^[a-z0-9_]{5,32}$/.test(nick) && !/^_|_$|__/.test(nick) && /[a-z]/.test(nick);
-    }
-
-    function showToast(msg) {
-      const el = document.getElementById("toastLine");
-      el.textContent = msg;
-      clearTimeout(showToast._timer);
-      showToast._timer = setTimeout(() => {
-        el.textContent = "";
-      }, 1800);
-    }
-
-    async function writeClipboard(text) {
+    (function () {
       try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(text);
-          return true;
+        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        if (tg) {
+          tg.ready();
+          tg.expand();
         }
-      } catch (_) {}
 
-      const area = document.createElement("textarea");
-      area.value = text;
-      area.style.position = "fixed";
-      area.style.opacity = "0";
-      document.body.appendChild(area);
-      area.focus();
-      area.select();
-      let ok = false;
-      try {
-        ok = document.execCommand("copy");
-      } catch (_) {
-        ok = false;
-      }
-      document.body.removeChild(area);
-      return ok;
-    }
+        let mode = "unique";
+        let count = 10;
+        let generated = [];
+        let activeNick = "";
 
-    function haptic(style = "light") {
-      if (tg && tg.HapticFeedback) {
-        try {
-          tg.HapticFeedback.impactOccurred(style);
-        } catch (_) {}
-      }
-    }
+        const prefixes = [
+          "pure", "dark", "neo", "zero", "void", "raw", "lost", "true",
+          "cold", "wild", "soft", "high", "deep", "next", "solo", "real"
+        ];
+        const roots = [
+          "flux", "echo", "wave", "drift", "pulse", "spark", "mint", "wolf",
+          "nova", "core", "vibe", "shade", "frost", "loom", "rift", "zen",
+          "glow", "path", "myth", "bolt", "crest", "haven", "cipher", "ember"
+        ];
+        const suffixes = [
+          "lab", "hub", "zone", "mode", "x", "ly", "io", "hq",
+          "way", "box", "den", "craft", "works", "line", "spot", "club"
+        ];
 
-    function openTelegramUsername(nick) {
-      const url = `https://t.me/${nick}`;
-      if (tg && tg.openLink) {
-        tg.openLink(url);
-      } else {
-        window.open(url, "_blank", "noopener,noreferrer");
-      }
-    }
+        const letters = "abcdefghijklmnopqrstuvwxyz";
+        const alphaNum = "abcdefghijklmnopqrstuvwxyz0123456789";
 
-    async function inspectNickModal(nick) {
-      activeNick = nick;
-      const backdrop = document.getElementById("modalBackdrop");
-      const statusEl = document.getElementById("modalStatus");
-      const nickEl = document.getElementById("modalNick");
-      const ownerEl = document.getElementById("modalOwner");
+        function pick(arr) {
+          return arr[Math.floor(Math.random() * arr.length)];
+        }
 
-      nickEl.textContent = "@" + nick;
-      statusEl.className = "modal-status check";
-      statusEl.textContent = "Проверяем...";
-      ownerEl.textContent = "Смотрим публичную страницу TG";
-      backdrop.classList.add("open");
+        function randInt(min, max) {
+          return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
 
-      // Пробуем через читаемый текстовый прокси r.jina.ai (если доступен в сети)
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 3200);
-        const res = await fetch(`https://r.jina.ai/http://t.me/${nick}`, { signal: controller.signal });
-        clearTimeout(timer);
+        function buildUnique(customWord) {
+          const clean = (customWord || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+          if (clean.length >= 2) {
+            const templates = [
+              function () { return pick(prefixes) + "_" + clean; },
+              function () { return clean + "_" + pick(suffixes); },
+              function () { return clean + pick(roots); },
+              function () { return pick(roots) + "_" + clean; },
+              function () { return clean + randInt(10, 99); }
+            ];
+            return pick(templates)();
+          }
 
-        if (res.ok) {
-          const text = await res.text();
-          const titleMatch = text.match(/Title:\s*(.+)/i);
-          const title = titleMatch ? titleMatch[1].trim() : "";
+          const templates = [
+            function () { return pick(prefixes) + "_" + pick(roots); },
+            function () { return pick(roots) + "_" + pick(suffixes); },
+            function () { return pick(prefixes) + pick(roots); },
+            function () { return pick(roots) + pick(suffixes); },
+            function () { return pick(roots) + "_" + randInt(10, 999); }
+          ];
+          return pick(templates)();
+        }
 
-          if (title && !/Telegram:\s*Contact|Telegram:\s*Launch/i.test(title) && !/If you have Telegram/i.test(text)) {
-            statusEl.className = "modal-status taken";
-            statusEl.textContent = "Юз занят";
-            ownerEl.textContent = title.replace(/^Telegram:\s*/i, "");
-            return;
+        function buildRandom5to6() {
+          const len = randInt(5, 6);
+          let str = "";
+          for (let i = 0; i < len; i++) {
+            str += alphaNum[Math.floor(Math.random() * alphaNum.length)];
+          }
+          if (!/[a-z]/.test(str)) {
+            const idx = randInt(0, len - 1);
+            str = str.slice(0, idx) + pick(letters.split("")) + str.slice(idx + 1);
+          }
+          return str;
+        }
+
+        function isValidNick(nick) {
+          return /^[a-z0-9_]{5,32}$/.test(nick) && !/^_|_$|__/.test(nick) && /[a-z]/.test(nick);
+        }
+
+        function showToast(msg) {
+          const el = document.getElementById("toastLine");
+          if (!el) return;
+          el.textContent = msg;
+          clearTimeout(showToast._timer);
+          showToast._timer = setTimeout(function () {
+            el.textContent = "";
+          }, 1800);
+        }
+
+        async function writeClipboard(text) {
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              await navigator.clipboard.writeText(text);
+              return true;
+            }
+          } catch (_) {}
+
+          const area = document.createElement("textarea");
+          area.value = text;
+          area.style.position = "fixed";
+          area.style.opacity = "0";
+          document.body.appendChild(area);
+          area.focus();
+          area.select();
+          let ok = false;
+          try {
+            ok = document.execCommand("copy");
+          } catch (_) {
+            ok = false;
+          }
+          document.body.removeChild(area);
+          return ok;
+        }
+
+        function haptic(style) {
+          if (tg && tg.HapticFeedback) {
+            try {
+              tg.HapticFeedback.impactOccurred(style || "light");
+            } catch (_) {}
           }
         }
-      } catch (_) {}
 
-      // Если браузер/прокси не дал точный ответ — показываем нейтральный статус для быстрой сверки
-      statusEl.className = "modal-status check";
-      statusEl.textContent = "Нужна сверка";
-      ownerEl.textContent = "Нажмите «Открыть в TG», чтобы точно увидеть статус и имя";
-    }
+        function openInsideTelegram(nick) {
+          const httpsUrl = "https://t.me/" + nick;
+          const tgSchemeUrl = "tg://resolve?domain=" + nick;
 
-    function closeModal() {
-      document.getElementById("modalBackdrop").classList.remove("open");
-    }
+          if (tg && typeof tg.openTelegramLink === "function") {
+            tg.openTelegramLink(httpsUrl);
+            return;
+          }
 
-    function renderList() {
-      const customWord = document.getElementById("baseWord").value.trim();
-      const uniqueSet = new Set();
-      let guard = 0;
-
-      while (uniqueSet.size < count && guard < 500) {
-        guard++;
-        const candidate = mode === "unique" ? buildUnique(customWord) : buildRandom5to6();
-        if (isValidNick(candidate)) {
-          uniqueSet.add(candidate);
+          window.location.href = tgSchemeUrl;
         }
-      }
 
-      generated = Array.from(uniqueSet);
-      const container = document.getElementById("resultsList");
-      container.innerHTML = "";
+        function closeModal() {
+          document.getElementById("modalBackdrop").classList.remove("open");
+        }
 
-      generated.forEach((nick) => {
-        const row = document.createElement("div");
-        row.className = "nick-row";
+        function renderList() {
+          const baseInput = document.getElementById("baseWord");
+          const customWord = baseInput ? baseInput.value.trim() : "";
+          const uniqueSet = new Set();
+          let guard = 0;
 
-        const nickBtn = document.createElement("button");
-        nickBtn.type = "button";
-        nickBtn.className = "nick-clickable";
-        nickBtn.textContent = "@" + nick;
-        nickBtn.addEventListener("click", () => {
-          haptic();
-          inspectNickModal(nick);
-        });
+          while (uniqueSet.size < count && guard < 500) {
+            guard++;
+            const candidate = mode === "unique" ? buildUnique(customWord) : buildRandom5to6();
+            if (isValidNick(candidate)) {
+              uniqueSet.add(candidate);
+            }
+          }
 
-        const copyBtn = document.createElement("button");
-        copyBtn.type = "button";
-        copyBtn.className = "copy-btn";
-        copyBtn.textContent = "Копировать";
-        copyBtn.addEventListener("click", async () => {
-          await writeClipboard("@" + nick);
-          haptic();
+          generated = Array.from(uniqueSet);
+          const container = document.getElementById("resultsList");
+          container.innerHTML = "";
 
-          copyBtn.classList.add("copied");
-          row.classList.add("is-copied");
-          copyBtn.textContent = "Готово";
-          showToast(`Скопировано @${nick}`);
+          generated.forEach(function (nick) {
+            const row = document.createElement("div");
+            row.className = "nick-row";
 
-          setTimeout(() => {
-            copyBtn.classList.remove("copied");
-            row.classList.remove("is-copied");
+            const nickBtn = document.createElement("button");
+            nickBtn.type = "button";
+            nickBtn.className = "nick-clickable";
+            nickBtn.textContent = "@" + nick;
+            nickBtn.addEventListener("click", function () {
+              haptic();
+              openInsideTelegram(nick);
+            });
+
+            const copyBtn = document.createElement("button");
+            copyBtn.type = "button";
+            copyBtn.className = "copy-btn";
             copyBtn.textContent = "Копировать";
-          }, 1500);
+            copyBtn.addEventListener("click", async function () {
+              await writeClipboard("@" + nick);
+              haptic();
+
+              copyBtn.classList.add("copied");
+              row.classList.add("is-copied");
+              copyBtn.textContent = "Готово";
+              showToast("Скопировано @" + nick);
+
+              setTimeout(function () {
+                copyBtn.classList.remove("copied");
+                row.classList.remove("is-copied");
+                copyBtn.textContent = "Копировать";
+              }, 1500);
+            });
+
+            row.appendChild(nickBtn);
+            row.appendChild(copyBtn);
+            container.appendChild(row);
+          });
+        }
+
+        document.querySelectorAll("#modeGroup .seg-btn").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            document.querySelectorAll("#modeGroup .seg-btn").forEach(function (b) { b.classList.remove("active"); });
+            btn.classList.add("active");
+            mode = btn.dataset.mode;
+            document.getElementById("baseWordWrap").style.display = mode === "unique" ? "block" : "none";
+            haptic();
+            renderList();
+          });
         });
 
-        row.appendChild(nickBtn);
-        row.appendChild(copyBtn);
-        container.appendChild(row);
-      });
-    }
+        document.querySelectorAll("#countGroup .seg-btn").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            document.querySelectorAll("#countGroup .seg-btn").forEach(function (b) { b.classList.remove("active"); });
+            btn.classList.add("active");
+            count = Number(btn.dataset.count);
+            haptic();
+            renderList();
+          });
+        });
 
-    document.querySelectorAll("#modeGroup .seg-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll("#modeGroup .seg-btn").forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        mode = btn.dataset.mode;
-        document.getElementById("baseWordWrap").style.display = mode === "unique" ? "block" : "none";
-        haptic();
+        document.getElementById("genBtn").addEventListener("click", function () {
+          haptic();
+          renderList();
+          showToast("Сгенерировано вариантов: " + generated.length);
+        });
+
+        document.getElementById("baseWord").addEventListener("input", function () {
+          if (mode === "unique") {
+            renderList();
+          }
+        });
+
+        document.getElementById("copyAllBtn").addEventListener("click", async function () {
+          if (!generated.length) return;
+          const text = generated.map(function (n) { return "@" + n; }).join("\n");
+          await writeClipboard(text);
+          haptic();
+          showToast("Скопировано списком (" + generated.length + ")");
+        });
+
+        document.getElementById("modalCopyBtn").addEventListener("click", async function () {
+          if (!activeNick) return;
+          await writeClipboard("@" + activeNick);
+          haptic();
+          showToast("Скопировано @" + activeNick);
+        });
+
+        document.getElementById("modalOpenTgBtn").addEventListener("click", function () {
+          if (!activeNick) return;
+          haptic();
+          openInsideTelegram(activeNick);
+        });
+
+        document.getElementById("modalCloseBtn").addEventListener("click", closeModal);
+        document.getElementById("modalBackdrop").addEventListener("click", function (e) {
+          if (e.target && e.target.id === "modalBackdrop") closeModal();
+        });
+
         renderList();
-      });
-    });
-
-    document.querySelectorAll("#countGroup .seg-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll("#countGroup .seg-btn").forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        count = Number(btn.dataset.count);
-        haptic();
-        renderList();
-      });
-    });
-
-    document.getElementById("genBtn").addEventListener("click", () => {
-      haptic();
-      renderList();
-      showToast(`Сгенерировано вариантов: ${generated.length}`);
-    });
-
-    document.getElementById("baseWord").addEventListener("input", () => {
-      if (mode === "unique") {
-        renderList();
+      } catch (err) {
+        document.body.innerHTML = "<div style='padding:20px;font-family:sans-serif;color:#fff;background:#111;'>Ошибка запуска: " + (err && err.message ? err.message : err) + "</div>";
       }
-    });
-
-    document.getElementById("copyAllBtn").addEventListener("click", async () => {
-      if (!generated.length) return;
-      const text = generated.map((n) => "@" + n).join("\n");
-      await writeClipboard(text);
-      haptic();
-      showToast(`Скопировано списком (${generated.length})`);
-    });
-
-    document.getElementById("modalCopyBtn").addEventListener("click", async () => {
-      if (!activeNick) return;
-      await writeClipboard("@" + activeNick);
-      haptic();
-      showToast(`Скопировано @${activeNick}`);
-    });
-
-    document.getElementById("modalOpenTgBtn").addEventListener("click", () => {
-      if (!activeNick) return;
-      haptic();
-      openTelegramUsername(activeNick);
-    });
-
-    document.getElementById("modalCloseBtn").addEventListener("click", closeModal);
-    document.getElementById("modalBackdrop").addEventListener("click", (e) => {
-      if (e.target.id === "modalBackdrop") closeModal();
-    });
-
-    renderList();
+    })();
   </script>
 </body>
 </html>
