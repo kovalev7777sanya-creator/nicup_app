@@ -1,9 +1,9 @@
 {
   "enabled": true,
   "tag": "Реклама",
-  "title": "Лучший канал телеграм",
-  "desc": "тиктокии",
+  "title": "",
+  "desc": "",
   "url": "https://t.me/telegram",
-  "media_type": "none",
-  "media_url": ""
+  "media_type": "image",
+  "media_url": "./assets/ad_banner_1795762010466.png"
 }
