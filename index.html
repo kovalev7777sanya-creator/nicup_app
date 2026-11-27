@@ -1064,10 +1064,36 @@
     })();
   </script>
 </body>
-}
-  })();
-  </script>
-</body>
-<!-- ВОТ СЮДА вставляй наш <script>...</script> -->
-</html>
+<script>
+(function () {
+  const COUNTER_URL = "https://api.counterapi.dev/v1/nicup_app_kovalev/opens_total/up";
+  const now = Date.now();
+  if (now - Number(sessionStorage.getItem("nicup_open_ts") || 0) > 1500) {
+    sessionStorage.setItem("nicup_open_ts", String(now));
+    fetch(COUNTER_URL, { cache: "no-store" }).catch(function () {});
+  }
+
+  fetch("./ad.json?t=" + Date.now(), { cache: "no-store" })
+    .then(function (r) { return r.json(); })
+    .then(function (cfg) {
+      const banner = document.getElementById("adBanner");
+      if (!banner) return;
+
+      if (cfg.enabled === false) {
+        banner.style.setProperty("display", "none", "important");
+        return;
+      }
+
+      const titleEl = document.getElementById("adTitle");
+      const descEl = document.getElementById("adDesc");
+
+      if (titleEl && cfg.title) titleEl.textContent = cfg.title;
+      if (descEl && cfg.desc) descEl.textContent = cfg.desc;
+      if (cfg.url) banner.href = cfg.url;
+
+      banner.style.setProperty("display", "block", "important");
+    })
+    .catch(function () {});
+})();
+</script>
 </html>
