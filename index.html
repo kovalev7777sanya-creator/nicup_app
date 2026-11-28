@@ -21,6 +21,7 @@
       --text-sec: rgba(219, 234, 254, 0.74);
       --blue-bright: #38bdf8;
       --green: #34d399;
+      --amber: #fbbf24;
 
       --ios-spring: cubic-bezier(0.22, 1.16, 0.36, 1);
     }
@@ -88,11 +89,11 @@
       margin: 0 auto;
     }
 
-    /* Шапка с логотипом NicUp слева без чёрного фона */
+    /* Шапка: логотип NicUp слева + круглая аватарка профиля справа */
     .top-header {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       padding: 6px 2px 12px;
       margin-bottom: 6px;
       background: transparent;
@@ -124,6 +125,37 @@
     .brand-up {
       color: #1677ff;
       margin-left: 1px;
+    }
+
+    .header-avatar-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(147, 197, 253, 0.48);
+      background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 8px 18px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s var(--ios-spring), border-color 0.2s ease;
+    }
+
+    .header-avatar-btn:active {
+      transform: scale(0.92);
+    }
+
+    .header-avatar-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .glass-card {
@@ -297,12 +329,11 @@
       border-color: var(--blue-bright);
     }
 
-    /* Компактные переключатели опций */
     .toggles-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .pill-toggle {
@@ -329,8 +360,8 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
 
-    /* Две кнопки генерации с плавным переключением активного состояния */
-    .gen-actions-row {
+    /* Переключатель режима: только выбирает режим, без генерации */
+    .mode-switch-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
@@ -338,16 +369,17 @@
       border-radius: 999px;
       background: rgba(4, 9, 22, 0.58);
       border: 1px solid rgba(96, 165, 250, 0.18);
+      margin-bottom: 12px;
     }
 
     .mode-pill-btn {
       width: 100%;
-      padding: 10px 12px;
+      padding: 9px 12px;
       border: 1px solid transparent;
       border-radius: 999px;
       background: transparent;
       color: var(--text-sec);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       cursor: pointer;
       transform: scale(0.98);
@@ -373,13 +405,34 @@
       transform: scale(0.94);
     }
 
+    /* Главная кнопка генерации: выдаёт ровно 10 ников */
+    .generate-main-btn {
+      width: 100%;
+      padding: 11px 16px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.36),
+        0 8px 20px rgba(37, 99, 235, 0.42);
+      transition: transform 0.2s var(--ios-spring);
+    }
+
+    .generate-main-btn:active {
+      transform: scale(0.97);
+    }
+
     .toast-line {
       min-height: 20px;
       padding: 0 6px;
       margin-bottom: 8px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
-      color: var(--green);
+      color: var(--text-sec);
       text-align: center;
     }
 
@@ -391,7 +444,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 15px;
+      gap: 8px;
+      padding: 11px 14px;
       border-bottom: 1px solid rgba(96, 165, 250, 0.14);
     }
 
@@ -399,11 +453,53 @@
       border-bottom: none;
     }
 
+    .nick-trigger {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      padding: 2px 0;
+    }
+
     .nick-text {
       font-size: 14px;
       font-weight: 800;
       letter-spacing: 0.01em;
       color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-decoration: underline;
+      text-decoration-color: rgba(147, 197, 253, 0.4);
+      text-underline-offset: 3px;
+    }
+
+    .status-chip {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--blue-bright);
+      white-space: nowrap;
+    }
+
+    .status-chip.busy {
+      background: rgba(251, 191, 36, 0.15);
+      border-color: rgba(251, 191, 36, 0.38);
+      color: var(--amber);
+    }
+
+    .status-chip.free {
+      background: rgba(52, 211, 153, 0.15);
+      border-color: rgba(52, 211, 153, 0.38);
+      color: var(--green);
     }
 
     .copy-pill {
@@ -440,6 +536,14 @@
       background: linear-gradient(135deg, #3b82f6, #1e3a8a);
       border: 2px solid rgba(147, 197, 253, 0.45);
       box-shadow: 0 10px 24px rgba(37, 99, 235, 0.4);
+      overflow: hidden;
+    }
+
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .profile-name {
@@ -480,7 +584,6 @@
       color: #ffffff;
     }
 
-    /* Нижняя плавающая панель с компактными кнопками */
     .bottom-dock-wrap {
       position: fixed;
       left: 0;
@@ -551,6 +654,8 @@
           <span class="brand-nic">Nic</span><span class="brand-up">Up</span>
         </span>
       </div>
+
+      <button id="headerAvatarBtn" type="button" class="header-avatar-btn" title="Профиль">N</button>
     </header>
 
     <main id="tabHome" class="tab-view active">
@@ -585,13 +690,15 @@
           <button id="toggleUnderscore" type="button" class="pill-toggle">Подчёркивание _</button>
         </div>
 
-        <div class="gen-actions-row">
+        <div class="mode-switch-row">
           <button id="uniqueBtn" type="button" class="mode-pill-btn active">Уникальные</button>
           <button id="randomBtn" type="button" class="mode-pill-btn">Случайные</button>
         </div>
+
+        <button id="generateBtn" type="button" class="generate-main-btn">Сгенерировать</button>
       </section>
 
-      <div id="toastLine" class="toast-line"></div>
+      <div id="toastLine" class="toast-line">Выбери режим и нажми «Сгенерировать»</div>
 
       <section id="resultsCard" class="glass-card results-card"></section>
     </main>
@@ -633,23 +740,51 @@
 
       const navBtns = document.querySelectorAll(".nav-pill-btn");
       const tabViews = document.querySelectorAll(".tab-view");
+      const headerAvatarBtn = document.getElementById("headerAvatarBtn");
+
+      function openTab(targetId) {
+        navBtns.forEach(function (b) {
+          b.classList.toggle("active", b.getAttribute("data-tab") === targetId);
+        });
+        tabViews.forEach(function (v) {
+          v.classList.toggle("active", v.id === targetId);
+        });
+      }
 
       navBtns.forEach(function (btn) {
         btn.addEventListener("click", function () {
           const targetId = btn.getAttribute("data-tab");
-          navBtns.forEach(function (b) { b.classList.remove("active"); });
-          tabViews.forEach(function (v) { v.classList.remove("active"); });
-          btn.classList.add("active");
-          const targetEl = document.getElementById(targetId);
-          if (targetEl) targetEl.classList.add("active");
+          openTab(targetId);
         });
       });
+
+      headerAvatarBtn.addEventListener("click", function () {
+        openTab("tabProfile");
+      });
+
+      function setAvatarContent(el, photoUrl, initial) {
+        el.innerHTML = "";
+        if (photoUrl) {
+          const img = document.createElement("img");
+          img.src = photoUrl;
+          img.alt = initial;
+          img.addEventListener("error", function () {
+            el.innerHTML = "";
+            el.textContent = initial;
+          });
+          el.appendChild(img);
+        } else {
+          el.textContent = initial;
+        }
+      }
 
       const tgUser = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
       if (tgUser) {
         const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || "Пользователь";
+        const initial = fullName.charAt(0).toUpperCase() || "N";
         document.getElementById("profileName").textContent = fullName;
-        document.getElementById("profileAvatar").textContent = fullName.charAt(0).toUpperCase();
+        setAvatarContent(document.getElementById("profileAvatar"), tgUser.photo_url, initial);
+        setAvatarContent(headerAvatarBtn, tgUser.photo_url, initial);
         document.getElementById("profileUsername").textContent = tgUser.username ? "@" + tgUser.username : "Без юзернейма";
         document.getElementById("profileId").textContent = String(tgUser.id);
       }
@@ -661,6 +796,7 @@
       const toggleUnderscore = document.getElementById("toggleUnderscore");
       const uniqueBtn = document.getElementById("uniqueBtn");
       const randomBtn = document.getElementById("randomBtn");
+      const generateBtn = document.getElementById("generateBtn");
       const resultsCard = document.getElementById("resultsCard");
       const toastLine = document.getElementById("toastLine");
 
@@ -765,30 +901,79 @@
         return "@" + res;
       }
 
-      function renderNicknames(mode) {
-        const chosenMode = mode || activeMode;
-        setActiveModeButton(chosenMode);
+      function checkNickHint(nick, chipEl) {
+        const plain = nick.replace(/^@/, "");
+        chipEl.className = "status-chip";
+        chipEl.textContent = "проверка...";
 
+        fetch("https://t.me/" + encodeURIComponent(plain), {
+          method: "GET",
+          mode: "no-cors",
+          cache: "no-store"
+        })
+          .then(function () {
+            chipEl.className = "status-chip busy";
+            chipEl.textContent = "проверено · t.me";
+            toastLine.textContent = "Проверен " + nick + " (открыть: t.me/" + plain + ")";
+          })
+          .catch(function () {
+            chipEl.className = "status-chip free";
+            chipEl.textContent = "нет отклика";
+            toastLine.textContent = "Нет ответа от t.me/" + plain + " (проверь в поиске ТГ)";
+          });
+      }
+
+      function generateTenNicknames() {
         const len = Number(lenRange.value) || 7;
         const kw = prefixInput.value.trim();
-        const set = new Set();
+        const list = [];
+        const seen = new Set();
         let guard = 0;
-        while (set.size < 6 && guard < 120) {
-          const nick = chosenMode === "random"
+
+        while (list.length < 10 && guard < 250) {
+          const nick = activeMode === "random"
             ? buildRandomUsername(len, kw)
             : buildUniqueUsername(len, kw);
-          set.add(nick);
+          if (!seen.has(nick)) {
+            seen.add(nick);
+            list.push(nick);
+          }
           guard++;
         }
 
+        // На случай очень короткой длины и ключевого слова добиваем до ровно 10 строк
+        while (list.length < 10) {
+          const fallback = "@" + (activeMode === "random" ? "u" : "n") +
+            Math.random().toString(36).slice(2, Math.max(4, len + 1));
+          if (!seen.has(fallback)) {
+            seen.add(fallback);
+            list.push(fallback);
+          }
+        }
+
         resultsCard.innerHTML = "";
-        set.forEach(function (nick) {
+        list.slice(0, 10).forEach(function (nick) {
           const row = document.createElement("div");
           row.className = "nick-row";
+
+          const trigger = document.createElement("button");
+          trigger.type = "button";
+          trigger.className = "nick-trigger";
 
           const span = document.createElement("span");
           span.className = "nick-text";
           span.textContent = nick;
+
+          const chip = document.createElement("span");
+          chip.className = "status-chip";
+          chip.textContent = "проверить";
+
+          trigger.appendChild(span);
+          trigger.appendChild(chip);
+
+          trigger.addEventListener("click", function () {
+            checkNickHint(nick, chip);
+          });
 
           const btn = document.createElement("button");
           btn.type = "button";
@@ -799,22 +984,28 @@
               navigator.clipboard.writeText(nick).catch(function () {});
             }
             toastLine.textContent = "Скопировано: " + nick;
-            setTimeout(function () {
-              if (toastLine.textContent === "Скопировано: " + nick) {
-                toastLine.textContent = "";
-              }
-            }, 1800);
           });
 
-          row.appendChild(span);
+          row.appendChild(trigger);
           row.appendChild(btn);
           resultsCard.appendChild(row);
         });
+
+        toastLine.textContent = "Выдано 10 ников (" + (activeMode === "random" ? "случайные" : "уникальные") + ")";
       }
 
-      uniqueBtn.addEventListener("click", function () { renderNicknames("unique"); });
-      randomBtn.addEventListener("click", function () { renderNicknames("random"); });
-      renderNicknames("unique");
+      // Кнопки "Уникальные" и "Случайные" только переключают режим, без генерации
+      uniqueBtn.addEventListener("click", function () {
+        setActiveModeButton("unique");
+        toastLine.textContent = "Режим: Уникальные — нажми «Сгенерировать»";
+      });
+
+      randomBtn.addEventListener("click", function () {
+        setActiveModeButton("random");
+        toastLine.textContent = "Режим: Случайные — нажми «Сгенерировать»";
+      });
+
+      generateBtn.addEventListener("click", generateTenNicknames);
     })();
   </script>
 
