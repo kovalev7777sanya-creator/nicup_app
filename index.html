@@ -3,27 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NicUp — Генератор</title>
+  <title>NicUp — Генератор юзернеймов</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
       --bg-deep: #040711;
-      --bg-mid: #081226;
       --orb-blue: rgba(37, 99, 235, 0.34);
       --orb-cyan: rgba(56, 189, 248, 0.22);
       --orb-indigo: rgba(29, 78, 216, 0.26);
 
       --glass-surface: rgba(14, 24, 48, 0.58);
-      --glass-surface-strong: rgba(20, 36, 72, 0.74);
       --glass-recessed: rgba(4, 9, 22, 0.68);
       --glass-border: rgba(96, 165, 250, 0.24);
       --glass-highlight: rgba(186, 230, 253, 0.28);
 
       --text-main: #ffffff;
       --text-sec: rgba(219, 234, 254, 0.74);
-      --blue-main: #2563eb;
       --blue-bright: #38bdf8;
       --green: #34d399;
+      --amber: #fbbf24;
 
       --ios-spring: cubic-bezier(0.22, 1.16, 0.36, 1);
     }
@@ -42,7 +40,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
       font-weight: 600;
       overflow-x: hidden;
-      padding: 14px 16px 106px;
+      padding: 14px 16px 104px;
       position: relative;
     }
 
@@ -55,7 +53,6 @@
       font-weight: 800;
     }
 
-    /* Фоновые световые пятна для жидкого стекла */
     .bg-orb {
       position: fixed;
       border-radius: 50%;
@@ -92,7 +89,7 @@
       margin: 0 auto;
     }
 
-    /* Верхняя шапка с логотипом NicUp слева без чёрного фона */
+    /* Шапка: логотип NicUp слева + круглая аватарка профиля справа */
     .top-header {
       display: flex;
       align-items: center;
@@ -130,7 +127,37 @@
       margin-left: 1px;
     }
 
-    /* Стеклянные карточки */
+    .header-avatar-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(147, 197, 253, 0.48);
+      background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 8px 18px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s var(--ios-spring), border-color 0.2s ease;
+    }
+
+    .header-avatar-btn:active {
+      transform: scale(0.92);
+    }
+
+    .header-avatar-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     .glass-card {
       background: var(--glass-surface);
       backdrop-filter: blur(26px) saturate(185%);
@@ -142,7 +169,6 @@
         0 14px 32px rgba(0, 0, 0, 0.45);
     }
 
-    /* Увеличенный блок рекламы */
     .ad-banner {
       display: block;
       position: relative;
@@ -224,19 +250,18 @@
       position: relative;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 10px 19px;
+      gap: 5px;
+      padding: 8px 15px;
       border-radius: 999px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       color: #ffffff;
       background: linear-gradient(135deg, #3b82f6, #1d4ed8);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.35),
-        0 8px 18px rgba(29, 78, 216, 0.45);
+        0 6px 14px rgba(29, 78, 216, 0.42);
     }
 
-    /* Переключение вкладок */
     .tab-view {
       display: none;
     }
@@ -250,7 +275,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Блок генератора */
     .gen-card {
       padding: 18px;
       margin-bottom: 14px;
@@ -291,12 +315,12 @@
 
     .glass-input {
       width: 100%;
-      padding: 12px 15px;
-      border-radius: 18px;
+      padding: 11px 14px;
+      border-radius: 16px;
       border: 1px solid var(--glass-border);
       background: var(--glass-recessed);
       color: #fff;
-      font-size: 14px;
+      font-size: 13px;
       outline: none;
       transition: border-color 0.2s ease;
     }
@@ -308,21 +332,21 @@
     .toggles-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
     .pill-toggle {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 11px 12px;
+      gap: 6px;
+      padding: 9px 10px;
       border-radius: 999px;
       background: var(--glass-recessed);
       border: 1px solid var(--glass-border);
       color: var(--text-sec);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       cursor: pointer;
       transition: all 0.2s var(--ios-spring);
@@ -336,23 +360,69 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
 
-    .primary-btn {
+    /* Переключатель режима: только выбирает режим, без генерации */
+    .mode-switch-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(4, 9, 22, 0.58);
+      border: 1px solid rgba(96, 165, 250, 0.18);
+      margin-bottom: 12px;
+    }
+
+    .mode-pill-btn {
       width: 100%;
-      padding: 14px 20px;
+      padding: 9px 12px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-sec);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transform: scale(0.98);
+      transition:
+        background 0.26s var(--ios-spring),
+        color 0.22s ease,
+        border-color 0.24s ease,
+        box-shadow 0.26s var(--ios-spring),
+        transform 0.24s var(--ios-spring);
+    }
+
+    .mode-pill-btn.active {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border-color: rgba(147, 197, 253, 0.55);
+      color: #ffffff;
+      transform: scale(1);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.36),
+        0 6px 18px rgba(37, 99, 235, 0.45);
+    }
+
+    .mode-pill-btn:active {
+      transform: scale(0.94);
+    }
+
+    /* Главная кнопка генерации: выдаёт ровно 10 ников */
+    .generate-main-btn {
+      width: 100%;
+      padding: 11px 16px;
       border: none;
       border-radius: 999px;
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
       color: #ffffff;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 800;
       cursor: pointer;
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.35),
-        0 10px 24px rgba(37, 99, 235, 0.45);
+        inset 0 1px 0 rgba(255, 255, 255, 0.36),
+        0 8px 20px rgba(37, 99, 235, 0.42);
       transition: transform 0.2s var(--ios-spring);
     }
 
-    .primary-btn:active {
+    .generate-main-btn:active {
       transform: scale(0.97);
     }
 
@@ -360,13 +430,12 @@
       min-height: 20px;
       padding: 0 6px;
       margin-bottom: 8px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
-      color: var(--green);
+      color: var(--text-sec);
       text-align: center;
     }
 
-    /* Список сгенерированных ников */
     .results-card {
       overflow: hidden;
     }
@@ -375,7 +444,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 13px 16px;
+      gap: 8px;
+      padding: 11px 14px;
       border-bottom: 1px solid rgba(96, 165, 250, 0.14);
     }
 
@@ -383,20 +453,62 @@
       border-bottom: none;
     }
 
+    .nick-trigger {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      padding: 2px 0;
+    }
+
     .nick-text {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
       letter-spacing: 0.01em;
       color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-decoration: underline;
+      text-decoration-color: rgba(147, 197, 253, 0.4);
+      text-underline-offset: 3px;
+    }
+
+    .status-chip {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--blue-bright);
+      white-space: nowrap;
+    }
+
+    .status-chip.busy {
+      background: rgba(251, 191, 36, 0.15);
+      border-color: rgba(251, 191, 36, 0.38);
+      color: var(--amber);
+    }
+
+    .status-chip.free {
+      background: rgba(52, 211, 153, 0.15);
+      border-color: rgba(52, 211, 153, 0.38);
+      color: var(--green);
     }
 
     .copy-pill {
-      padding: 7px 14px;
+      padding: 6px 12px;
       border-radius: 999px;
       border: 1px solid rgba(96, 165, 250, 0.34);
       background: rgba(37, 99, 235, 0.24);
       color: #bae6fd;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       cursor: pointer;
       transition: transform 0.18s var(--ios-spring), background 0.18s ease;
@@ -406,7 +518,6 @@
       transform: scale(0.94);
     }
 
-    /* Вкладка Профиль */
     .profile-card {
       padding: 22px 18px;
       text-align: center;
@@ -425,6 +536,14 @@
       background: linear-gradient(135deg, #3b82f6, #1e3a8a);
       border: 2px solid rgba(147, 197, 253, 0.45);
       box-shadow: 0 10px 24px rgba(37, 99, 235, 0.4);
+      overflow: hidden;
+    }
+
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .profile-name {
@@ -465,7 +584,6 @@
       color: #ffffff;
     }
 
-    /* Нижняя плавающая панель с 2 круглыми кнопками */
     .bottom-dock-wrap {
       position: fixed;
       left: 0;
@@ -482,8 +600,8 @@
       pointer-events: auto;
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px;
+      gap: 6px;
+      padding: 5px;
       border-radius: 999px;
       background: rgba(10, 18, 38, 0.78);
       backdrop-filter: blur(28px) saturate(200%);
@@ -498,14 +616,14 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      min-width: 136px;
-      padding: 12px 22px;
+      gap: 6px;
+      min-width: 118px;
+      padding: 10px 18px;
       border: none;
       border-radius: 999px;
       background: transparent;
       color: var(--text-sec);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       cursor: pointer;
       transition: all 0.24s var(--ios-spring);
@@ -530,18 +648,17 @@
   <div class="bg-orb orb-3"></div>
 
   <div class="app-wrap">
-    <!-- Шапка: логотип NicUp слева без чёрного фона -->
     <header class="top-header">
       <div class="brand-logo" aria-label="NicUp">
         <span class="brand-wordmark">
           <span class="brand-nic">Nic</span><span class="brand-up">Up</span>
         </span>
       </div>
+
+      <button id="headerAvatarBtn" type="button" class="header-avatar-btn" title="Профиль">N</button>
     </header>
 
-    <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
     <main id="tabHome" class="tab-view active">
-      <!-- Увеличенный рекламный баннер -->
       <a id="adBanner" class="ad-banner" href="https://t.me" target="_blank" rel="noopener">
         <div class="ad-top">
           <span class="ad-tag">Реклама</span>
@@ -551,7 +668,6 @@
         <span class="ad-cta">Перейти →</span>
       </a>
 
-      <!-- Генератор юзернеймов -->
       <section class="glass-card gen-card">
         <div class="section-title">
           <span>Генератор юзернеймов</span>
@@ -566,7 +682,7 @@
         </div>
 
         <div class="control-group">
-          <input id="prefixInput" class="glass-input" type="text" maxlength="10" placeholder="Ключевое слово (необязательно)" />
+          <input id="prefixInput" class="glass-input" type="text" maxlength="12" placeholder="Ключевое слово (необязательно)" />
         </div>
 
         <div class="toggles-row">
@@ -574,15 +690,19 @@
           <button id="toggleUnderscore" type="button" class="pill-toggle">Подчёркивание _</button>
         </div>
 
-        <button id="generateBtn" type="button" class="primary-btn">Сгенерировать ники</button>
+        <div class="mode-switch-row">
+          <button id="uniqueBtn" type="button" class="mode-pill-btn active">Уникальные</button>
+          <button id="randomBtn" type="button" class="mode-pill-btn">Случайные</button>
+        </div>
+
+        <button id="generateBtn" type="button" class="generate-main-btn">Сгенерировать</button>
       </section>
 
-      <div id="toastLine" class="toast-line"></div>
+      <div id="toastLine" class="toast-line">Выбери режим и нажми «Сгенерировать»</div>
 
       <section id="resultsCard" class="glass-card results-card"></section>
     </main>
 
-    <!-- ВКЛАДКА 2: ПРОФИЛЬ -->
     <section id="tabProfile" class="tab-view">
       <div class="glass-card profile-card">
         <div id="profileAvatar" class="profile-avatar">N</div>
@@ -603,7 +723,6 @@
     </section>
   </div>
 
-  <!-- Нижняя панель с 2 круглыми кнопками -->
   <div class="bottom-dock-wrap">
     <nav class="bottom-dock" aria-label="Навигация">
       <button type="button" class="nav-pill-btn active" data-tab="tabHome">Главная</button>
@@ -619,43 +738,84 @@
         tg.expand();
       }
 
-      // Навигация между вкладками "Главная" и "Профиль"
       const navBtns = document.querySelectorAll(".nav-pill-btn");
       const tabViews = document.querySelectorAll(".tab-view");
+      const headerAvatarBtn = document.getElementById("headerAvatarBtn");
+
+      function openTab(targetId) {
+        navBtns.forEach(function (b) {
+          b.classList.toggle("active", b.getAttribute("data-tab") === targetId);
+        });
+        tabViews.forEach(function (v) {
+          v.classList.toggle("active", v.id === targetId);
+        });
+      }
 
       navBtns.forEach(function (btn) {
         btn.addEventListener("click", function () {
           const targetId = btn.getAttribute("data-tab");
-          navBtns.forEach(function (b) { b.classList.remove("active"); });
-          tabViews.forEach(function (v) { v.classList.remove("active"); });
-          btn.classList.add("active");
-          const targetEl = document.getElementById(targetId);
-          if (targetEl) targetEl.classList.add("active");
+          openTab(targetId);
         });
       });
 
-      // Заполнение данных профиля из Telegram WebApp
+      headerAvatarBtn.addEventListener("click", function () {
+        openTab("tabProfile");
+      });
+
+      function setAvatarContent(el, photoUrl, initial) {
+        el.innerHTML = "";
+        if (photoUrl) {
+          const img = document.createElement("img");
+          img.src = photoUrl;
+          img.alt = initial;
+          img.addEventListener("error", function () {
+            el.innerHTML = "";
+            el.textContent = initial;
+          });
+          el.appendChild(img);
+        } else {
+          el.textContent = initial;
+        }
+      }
+
       const tgUser = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
       if (tgUser) {
         const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || "Пользователь";
+        const initial = fullName.charAt(0).toUpperCase() || "N";
         document.getElementById("profileName").textContent = fullName;
-        document.getElementById("profileAvatar").textContent = fullName.charAt(0).toUpperCase();
+        setAvatarContent(document.getElementById("profileAvatar"), tgUser.photo_url, initial);
+        setAvatarContent(headerAvatarBtn, tgUser.photo_url, initial);
         document.getElementById("profileUsername").textContent = tgUser.username ? "@" + tgUser.username : "Без юзернейма";
         document.getElementById("profileId").textContent = String(tgUser.id);
       }
 
-      // Логика генератора ников
       const lenRange = document.getElementById("lenRange");
       const lenLabel = document.getElementById("lenLabel");
       const prefixInput = document.getElementById("prefixInput");
       const toggleDigits = document.getElementById("toggleDigits");
       const toggleUnderscore = document.getElementById("toggleUnderscore");
+      const uniqueBtn = document.getElementById("uniqueBtn");
+      const randomBtn = document.getElementById("randomBtn");
       const generateBtn = document.getElementById("generateBtn");
       const resultsCard = document.getElementById("resultsCard");
       const toastLine = document.getElementById("toastLine");
 
       let useDigits = true;
       let useUnderscore = false;
+      let activeMode = "unique";
+
+      const WORD_ROOTS = [
+        "cyber", "neon", "void", "flux", "nova", "drift", "zen", "apex",
+        "kuro", "lux", "vibe", "echo", "orbit", "pixel", "storm", "frost",
+        "shadow", "pulse", "atlas", "hyper", "lunar", "solar", "rift", "byte",
+        "stark", "omega", "alpha", "delta", "titan", "ghost", "spark", "onyx"
+      ];
+
+      function setActiveModeButton(mode) {
+        activeMode = mode;
+        uniqueBtn.classList.toggle("active", mode === "unique");
+        randomBtn.classList.toggle("active", mode === "random");
+      }
 
       lenRange.addEventListener("input", function () {
         lenLabel.textContent = lenRange.value + " символов";
@@ -671,24 +831,62 @@
         toggleUnderscore.classList.toggle("active", useUnderscore);
       });
 
-      function buildUsername(length, rawPrefix) {
+      function sanitizeKeyword(raw) {
+        let s = (raw || "").toLowerCase().replace(/[^a-z0-9_]/g, "");
+        if (s && !/^[a-z]/.test(s)) {
+          s = "x" + s;
+        }
+        return s;
+      }
+
+      function pick(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function buildUniqueUsername(length, rawKeyword) {
+        const digits = "0123456789";
+        const kw = sanitizeKeyword(rawKeyword);
+        const w1 = kw || pick(WORD_ROOTS);
+        let w2 = pick(WORD_ROOTS);
+        while (w2 === w1) {
+          w2 = pick(WORD_ROOTS);
+        }
+
+        let base = useUnderscore && Math.random() < 0.5 ? (w1 + "_" + w2) : (w1 + w2);
+
+        if (useDigits && base.length < length) {
+          const maxDig = Math.min(3, length - base.length);
+          const digCount = Math.max(1, Math.floor(Math.random() * maxDig) + 1);
+          for (let i = 0; i < digCount; i++) {
+            base += digits[Math.floor(Math.random() * digits.length)];
+          }
+        }
+
+        const letters = "abcdefghijklmnopqrstuvwxyz";
+        while (base.length < length) {
+          base += letters[Math.floor(Math.random() * letters.length)];
+        }
+
+        let trimmed = base.slice(0, length).replace(/^_+|_+$/g, "");
+        if (!trimmed || !/^[a-z]/.test(trimmed)) {
+          trimmed = "n" + trimmed.slice(0, Math.max(1, length - 1));
+        }
+        return "@" + trimmed;
+      }
+
+      function buildRandomUsername(length, rawKeyword) {
         const vowels = "aeiouy";
         const consonants = "bcdfghjklmnpqrstvwxz";
         const digits = "0123456789";
 
-        let cleanPrefix = (rawPrefix || "").toLowerCase().replace(/[^a-z0-9_]/g, "");
-        if (cleanPrefix && !/^[a-z]/.test(cleanPrefix)) {
-          cleanPrefix = "x" + cleanPrefix;
-        }
-
-        let res = cleanPrefix.slice(0, length);
+        let res = sanitizeKeyword(rawKeyword).slice(0, length);
         while (res.length < length) {
           const prev = res[res.length - 1] || "";
-          if (useUnderscore && res.length > 2 && res.length < length - 2 && prev !== "_" && Math.random() < 0.14) {
+          if (useUnderscore && res.length > 1 && res.length < length - 1 && prev !== "_" && Math.random() < 0.18) {
             res += "_";
             continue;
           }
-          if (useDigits && res.length >= length - 2 && Math.random() < 0.35) {
+          if (useDigits && res.length >= length - 2 && Math.random() < 0.42) {
             res += digits[Math.floor(Math.random() * digits.length)];
             continue;
           }
@@ -696,27 +894,86 @@
           const pool = isPrevVowel ? consonants : vowels;
           res += pool[Math.floor(Math.random() * pool.length)];
         }
+        res = res.replace(/^_+|_+$/g, "");
+        if (!res || !/^[a-z]/.test(res)) {
+          res = "u" + res.slice(0, Math.max(1, length - 1));
+        }
         return "@" + res;
       }
 
-      function renderNicknames() {
+      function checkNickHint(nick, chipEl) {
+        const plain = nick.replace(/^@/, "");
+        chipEl.className = "status-chip";
+        chipEl.textContent = "проверка...";
+
+        fetch("https://t.me/" + encodeURIComponent(plain), {
+          method: "GET",
+          mode: "no-cors",
+          cache: "no-store"
+        })
+          .then(function () {
+            chipEl.className = "status-chip busy";
+            chipEl.textContent = "проверено · t.me";
+            toastLine.textContent = "Проверен " + nick + " (открыть: t.me/" + plain + ")";
+          })
+          .catch(function () {
+            chipEl.className = "status-chip free";
+            chipEl.textContent = "нет отклика";
+            toastLine.textContent = "Нет ответа от t.me/" + plain + " (проверь в поиске ТГ)";
+          });
+      }
+
+      function generateTenNicknames() {
         const len = Number(lenRange.value) || 7;
-        const prefix = prefixInput.value.trim();
-        const set = new Set();
+        const kw = prefixInput.value.trim();
+        const list = [];
+        const seen = new Set();
         let guard = 0;
-        while (set.size < 6 && guard < 80) {
-          set.add(buildUsername(len, prefix));
+
+        while (list.length < 10 && guard < 250) {
+          const nick = activeMode === "random"
+            ? buildRandomUsername(len, kw)
+            : buildUniqueUsername(len, kw);
+          if (!seen.has(nick)) {
+            seen.add(nick);
+            list.push(nick);
+          }
           guard++;
         }
 
+        // На случай очень короткой длины и ключевого слова добиваем до ровно 10 строк
+        while (list.length < 10) {
+          const fallback = "@" + (activeMode === "random" ? "u" : "n") +
+            Math.random().toString(36).slice(2, Math.max(4, len + 1));
+          if (!seen.has(fallback)) {
+            seen.add(fallback);
+            list.push(fallback);
+          }
+        }
+
         resultsCard.innerHTML = "";
-        set.forEach(function (nick) {
+        list.slice(0, 10).forEach(function (nick) {
           const row = document.createElement("div");
           row.className = "nick-row";
+
+          const trigger = document.createElement("button");
+          trigger.type = "button";
+          trigger.className = "nick-trigger";
 
           const span = document.createElement("span");
           span.className = "nick-text";
           span.textContent = nick;
+
+          const chip = document.createElement("span");
+          chip.className = "status-chip";
+          chip.textContent = "проверить";
+
+          trigger.appendChild(span);
+          trigger.appendChild(chip);
+
+          trigger.addEventListener("click", function () {
+            checkNickHint(nick, chip);
+          });
 
           const btn = document.createElement("button");
           btn.type = "button";
@@ -727,21 +984,28 @@
               navigator.clipboard.writeText(nick).catch(function () {});
             }
             toastLine.textContent = "Скопировано: " + nick;
-            setTimeout(function () {
-              if (toastLine.textContent === "Скопировано: " + nick) {
-                toastLine.textContent = "";
-              }
-            }, 1800);
           });
 
-          row.appendChild(span);
+          row.appendChild(trigger);
           row.appendChild(btn);
           resultsCard.appendChild(row);
         });
+
+        toastLine.textContent = "Выдано 10 ников (" + (activeMode === "random" ? "случайные" : "уникальные") + ")";
       }
 
-      generateBtn.addEventListener("click", renderNicknames);
-      renderNicknames();
+      // Кнопки "Уникальные" и "Случайные" только переключают режим, без генерации
+      uniqueBtn.addEventListener("click", function () {
+        setActiveModeButton("unique");
+        toastLine.textContent = "Режим: Уникальные — нажми «Сгенерировать»";
+      });
+
+      randomBtn.addEventListener("click", function () {
+        setActiveModeButton("random");
+        toastLine.textContent = "Режим: Случайные — нажми «Сгенерировать»";
+      });
+
+      generateBtn.addEventListener("click", generateTenNicknames);
     })();
   </script>
 
@@ -751,6 +1015,8 @@
       const BIN_ID = "6b0938883957a11c13b6397b";
       const API_KEY = "$2a$10$nbho.No3FFfEiqFA5FQcwuYL/kMVR1KOPuHPv0vsFdgk9eEiLbAVa";
       const BIN_URL = "https://api.jsonbin.io/v3/b/" + BIN_ID;
+
+      let writeQueue = Promise.resolve();
 
       function todayKey() {
         const d = new Date();
@@ -772,18 +1038,31 @@
         return localId;
       }
 
-      function mutateBin(updater) {
-        return fetch(BIN_URL + "/latest", {
+      function fetchLatestRecord() {
+        return fetch(BIN_URL + "/latest?t=" + Date.now(), {
           cache: "no-store",
-          headers: { "X-Master-Key": API_KEY }
+          headers: {
+            "X-Master-Key": API_KEY
+          }
         })
           .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (res) {
-            const rec = (res && res.record && typeof res.record === "object") ? res.record : {};
+          .then(function (body) {
+            if (!body || typeof body !== "object") return {};
+            if (body.record && typeof body.record === "object") return body.record;
+            return body;
+          })
+          .catch(function () { return {}; });
+      }
+
+      function mutateBin(updater) {
+        writeQueue = writeQueue
+          .then(function () { return fetchLatestRecord(); })
+          .then(function (rec) {
+            const base = (rec && typeof rec === "object") ? rec : {};
             const data = {
-              users: (rec.users && typeof rec.users === "object") ? rec.users : {},
-              days: (rec.days && typeof rec.days === "object") ? rec.days : {},
-              ad_clicks: typeof rec.ad_clicks === "number" ? rec.ad_clicks : 0
+              users: (base.users && typeof base.users === "object") ? base.users : {},
+              days: (base.days && typeof base.days === "object") ? base.days : {},
+              ad_clicks: typeof base.ad_clicks === "number" ? base.ad_clicks : 0
             };
             updater(data);
             return fetch(BIN_URL, {
@@ -793,9 +1072,10 @@
                 "X-Master-Key": API_KEY
               },
               body: JSON.stringify(data)
-            });
+            }).then(function () { return undefined; });
           })
-          .catch(function () {});
+          .catch(function () { return undefined; });
+        return writeQueue;
       }
 
       const now = Date.now();
