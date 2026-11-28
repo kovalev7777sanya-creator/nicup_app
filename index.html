@@ -456,6 +456,47 @@
       text-align: center;
     }
 
+    .pending-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 12px;
+      margin-bottom: 10px;
+      border-radius: 16px;
+      background: rgba(14, 24, 48, 0.78);
+      border: 1px solid rgba(96, 165, 250, 0.34);
+      font-size: 12px;
+      color: #e2e8f0;
+    }
+
+    .pending-bar.show {
+      display: flex;
+    }
+
+    .pending-bar-btns {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .busy-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(251, 113, 133, 0.45);
+      background: rgba(251, 113, 133, 0.16);
+      color: #fda4af;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.18s var(--ios-spring);
+    }
+
+    .busy-pill:active {
+      transform: scale(0.94);
+    }
+
     .results-card {
       overflow: hidden;
     }
@@ -468,8 +509,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      padding: 10px 14px;
+      gap: 6px;
+      padding: 10px 12px;
       border-bottom: 1px solid rgba(96, 165, 250, 0.14);
       animation: nickAppear 0.28s var(--ios-spring) both;
     }
@@ -507,7 +548,7 @@
     .row-actions {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex-shrink: 0;
     }
 
@@ -539,7 +580,7 @@
     }
 
     .copy-pill {
-      padding: 6px 11px;
+      padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid rgba(96, 165, 250, 0.34);
       background: rgba(37, 99, 235, 0.24);
@@ -838,6 +879,14 @@
 
       <div id="toastLine" class="toast-line">Выбери режим и нажми «Сгенерировать»</div>
 
+      <div id="pendingCheckBar" class="pending-bar">
+        <span id="pendingCheckLabel">Проверяешь: @nick</span>
+        <div class="pending-bar-btns">
+          <button id="pendingBusyBtn" type="button" class="busy-pill">Занят</button>
+          <button id="pendingDismissBtn" type="button" class="mini-clear-btn">Скрыть</button>
+        </div>
+      </div>
+
       <section id="resultsCard" class="glass-card results-card"></section>
     </main>
 
@@ -893,6 +942,7 @@
     (function () {
       const SUPPORT_URL = "https://t.me";
       const CHANNEL_URL = "https://t.me";
+      const TG_SETTINGS_URL = "https://t.me/settings";
 
       const supportLinkEl = document.getElementById("supportLinkBtn");
       const channelLinkEl = document.getElementById("channelLinkBtn");
@@ -1026,6 +1076,10 @@
       const generateBtn = document.getElementById("generateBtn");
       const resultsCard = document.getElementById("resultsCard");
       const toastLine = document.getElementById("toastLine");
+      const pendingCheckBar = document.getElementById("pendingCheckBar");
+      const pendingCheckLabel = document.getElementById("pendingCheckLabel");
+      const pendingBusyBtn = document.getElementById("pendingBusyBtn");
+      const pendingDismissBtn = document.getElementById("pendingDismissBtn");
 
       let useDigits = true;
       let useUnderscore = false;
@@ -1033,6 +1087,7 @@
       let activeMode = "unique";
       let poolNicks = [];
       let revealTimers = [];
+      let pendingCheckNick = null;
 
       const WORD_ROOTS = [
         "cyber", "neon", "void", "flux", "nova", "drift", "zen", "apex",
@@ -1060,12 +1115,69 @@
         return copyWithoutAt ? nick.replace(/^@/, "") : nick;
       }
 
-      function copyNickText(nick) {
+      function copyNickText(nick, silentToast) {
         const textToCopy = formatForCopy(nick);
         if (navigator.clipboard) {
           navigator.clipboard.writeText(textToCopy).catch(function () {});
         }
-        toastLine.textContent = "Скопировано: " + textToCopy;
+        if (!silentToast) {
+          toastLine.textContent = "Скопировано: " + textToCopy;
+        }
+        return textToCopy;
+      }
+
+      function updatePendingBar() {
+        if (!pendingCheckBar || !pendingCheckLabel) return;
+        if (pendingCheckNick) {
+          pendingCheckLabel.textContent = "Проверяешь: " + pendingCheckNick;
+          pendingCheckBar.classList.add("show");
+        } else {
+          pendingCheckBar.classList.remove("show");
+        }
+      }
+
+      function markNickBusy(nick, rowEl) {
+        if (!nick) return;
+        const targetRow = rowEl || resultsCard.querySelector('.nick-row[data-nick="' + nick.replace(/"/g, '\\"') + '"]');
+        if (targetRow && targetRow.parentNode) {
+          targetRow.parentNode.removeChild(targetRow);
+        }
+        poolNicks = poolNicks.filter(function (item) { return item !== nick; });
+        if (pendingCheckNick === nick) {
+          pendingCheckNick = null;
+          updatePendingBar();
+        }
+        toastLine.textContent = nick + " отмечен как занят и убран из списка";
+      }
+
+      function openTelegramSettingsForCheck(nick) {
+        const copied = copyNickText(nick, true);
+        pendingCheckNick = nick;
+        updatePendingBar();
+        toastLine.textContent = "Скопировано (" + copied + ") — открываю настройки Telegram";
+
+        if (tg && typeof tg.openLink === "function") {
+          try {
+            tg.openLink(TG_SETTINGS_URL);
+            return;
+          } catch (e) {}
+        }
+        window.open(TG_SETTINGS_URL, "_blank", "noopener");
+      }
+
+      if (pendingBusyBtn) {
+        pendingBusyBtn.addEventListener("click", function () {
+          if (pendingCheckNick) {
+            markNickBusy(pendingCheckNick);
+          }
+        });
+      }
+
+      if (pendingDismissBtn) {
+        pendingDismissBtn.addEventListener("click", function () {
+          pendingCheckNick = null;
+          updatePendingBar();
+        });
       }
 
       function setActiveModeButton(mode) {
@@ -1232,6 +1344,7 @@
       function appendNickRow(nick) {
         const row = document.createElement("div");
         row.className = "nick-row";
+        row.setAttribute("data-nick", nick);
 
         const trigger = document.createElement("button");
         trigger.type = "button";
@@ -1264,16 +1377,25 @@
             : "Убрано из избранного: " + nick;
         });
 
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "copy-pill";
-        btn.textContent = "Копировать";
-        btn.addEventListener("click", function () {
-          copyNickText(nick);
+        const checkBtn = document.createElement("button");
+        checkBtn.type = "button";
+        checkBtn.className = "copy-pill";
+        checkBtn.textContent = "Проверить";
+        checkBtn.addEventListener("click", function () {
+          openTelegramSettingsForCheck(nick);
+        });
+
+        const busyBtn = document.createElement("button");
+        busyBtn.type = "button";
+        busyBtn.className = "busy-pill";
+        busyBtn.textContent = "Занят";
+        busyBtn.addEventListener("click", function () {
+          markNickBusy(nick, row);
         });
 
         actions.appendChild(heartBtn);
-        actions.appendChild(btn);
+        actions.appendChild(checkBtn);
+        actions.appendChild(busyBtn);
 
         row.appendChild(trigger);
         row.appendChild(actions);
