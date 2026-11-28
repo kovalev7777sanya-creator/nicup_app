@@ -974,7 +974,7 @@
 
           <div class="inputs-stack">
             <input id="prefixInput" class="glass-input" type="text" maxlength="12" placeholder="Ключевое слово (необязательно)" />
-            <input id="excludeInput" class="glass-input" type="text" maxlength="40" placeholder="Исключить буквы или слова (напр: z, q, cyber)" />
+            <input id="excludeInput" class="glass-input" type="text" maxlength="40" placeholder="Исключить буквы или слова (напр: z, q, xna)" />
           </div>
 
           <div class="toggles-row">
@@ -1291,11 +1291,20 @@
       let revealTimers = [];
       let pendingCheckNick = null;
 
-      const WORD_ROOTS = [
-        "cyber", "neon", "void", "flux", "nova", "drift", "zen", "apex",
-        "kuro", "lux", "vibe", "echo", "orbit", "pixel", "storm", "frost",
-        "shadow", "pulse", "atlas", "hyper", "lunar", "solar", "rift", "byte",
-        "stark", "omega", "alpha", "delta", "titan", "ghost", "spark", "onyx"
+      const SYLLABLE_CHUNKS = [
+        "ka", "ke", "ki", "ko", "ku",
+        "ra", "re", "ri", "ro", "ru",
+        "va", "ve", "vi", "vo", "vu",
+        "za", "ze", "zi", "zo", "zu",
+        "ma", "me", "mi", "mo", "mu",
+        "na", "ne", "ni", "no", "nu",
+        "la", "le", "li", "lo", "lu",
+        "ta", "te", "ti", "to", "tu",
+        "da", "de", "di", "do", "du",
+        "sa", "se", "si", "so", "su",
+        "ven", "kor", "mir", "zel", "tor",
+        "pax", "rix", "den", "hal", "lor",
+        "vek", "sor", "kil", "mav", "nor"
       ];
 
       function normalizePoolStatus(rawStatus) {
@@ -1491,7 +1500,7 @@
           s = filterAllowedChars(s, bannedChars);
         }
         if (s && !/^[a-z]/.test(s)) {
-          const safeFirst = filterAllowedChars("xna", bannedChars);
+          const safeFirst = filterAllowedChars("krmn", bannedChars);
           s = (safeFirst ? safeFirst[0] : "a") + s;
         }
         return s;
@@ -1506,37 +1515,36 @@
         const allowedDigits = filterAllowedChars("0123456789", excl.bannedChars);
         const allowUnderscore = useUnderscore && !excl.bannedChars.has("_");
 
-        const validRoots = WORD_ROOTS.filter(function (w) {
-          return passesExclusions(w, excl);
+        const validChunks = SYLLABLE_CHUNKS.filter(function (ch) {
+          return passesExclusions(ch, excl);
         });
-        const rootsPool = validRoots.length ? validRoots : [allowedLetters.slice(0, 4) || "user"];
+        const chunkPool = validChunks.length ? validChunks : [allowedLetters.slice(0, 2) || "ka"];
 
         const kw = sanitizeKeyword(rawKeyword, excl.bannedChars);
-        const w1 = kw || pick(rootsPool);
-        let w2 = pick(rootsPool);
-        if (rootsPool.length > 1) {
-          while (w2 === w1) {
-            w2 = pick(rootsPool);
-          }
-        }
-
-        let base = allowUnderscore && Math.random() < 0.5 ? (w1 + "_" + w2) : (w1 + w2);
-
-        if (useDigits && allowedDigits.length > 0 && base.length < length) {
-          const maxDig = Math.min(3, length - base.length);
-          const digCount = Math.max(1, Math.floor(Math.random() * maxDig) + 1);
-          for (let i = 0; i < digCount; i++) {
-            base += allowedDigits[Math.floor(Math.random() * allowedDigits.length)];
-          }
-        }
+        let base = kw || (pick(chunkPool) + pick(chunkPool));
 
         while (base.length < length) {
-          base += allowedLetters[Math.floor(Math.random() * allowedLetters.length)];
+          const nextChunk = pick(chunkPool);
+          if (allowUnderscore && base.length >= 3 && base.length < length - 2 && !base.endsWith("_") && Math.random() < 0.22) {
+            base += "_" + nextChunk;
+          } else {
+            base += nextChunk;
+          }
         }
 
-        let trimmed = base.slice(0, length).replace(/^_+|_+$/g, "");
+        if (useDigits && allowedDigits.length > 0 && base.length >= 4 && Math.random() < 0.45) {
+          const digCount = Math.min(2, Math.max(1, length - 4));
+          let tailDigits = "";
+          for (let d = 0; d < digCount; d++) {
+            tailDigits += allowedDigits[Math.floor(Math.random() * allowedDigits.length)];
+          }
+          base = base.slice(0, Math.max(1, length - tailDigits.length)) + tailDigits;
+        }
+
+        let trimmed = base.slice(0, length).replace(/^_+|_+$/g, "").replace(/__+/g, "_");
         if (!trimmed || !/^[a-z]/.test(trimmed)) {
-          trimmed = allowedLetters[0] + trimmed.slice(0, Math.max(1, length - 1));
+          const firstLetter = filterAllowedChars("abcdefghijklmnopqrstuvwxyz", excl.bannedChars)[0] || "k";
+          trimmed = firstLetter + trimmed.slice(0, Math.max(1, length - 1));
         }
         return "@" + trimmed;
       }
