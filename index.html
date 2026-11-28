@@ -12,13 +12,13 @@
       --orb-cyan: rgba(56, 189, 248, 0.22);
       --orb-indigo: rgba(29, 78, 216, 0.26);
 
-      --glass-surface: rgba(14, 24, 48, 0.62);
-      --glass-recessed: rgba(4, 9, 22, 0.72);
-      --glass-border: rgba(96, 165, 250, 0.25);
+      --glass-surface: rgba(14, 24, 48, 0.64);
+      --glass-recessed: rgba(4, 9, 22, 0.74);
+      --glass-border: rgba(96, 165, 250, 0.26);
       --glass-highlight: rgba(186, 230, 253, 0.28);
 
       --text-main: #ffffff;
-      --text-sec: rgba(219, 234, 254, 0.76);
+      --text-sec: rgba(219, 234, 254, 0.78);
       --blue-bright: #38bdf8;
       --green: #34d399;
       --amber: #fbbf24;
@@ -46,10 +46,12 @@
       overflow-x: hidden;
       padding: 14px 16px 104px;
       position: relative;
+      touch-action: manipulation;
     }
 
     button,
     input,
+    a,
     .nick-text,
     .section-title,
     .ad-title,
@@ -57,9 +59,10 @@
       font-weight: 800;
     }
 
-    button {
+    button,
+    a {
       cursor: pointer;
-      pointer-events: auto;
+      touch-action: manipulation;
     }
 
     .bg-orb {
@@ -97,7 +100,6 @@
       z-index: 2;
       max-width: 460px;
       margin: 0 auto;
-      pointer-events: auto;
     }
 
     .top-header {
@@ -231,6 +233,7 @@
       justify-content: space-between;
       gap: 8px;
       margin-bottom: 10px;
+      pointer-events: none;
     }
 
     .ad-tag {
@@ -252,6 +255,7 @@
       letter-spacing: -0.02em;
       margin-bottom: 7px;
       line-height: 1.2;
+      pointer-events: none;
     }
 
     .ad-desc {
@@ -261,6 +265,7 @@
       line-height: 1.42;
       margin-bottom: 16px;
       max-width: 90%;
+      pointer-events: none;
     }
 
     .ad-cta {
@@ -277,6 +282,7 @@
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.35),
         0 6px 14px rgba(29, 78, 216, 0.42);
+      pointer-events: none;
     }
 
     .tab-view {
@@ -286,11 +292,11 @@
     }
     .tab-view.active {
       display: block;
-      animation: fadeSlide 0.22s ease;
+      animation: fadeSlide 0.2s ease;
     }
 
     @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(5px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -490,6 +496,10 @@
       border: none;
       text-align: left;
       padding: 2px 0;
+    }
+
+    .nick-trigger * {
+      pointer-events: none;
     }
 
     .nick-text {
@@ -808,11 +818,11 @@
         </span>
       </div>
 
-      <button id="headerAvatarBtn" type="button" class="header-avatar-btn" title="Профиль">N</button>
+      <button id="headerAvatarBtn" type="button" class="header-avatar-btn" data-action="open-profile" title="Профиль">N</button>
     </header>
 
     <main id="tabHome" class="tab-view active">
-      <a id="adBanner" class="ad-banner" href="https://t.me" target="_blank" rel="noopener">
+      <a id="adBanner" class="ad-banner" href="https://t.me" target="_blank" rel="noopener noreferrer">
         <div class="ad-top">
           <span class="ad-tag">Реклама</span>
         </div>
@@ -840,20 +850,20 @@
         </div>
 
         <div class="toggles-row">
-          <button id="toggleDigits" type="button" class="pill-toggle active">Цифры 0–9</button>
-          <button id="toggleUnderscore" type="button" class="pill-toggle">Подчёркивание _</button>
+          <button id="toggleDigits" type="button" class="pill-toggle active" data-action="toggle-digits">Цифры 0–9</button>
+          <button id="toggleUnderscore" type="button" class="pill-toggle" data-action="toggle-underscore">Подчёркивание _</button>
         </div>
 
         <div class="single-toggle-row">
-          <button id="toggleNoAt" type="button" class="pill-toggle">Копировать без @</button>
+          <button id="toggleNoAt" type="button" class="pill-toggle" data-action="toggle-no-at">Копировать без @</button>
         </div>
 
         <div class="mode-switch-row">
-          <button id="uniqueBtn" type="button" class="mode-pill-btn active">Уникальные</button>
-          <button id="randomBtn" type="button" class="mode-pill-btn">Случайные</button>
+          <button id="uniqueBtn" type="button" class="mode-pill-btn active" data-action="mode-unique">Уникальные</button>
+          <button id="randomBtn" type="button" class="mode-pill-btn" data-action="mode-random">Случайные</button>
         </div>
 
-        <button id="generateBtn" type="button" class="generate-main-btn">Сгенерировать</button>
+        <button id="generateBtn" type="button" class="generate-main-btn" data-action="generate">Сгенерировать</button>
       </section>
 
       <div id="toastLine" class="toast-line">Выбери режим и нажми «Сгенерировать»</div>
@@ -879,15 +889,15 @@
         </div>
 
         <div class="support-links-grid">
-          <a id="supportLinkBtn" class="support-link-btn primary" href="https://t.me" target="_blank" rel="noopener">Чат с поддержкой</a>
-          <a id="channelLinkBtn" class="support-link-btn" href="https://t.me" target="_blank" rel="noopener">Канал NicUp</a>
+          <a id="supportLinkBtn" class="support-link-btn primary" data-ext-link="support" href="https://t.me" target="_blank" rel="noopener noreferrer">Чат с поддержкой</a>
+          <a id="channelLinkBtn" class="support-link-btn" data-ext-link="channel" href="https://t.me" target="_blank" rel="noopener noreferrer">Канал NicUp</a>
         </div>
       </div>
 
       <div class="glass-card profile-section-card">
         <div class="section-title">
           <span>♥ Избранное</span>
-          <button id="clearFavBtn" type="button" class="mini-clear-btn">Очистить</button>
+          <button id="clearFavBtn" type="button" class="mini-clear-btn" data-action="clear-fav">Очистить</button>
         </div>
         <div id="favoritesListWrap"></div>
       </div>
@@ -895,7 +905,7 @@
       <div class="glass-card profile-section-card">
         <div class="section-title">
           <span>История генераций</span>
-          <button id="clearHistoryBtn" type="button" class="mini-clear-btn">Очистить</button>
+          <button id="clearHistoryBtn" type="button" class="mini-clear-btn" data-action="clear-history">Очистить</button>
         </div>
         <div id="historyListWrap"></div>
       </div>
@@ -904,20 +914,16 @@
 
   <div class="bottom-dock-wrap">
     <nav class="bottom-dock" aria-label="Навигация">
-      <button type="button" class="nav-pill-btn active" data-tab="tabHome">Главная</button>
-      <button type="button" class="nav-pill-btn" data-tab="tabProfile">Профиль</button>
+      <button type="button" class="nav-pill-btn active" data-action="switch-tab" data-tab="tabHome">Главная</button>
+      <button type="button" class="nav-pill-btn" data-action="switch-tab" data-tab="tabProfile">Профиль</button>
     </nav>
   </div>
 
   <script>
     (function () {
+      // Вставь сюда реальные ссылки на профиль/чат поддержки и канал:
       const SUPPORT_URL = "https://t.me";
       const CHANNEL_URL = "https://t.me";
-
-      const supportLinkEl = document.getElementById("supportLinkBtn");
-      const channelLinkEl = document.getElementById("channelLinkBtn");
-      if (supportLinkEl) supportLinkEl.href = https://t.me/nicup_support;
-      if (channelLinkEl) channelLinkEl.href = https://t.me/nicup_support;
 
       let tg = null;
       try {
@@ -927,6 +933,22 @@
           tg.expand();
         }
       } catch (e) {}
+
+      const supportLinkEl = document.getElementById("supportLinkBtn");
+      const channelLinkEl = document.getElementById("channelLinkBtn");
+      if (supportLinkEl) supportLinkEl.href = https://t.me/nicup_support;
+      if (channelLinkEl) channelLinkEl.href = CHANNEL_URL;
+
+      function openExternalUrl(url) {
+        if (!url) return;
+        try {
+          if (tg && typeof tg.openLink === "function") {
+            tg.openLink(url);
+            return;
+          }
+        } catch (e) {}
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
 
       const navBtns = document.querySelectorAll(".nav-pill-btn");
       const tabViews = document.querySelectorAll(".tab-view");
@@ -944,18 +966,6 @@
           renderHistoryList();
         }
         window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      navBtns.forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          openTab(btn.getAttribute("data-tab"));
-        });
-      });
-
-      if (headerAvatarBtn) {
-        headerAvatarBtn.addEventListener("click", function () {
-          openTab("tabProfile");
-        });
       }
 
       function setAvatarContent(el, photoUrl, initial) {
@@ -1051,7 +1061,6 @@
       const toggleNoAt = document.getElementById("toggleNoAt");
       const uniqueBtn = document.getElementById("uniqueBtn");
       const randomBtn = document.getElementById("randomBtn");
-      const generateBtn = document.getElementById("generateBtn");
       const resultsCard = document.getElementById("resultsCard");
       const toastLine = document.getElementById("toastLine");
 
@@ -1075,6 +1084,15 @@
         const textToCopy = formatForCopy(nick);
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(textToCopy).catch(function () {});
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = textToCopy;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand("copy"); } catch (e) {}
+          document.body.removeChild(ta);
         }
         if (toastLine) toastLine.textContent = "Скопировано: " + textToCopy;
       }
@@ -1088,32 +1106,6 @@
       if (lenRange && lenLabel) {
         lenRange.addEventListener("input", function () {
           lenLabel.textContent = lenRange.value + " символов";
-        });
-      }
-
-      if (toggleDigits) {
-        toggleDigits.addEventListener("click", function () {
-          useDigits = !useDigits;
-          toggleDigits.classList.toggle("active", useDigits);
-        });
-      }
-
-      if (toggleUnderscore) {
-        toggleUnderscore.addEventListener("click", function () {
-          useUnderscore = !useUnderscore;
-          toggleUnderscore.classList.toggle("active", useUnderscore);
-        });
-      }
-
-      if (toggleNoAt) {
-        toggleNoAt.addEventListener("click", function () {
-          copyWithoutAt = !copyWithoutAt;
-          toggleNoAt.classList.toggle("active", copyWithoutAt);
-          if (toastLine) {
-            toastLine.textContent = copyWithoutAt
-              ? "Копирование без @ включено"
-              : "Копирование с @ включено";
-          }
         });
       }
 
@@ -1242,8 +1234,10 @@
 
       function checkNickHint(nick, chipEl) {
         const plain = nick.replace(/^@/, "");
-        chipEl.className = "status-chip";
-        chipEl.textContent = "проверка...";
+        if (chipEl) {
+          chipEl.className = "status-chip";
+          chipEl.textContent = "проверка...";
+        }
 
         fetch("https://t.me/" + encodeURIComponent(plain), {
           method: "GET",
@@ -1251,13 +1245,17 @@
           cache: "no-store"
         })
           .then(function () {
-            chipEl.className = "status-chip busy";
-            chipEl.textContent = "проверено · t.me";
+            if (chipEl) {
+              chipEl.className = "status-chip busy";
+              chipEl.textContent = "проверено · t.me";
+            }
             if (toastLine) toastLine.textContent = "Проверен " + nick + " (t.me/" + plain + ")";
           })
           .catch(function () {
-            chipEl.className = "status-chip free";
-            chipEl.textContent = "нет отклика";
+            if (chipEl) {
+              chipEl.className = "status-chip free";
+              chipEl.textContent = "нет отклика";
+            }
             if (toastLine) toastLine.textContent = "Нет ответа от t.me/" + plain;
           });
       }
@@ -1307,6 +1305,8 @@
           const trigger = document.createElement("button");
           trigger.type = "button";
           trigger.className = "nick-trigger";
+          trigger.setAttribute("data-action", "check-nick");
+          trigger.setAttribute("data-nick", nick);
 
           const span = document.createElement("span");
           span.className = "nick-text";
@@ -1319,10 +1319,6 @@
           trigger.appendChild(span);
           trigger.appendChild(chip);
 
-          trigger.addEventListener("click", function () {
-            checkNickHint(nick, chip);
-          });
-
           const actions = document.createElement("div");
           actions.className = "row-actions";
 
@@ -1331,24 +1327,15 @@
           heartBtn.className = "fav-heart-btn" + (isFavorite(nick) ? " liked" : "");
           heartBtn.textContent = "♥";
           heartBtn.title = "В избранное";
-          heartBtn.addEventListener("click", function () {
-            toggleFavorite(nick);
-            const likedNow = isFavorite(nick);
-            heartBtn.classList.toggle("liked", likedNow);
-            if (toastLine) {
-              toastLine.textContent = likedNow
-                ? "Добавлено в избранное: " + nick
-                : "Убрано из избранного: " + nick;
-            }
-          });
+          heartBtn.setAttribute("data-action", "toggle-fav");
+          heartBtn.setAttribute("data-nick", nick);
 
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "copy-pill";
           btn.textContent = "Копировать";
-          btn.addEventListener("click", function () {
-            copyNickText(nick);
-          });
+          btn.setAttribute("data-action", "copy-nick");
+          btn.setAttribute("data-nick", nick);
 
           actions.appendChild(heartBtn);
           actions.appendChild(btn);
@@ -1391,21 +1378,16 @@
           copyBtn.type = "button";
           copyBtn.className = "copy-pill";
           copyBtn.textContent = "Копировать";
-          copyBtn.addEventListener("click", function () {
-            copyNickText(nick);
-            copyBtn.textContent = "Готово";
-            setTimeout(function () { copyBtn.textContent = "Копировать"; }, 1100);
-          });
+          copyBtn.setAttribute("data-action", "copy-saved");
+          copyBtn.setAttribute("data-nick", nick);
 
           const delBtn = document.createElement("button");
           delBtn.type = "button";
           delBtn.className = "fav-heart-btn liked";
           delBtn.textContent = "♥";
           delBtn.title = "Убрать из избранного";
-          delBtn.addEventListener("click", function () {
-            toggleFavorite(nick);
-            renderFavoritesList();
-          });
+          delBtn.setAttribute("data-action", "remove-fav");
+          delBtn.setAttribute("data-nick", nick);
 
           actions.appendChild(copyBtn);
           actions.appendChild(delBtn);
@@ -1458,11 +1440,8 @@
           copyBtn.type = "button";
           copyBtn.className = "copy-pill";
           copyBtn.textContent = "Копировать";
-          copyBtn.addEventListener("click", function () {
-            copyNickText(entry.nick);
-            copyBtn.textContent = "Готово";
-            setTimeout(function () { copyBtn.textContent = "Копировать"; }, 1100);
-          });
+          copyBtn.setAttribute("data-action", "copy-saved");
+          copyBtn.setAttribute("data-nick", entry.nick);
 
           actions.appendChild(copyBtn);
 
@@ -1475,41 +1454,85 @@
         wrap.appendChild(listEl);
       }
 
-      const clearFavBtn = document.getElementById("clearFavBtn");
-      if (clearFavBtn) {
-        clearFavBtn.addEventListener("click", function () {
+      // Единый делегированный обработчик кликов по всему документу
+      document.addEventListener("click", function (event) {
+        const actionEl = event.target.closest("[data-action], [data-ext-link]");
+        if (!actionEl) return;
+
+        if (actionEl.hasAttribute("data-ext-link")) {
+          const href = actionEl.getAttribute("href");
+          if (href) {
+            event.preventDefault();
+            openExternalUrl(href);
+          }
+          return;
+        }
+
+        const action = actionEl.getAttribute("data-action");
+        const nick = actionEl.getAttribute("data-nick") || "";
+
+        if (action === "open-profile") {
+          openTab("tabProfile");
+        } else if (action === "switch-tab") {
+          const tabId = actionEl.getAttribute("data-tab");
+          if (tabId) openTab(tabId);
+        } else if (action === "toggle-digits") {
+          useDigits = !useDigits;
+          if (toggleDigits) toggleDigits.classList.toggle("active", useDigits);
+        } else if (action === "toggle-underscore") {
+          useUnderscore = !useUnderscore;
+          if (toggleUnderscore) toggleUnderscore.classList.toggle("active", useUnderscore);
+        } else if (action === "toggle-no-at") {
+          copyWithoutAt = !copyWithoutAt;
+          if (toggleNoAt) toggleNoAt.classList.toggle("active", copyWithoutAt);
+          if (toastLine) {
+            toastLine.textContent = copyWithoutAt
+              ? "Копирование без @ включено"
+              : "Копирование с @ включено";
+          }
+        } else if (action === "mode-unique") {
+          setActiveModeButton("unique");
+          if (toastLine) toastLine.textContent = "Режим: Уникальные — нажми «Сгенерировать»";
+        } else if (action === "mode-random") {
+          setActiveModeButton("random");
+          if (toastLine) toastLine.textContent = "Режим: Случайные — нажми «Сгенерировать»";
+        } else if (action === "generate") {
+          generateTenNicknames();
+        } else if (action === "check-nick") {
+          const chipEl = actionEl.querySelector(".status-chip");
+          checkNickHint(nick, chipEl);
+        } else if (action === "toggle-fav") {
+          toggleFavorite(nick);
+          const likedNow = isFavorite(nick);
+          actionEl.classList.toggle("liked", likedNow);
+          if (toastLine) {
+            toastLine.textContent = likedNow
+              ? "Добавлено в избранное: " + nick
+              : "Убрано из избранного: " + nick;
+          }
+        } else if (action === "copy-nick") {
+          copyNickText(nick);
+          const prev = actionEl.textContent;
+          actionEl.textContent = "Готово";
+          setTimeout(function () { actionEl.textContent = prev || "Копировать"; }, 1000);
+        } else if (action === "copy-saved") {
+          copyNickText(nick);
+          const prevSaved = actionEl.textContent;
+          actionEl.textContent = "Готово";
+          setTimeout(function () { actionEl.textContent = prevSaved || "Копировать"; }, 1000);
+        } else if (action === "remove-fav") {
+          toggleFavorite(nick);
+          renderFavoritesList();
+        } else if (action === "clear-fav") {
           favorites = [];
           saveJsonArray(FAV_STORAGE_KEY, favorites);
           renderFavoritesList();
-        });
-      }
-
-      const clearHistoryBtn = document.getElementById("clearHistoryBtn");
-      if (clearHistoryBtn) {
-        clearHistoryBtn.addEventListener("click", function () {
+        } else if (action === "clear-history") {
           genHistory = [];
           saveJsonArray(HIST_STORAGE_KEY, genHistory);
           renderHistoryList();
-        });
-      }
-
-      if (uniqueBtn) {
-        uniqueBtn.addEventListener("click", function () {
-          setActiveModeButton("unique");
-          if (toastLine) toastLine.textContent = "Режим: Уникальные — нажми «Сгенерировать»";
-        });
-      }
-
-      if (randomBtn) {
-        randomBtn.addEventListener("click", function () {
-          setActiveModeButton("random");
-          if (toastLine) toastLine.textContent = "Режим: Случайные — нажми «Сгенерировать»";
-        });
-      }
-
-      if (generateBtn) {
-        generateBtn.addEventListener("click", generateTenNicknames);
-      }
+        }
+      });
 
       updateFavCounter();
       renderFavoritesList();
