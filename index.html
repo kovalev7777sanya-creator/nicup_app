@@ -8,20 +8,17 @@
   <style>
     :root {
       --bg-deep: #040711;
-      --bg-mid: #081226;
       --orb-blue: rgba(37, 99, 235, 0.34);
       --orb-cyan: rgba(56, 189, 248, 0.22);
       --orb-indigo: rgba(29, 78, 216, 0.26);
 
       --glass-surface: rgba(14, 24, 48, 0.58);
-      --glass-surface-strong: rgba(20, 36, 72, 0.74);
       --glass-recessed: rgba(4, 9, 22, 0.68);
       --glass-border: rgba(96, 165, 250, 0.24);
       --glass-highlight: rgba(186, 230, 253, 0.28);
 
       --text-main: #ffffff;
       --text-sec: rgba(219, 234, 254, 0.74);
-      --blue-main: #2563eb;
       --blue-bright: #38bdf8;
       --green: #34d399;
 
@@ -42,7 +39,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
       font-weight: 600;
       overflow-x: hidden;
-      padding: 14px 16px 106px;
+      padding: 14px 16px 104px;
       position: relative;
     }
 
@@ -91,10 +88,11 @@
       margin: 0 auto;
     }
 
+    /* Шапка с логотипом NicUp слева без чёрного фона */
     .top-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       padding: 6px 2px 12px;
       margin-bottom: 6px;
       background: transparent;
@@ -126,33 +124,6 @@
     .brand-up {
       color: #1677ff;
       margin-left: 1px;
-    }
-
-    .online-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 7px 14px;
-      border-radius: 999px;
-      background: var(--glass-surface);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border: 1px solid rgba(52, 211, 153, 0.34);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        0 8px 20px rgba(0, 0, 0, 0.35);
-      font-size: 13px;
-      font-weight: 800;
-      color: #ffffff;
-      line-height: 1;
-    }
-
-    .online-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 10px var(--green);
     }
 
     .glass-card {
@@ -247,16 +218,16 @@
       position: relative;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 10px 19px;
+      gap: 5px;
+      padding: 8px 15px;
       border-radius: 999px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       color: #ffffff;
       background: linear-gradient(135deg, #3b82f6, #1d4ed8);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.35),
-        0 8px 18px rgba(29, 78, 216, 0.45);
+        0 6px 14px rgba(29, 78, 216, 0.42);
     }
 
     .tab-view {
@@ -312,12 +283,12 @@
 
     .glass-input {
       width: 100%;
-      padding: 12px 15px;
-      border-radius: 18px;
+      padding: 11px 14px;
+      border-radius: 16px;
       border: 1px solid var(--glass-border);
       background: var(--glass-recessed);
       color: #fff;
-      font-size: 14px;
+      font-size: 13px;
       outline: none;
       transition: border-color 0.2s ease;
     }
@@ -326,24 +297,25 @@
       border-color: var(--blue-bright);
     }
 
+    /* Чуть уменьшенные переключатели опций */
     .toggles-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 8px;
+      margin-bottom: 14px;
     }
 
     .pill-toggle {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 11px 12px;
+      gap: 6px;
+      padding: 9px 10px;
       border-radius: 999px;
       background: var(--glass-recessed);
       border: 1px solid var(--glass-border);
       color: var(--text-sec);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       cursor: pointer;
       transition: all 0.2s var(--ios-spring);
@@ -357,23 +329,47 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
 
-    .primary-btn {
+    /* Две аккуратные кнопки генерации: Уникальные и Случайные */
+    .gen-actions-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-unique {
       width: 100%;
-      padding: 14px 20px;
+      padding: 11px 12px;
       border: none;
       border-radius: 999px;
       background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
       color: #ffffff;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 800;
       cursor: pointer;
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.35),
-        0 10px 24px rgba(37, 99, 235, 0.45);
+        inset 0 1px 0 rgba(255, 255, 255, 0.32),
+        0 8px 18px rgba(37, 99, 235, 0.4);
       transition: transform 0.2s var(--ios-spring);
     }
 
-    .primary-btn:active {
+    .btn-random {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid rgba(96, 165, 250, 0.42);
+      border-radius: 999px;
+      background: rgba(15, 29, 64, 0.85);
+      color: #e0f2fe;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 6px 14px rgba(0, 0, 0, 0.32);
+      transition: transform 0.2s var(--ios-spring), background 0.2s ease;
+    }
+
+    .btn-unique:active,
+    .btn-random:active {
       transform: scale(0.97);
     }
 
@@ -395,7 +391,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 13px 16px;
+      padding: 12px 15px;
       border-bottom: 1px solid rgba(96, 165, 250, 0.14);
     }
 
@@ -404,19 +400,19 @@
     }
 
     .nick-text {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
       letter-spacing: 0.01em;
       color: #f8fafc;
     }
 
     .copy-pill {
-      padding: 7px 14px;
+      padding: 6px 12px;
       border-radius: 999px;
       border: 1px solid rgba(96, 165, 250, 0.34);
       background: rgba(37, 99, 235, 0.24);
       color: #bae6fd;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       cursor: pointer;
       transition: transform 0.18s var(--ios-spring), background 0.18s ease;
@@ -484,6 +480,7 @@
       color: #ffffff;
     }
 
+    /* Нижняя плавающая панель с чуть более компактными кнопками */
     .bottom-dock-wrap {
       position: fixed;
       left: 0;
@@ -500,8 +497,8 @@
       pointer-events: auto;
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px;
+      gap: 6px;
+      padding: 5px;
       border-radius: 999px;
       background: rgba(10, 18, 38, 0.78);
       backdrop-filter: blur(28px) saturate(200%);
@@ -516,14 +513,14 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      min-width: 136px;
-      padding: 12px 22px;
+      gap: 6px;
+      min-width: 118px;
+      padding: 10px 18px;
       border: none;
       border-radius: 999px;
       background: transparent;
       color: var(--text-sec);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       cursor: pointer;
       transition: all 0.24s var(--ios-spring);
@@ -554,11 +551,6 @@
           <span class="brand-nic">Nic</span><span class="brand-up">Up</span>
         </span>
       </div>
-
-      <div class="online-badge" title="Онлайн в приложении">
-        <span class="online-dot"></span>
-        <span id="onlineCounter">0</span>
-      </div>
     </header>
 
     <main id="tabHome" class="tab-view active">
@@ -585,7 +577,7 @@
         </div>
 
         <div class="control-group">
-          <input id="prefixInput" class="glass-input" type="text" maxlength="10" placeholder="Ключевое слово (необязательно)" />
+          <input id="prefixInput" class="glass-input" type="text" maxlength="12" placeholder="Ключевое слово (необязательно)" />
         </div>
 
         <div class="toggles-row">
@@ -593,7 +585,10 @@
           <button id="toggleUnderscore" type="button" class="pill-toggle">Подчёркивание _</button>
         </div>
 
-        <button id="generateBtn" type="button" class="primary-btn">Сгенерировать ники</button>
+        <div class="gen-actions-row">
+          <button id="uniqueBtn" type="button" class="btn-unique">Уникальные</button>
+          <button id="randomBtn" type="button" class="btn-random">Случайные</button>
+        </div>
       </section>
 
       <div id="toastLine" class="toast-line"></div>
@@ -664,12 +659,20 @@
       const prefixInput = document.getElementById("prefixInput");
       const toggleDigits = document.getElementById("toggleDigits");
       const toggleUnderscore = document.getElementById("toggleUnderscore");
-      const generateBtn = document.getElementById("generateBtn");
+      const uniqueBtn = document.getElementById("uniqueBtn");
+      const randomBtn = document.getElementById("randomBtn");
       const resultsCard = document.getElementById("resultsCard");
       const toastLine = document.getElementById("toastLine");
 
       let useDigits = true;
       let useUnderscore = false;
+
+      const WORD_ROOTS = [
+        "cyber", "neon", "void", "flux", "nova", "drift", "zen", "apex",
+        "kuro", "lux", "vibe", "echo", "orbit", "pixel", "storm", "frost",
+        "shadow", "pulse", "atlas", "hyper", "lunar", "solar", "rift", "byte",
+        "stark", "omega", "alpha", "delta", "titan", "ghost", "spark", "onyx"
+      ];
 
       lenRange.addEventListener("input", function () {
         lenLabel.textContent = lenRange.value + " символов";
@@ -685,24 +688,62 @@
         toggleUnderscore.classList.toggle("active", useUnderscore);
       });
 
-      function buildUsername(length, rawPrefix) {
+      function sanitizeKeyword(raw) {
+        let s = (raw || "").toLowerCase().replace(/[^a-z0-9_]/g, "");
+        if (s && !/^[a-z]/.test(s)) {
+          s = "x" + s;
+        }
+        return s;
+      }
+
+      function pick(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function buildUniqueUsername(length, rawKeyword) {
+        const digits = "0123456789";
+        const kw = sanitizeKeyword(rawKeyword);
+        const w1 = kw || pick(WORD_ROOTS);
+        let w2 = pick(WORD_ROOTS);
+        while (w2 === w1) {
+          w2 = pick(WORD_ROOTS);
+        }
+
+        let base = useUnderscore && Math.random() < 0.5 ? (w1 + "_" + w2) : (w1 + w2);
+
+        if (useDigits && base.length < length) {
+          const maxDig = Math.min(3, length - base.length);
+          const digCount = Math.max(1, Math.floor(Math.random() * maxDig) + 1);
+          for (let i = 0; i < digCount; i++) {
+            base += digits[Math.floor(Math.random() * digits.length)];
+          }
+        }
+
+        const letters = "abcdefghijklmnopqrstuvwxyz";
+        while (base.length < length) {
+          base += letters[Math.floor(Math.random() * letters.length)];
+        }
+
+        let trimmed = base.slice(0, length).replace(/^_+|_+$/g, "");
+        if (!trimmed || !/^[a-z]/.test(trimmed)) {
+          trimmed = "n" + trimmed.slice(0, Math.max(1, length - 1));
+        }
+        return "@" + trimmed;
+      }
+
+      function buildRandomUsername(length, rawKeyword) {
         const vowels = "aeiouy";
         const consonants = "bcdfghjklmnpqrstvwxz";
         const digits = "0123456789";
 
-        let cleanPrefix = (rawPrefix || "").toLowerCase().replace(/[^a-z0-9_]/g, "");
-        if (cleanPrefix && !/^[a-z]/.test(cleanPrefix)) {
-          cleanPrefix = "x" + cleanPrefix;
-        }
-
-        let res = cleanPrefix.slice(0, length);
+        let res = sanitizeKeyword(rawKeyword).slice(0, length);
         while (res.length < length) {
           const prev = res[res.length - 1] || "";
-          if (useUnderscore && res.length > 2 && res.length < length - 2 && prev !== "_" && Math.random() < 0.14) {
+          if (useUnderscore && res.length > 1 && res.length < length - 1 && prev !== "_" && Math.random() < 0.18) {
             res += "_";
             continue;
           }
-          if (useDigits && res.length >= length - 2 && Math.random() < 0.35) {
+          if (useDigits && res.length >= length - 2 && Math.random() < 0.42) {
             res += digits[Math.floor(Math.random() * digits.length)];
             continue;
           }
@@ -710,16 +751,23 @@
           const pool = isPrevVowel ? consonants : vowels;
           res += pool[Math.floor(Math.random() * pool.length)];
         }
+        res = res.replace(/^_+|_+$/g, "");
+        if (!res || !/^[a-z]/.test(res)) {
+          res = "u" + res.slice(0, Math.max(1, length - 1));
+        }
         return "@" + res;
       }
 
-      function renderNicknames() {
+      function renderNicknames(mode) {
         const len = Number(lenRange.value) || 7;
-        const prefix = prefixInput.value.trim();
+        const kw = prefixInput.value.trim();
         const set = new Set();
         let guard = 0;
-        while (set.size < 6 && guard < 80) {
-          set.add(buildUsername(len, prefix));
+        while (set.size < 6 && guard < 120) {
+          const nick = mode === "random"
+            ? buildRandomUsername(len, kw)
+            : buildUniqueUsername(len, kw);
+          set.add(nick);
           guard++;
         }
 
@@ -754,24 +802,19 @@
         });
       }
 
-      generateBtn.addEventListener("click", renderNicknames);
-      renderNicknames();
+      uniqueBtn.addEventListener("click", function () { renderNicknames("unique"); });
+      randomBtn.addEventListener("click", function () { renderNicknames("random"); });
+      renderNicknames("unique");
     })();
   </script>
 
-  <!-- Статистика JSONBin.io, живой онлайн с 0 каждые 5 сек (с очередью записи) и ad.json -->
+  <!-- Статистика JSONBin.io и загрузка рекламы ad.json -->
   <script>
     (function () {
       const BIN_ID = "6b0938883957a11c13b6397b";
       const API_KEY = "$2a$10$nbho.No3FFfEiqFA5FQcwuYL/kMVR1KOPuHPv0vsFdgk9eEiLbAVa";
       const BIN_URL = "https://api.jsonbin.io/v3/b/" + BIN_ID;
 
-      const ONLINE_BASE = 0;
-      const ONLINE_TTL_MS = 25000;
-      const POLL_INTERVAL_MS = 5000;
-      const PING_INTERVAL_MS = 7000;
-
-      let lastPingSentAt = 0;
       let writeQueue = Promise.resolve();
 
       function todayKey() {
@@ -794,62 +837,33 @@
         return localId;
       }
 
-      function getClientKey() {
-        let cid = sessionStorage.getItem("nicup_client_cid");
-        if (!cid) {
-          cid = "c_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
-          sessionStorage.setItem("nicup_client_cid", cid);
-        }
-        return getUserId() + "_" + cid;
-      }
-
-      function countActiveUsers(onlineMap, nowTs) {
-        let active = 0;
-        if (!onlineMap || typeof onlineMap !== "object") return 0;
-        Object.keys(onlineMap).forEach(function (k) {
-          if (nowTs - Number(onlineMap[k] || 0) <= ONLINE_TTL_MS) {
-            active++;
-          }
-        });
-        return active;
-      }
-
-      function renderOnlineCount(onlineMap) {
-        const el = document.getElementById("onlineCounter");
-        if (!el) return;
-        const active = countActiveUsers(onlineMap, Date.now());
-        el.textContent = String(ONLINE_BASE + active);
-      }
-
       function fetchLatestRecord() {
         return fetch(BIN_URL + "/latest?t=" + Date.now(), {
           cache: "no-store",
           headers: {
-            "X-Master-Key": API_KEY,
-            "X-Bin-Meta": "false"
+            "X-Master-Key": API_KEY
           }
         })
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (body) {
-            if (!body || typeof body !== "object") return null;
-            return (body.record && typeof body.record === "object") ? body.record : body;
+            if (!body || typeof body !== "object") return {};
+            if (body.record && typeof body.record === "object") return body.record;
+            return body;
           })
-          .catch(function () { return null; });
+          .catch(function () { return {}; });
       }
 
       function mutateBin(updater) {
         writeQueue = writeQueue
           .then(function () { return fetchLatestRecord(); })
           .then(function (rec) {
-            if (!rec) return;
+            const base = (rec && typeof rec === "object") ? rec : {};
             const data = {
-              users: (rec.users && typeof rec.users === "object") ? rec.users : {},
-              days: (rec.days && typeof rec.days === "object") ? rec.days : {},
-              ad_clicks: typeof rec.ad_clicks === "number" ? rec.ad_clicks : 0,
-              online_map: (rec.online_map && typeof rec.online_map === "object") ? rec.online_map : {}
+              users: (base.users && typeof base.users === "object") ? base.users : {},
+              days: (base.days && typeof base.days === "object") ? base.days : {},
+              ad_clicks: typeof base.ad_clicks === "number" ? base.ad_clicks : 0
             };
             updater(data);
-            renderOnlineCount(data.online_map);
             return fetch(BIN_URL, {
               method: "PUT",
               headers: {
@@ -863,42 +877,11 @@
         return writeQueue;
       }
 
-      function refreshOnlineOnly() {
-        fetchLatestRecord().then(function (rec) {
-          if (!rec) return;
-          renderOnlineCount(rec.online_map);
-        });
-      }
-
-      function pingOnline(force) {
-        const nowTs = Date.now();
-        if (document.hidden) return;
-        if (!force && nowTs - lastPingSentAt < PING_INTERVAL_MS) return;
-
-        const ckey = getClientKey();
-        lastPingSentAt = nowTs;
-
-        mutateBin(function (data) {
-          if (!data.online_map || typeof data.online_map !== "object") {
-            data.online_map = {};
-          }
-          data.online_map[ckey] = nowTs;
-          Object.keys(data.online_map).forEach(function (k) {
-            if (nowTs - Number(data.online_map[k] || 0) > ONLINE_TTL_MS) {
-              delete data.online_map[k];
-            }
-          });
-        });
-      }
-
       const now = Date.now();
-      const isNewSession = (now - Number(sessionStorage.getItem("nicup_open_ts") || 0)) > 1500;
-      if (isNewSession) {
+      if (now - Number(sessionStorage.getItem("nicup_open_ts") || 0) > 1500) {
         sessionStorage.setItem("nicup_open_ts", String(now));
         const uid = getUserId();
-        const ckey = getClientKey();
         const day = todayKey();
-        lastPingSentAt = now;
         mutateBin(function (data) {
           if (!data.users[uid]) {
             data.users[uid] = { first_seen: day, last_seen: day };
@@ -914,29 +897,8 @@
           if (data.days[day].active_users.indexOf(uid) === -1) {
             data.days[day].active_users.push(uid);
           }
-          data.online_map[ckey] = now;
-          Object.keys(data.online_map).forEach(function (k) {
-            if (now - Number(data.online_map[k] || 0) > ONLINE_TTL_MS) {
-              delete data.online_map[k];
-            }
-          });
         });
-      } else {
-        refreshOnlineOnly();
-        pingOnline(true);
       }
-
-      setInterval(function () {
-        refreshOnlineOnly();
-        pingOnline(false);
-      }, POLL_INTERVAL_MS);
-
-      document.addEventListener("visibilitychange", function () {
-        if (!document.hidden) {
-          refreshOnlineOnly();
-          pingOnline(true);
-        }
-      });
 
       fetch("./ad.json?t=" + Date.now(), { cache: "no-store" })
         .then(function (r) { return r.json(); })
