@@ -549,17 +549,17 @@
       text-underline-offset: 3px;
     }
 
-    .nick-substatus {
+    .nick-status-sub {
       font-size: 11px;
       font-weight: 700;
       line-height: 1.25;
     }
 
-    .nick-substatus.free {
+    .nick-status-sub.free {
       color: var(--green);
     }
 
-    .nick-substatus.fragment {
+    .nick-status-sub.fragment {
       color: var(--amber);
     }
 
@@ -1149,28 +1149,23 @@
         return "free";
       }
 
-      function applyPoolData(data) {
-        const items = Array.isArray(data) ? data : (data && Array.isArray(data.usernames) ? data.usernames : []);
-        poolItems = items
-          .map(function (item) {
-            const raw = typeof item === "string"
-              ? item
-              : (item && (item.username || item.nick) ? (item.username || item.nick) : "");
-            const clean = String(raw).trim().toLowerCase().replace(/^@/, "");
-            if (!clean) return null;
-            const nick = "@" + clean;
-            if (isBusyNick(nick)) return null;
-            const status = typeof item === "object" && item !== null ? normalizePoolStatus(item.status) : "free";
-            return { nick: nick, status: status };
-          })
-          .filter(Boolean);
-      }
-
-      // Подтягиваем готовый пул из репозитория (создаётся через GitHub Actions)
       fetch("./pool.json?t=" + Date.now(), { cache: "no-store" })
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (data) {
-          if (data) applyPoolData(data);
+          const items = Array.isArray(data) ? data : (data && Array.isArray(data.usernames) ? data.usernames : []);
+          poolItems = items
+            .map(function (item) {
+              const raw = typeof item === "string"
+                ? item
+                : (item && (item.username || item.nick) ? (item.username || item.nick) : "");
+              const clean = String(raw).trim().toLowerCase().replace(/^@/, "");
+              if (!clean) return null;
+              const nick = "@" + clean;
+              if (isBusyNick(nick)) return null;
+              const status = typeof item === "object" && item !== null ? normalizePoolStatus(item.status) : "free";
+              return { nick: nick, status: status };
+            })
+            .filter(Boolean);
         })
         .catch(function () {});
 
@@ -1266,7 +1261,7 @@
         if (onlyFree && includeFragment) {
           toastLine.textContent = "Режим: Свободные + Фрагмент";
         } else if (onlyFree) {
-          toastLine.textContent = "Режим: Только свободные (Фрагмент скрыт)";
+          toastLine.textContent = "Режим: Только свободные (Фрагмент не выдаётся)";
         } else if (includeFragment) {
           toastLine.textContent = "Режим: Фрагмент включён";
         } else {
@@ -1429,11 +1424,8 @@
 
       function allowsStatus(status) {
         if (status === "fragment") {
-          // Если включено "Только свободные" и НЕ включено "Фрагмент" — Fragment не выдаём
           if (onlyFree && !includeFragment) return false;
-          // Если включено "Только свободные" И "Фрагмент" одновременно — выдаём оба
           if (onlyFree && includeFragment) return true;
-          // Если "Только свободные" выключено — смотрим на кнопку "Фрагмент"
           return includeFragment;
         }
         return true;
@@ -1457,10 +1449,10 @@
 
         const subStatus = document.createElement("span");
         if (status === "fragment") {
-          subStatus.className = "nick-substatus fragment";
+          subStatus.className = "nick-status-sub fragment";
           subStatus.textContent = "Занят на Fragment";
         } else {
-          subStatus.className = "nick-substatus free";
+          subStatus.className = "nick-status-sub free";
           subStatus.textContent = "Свободен";
         }
 
@@ -1529,7 +1521,6 @@
         const list = [];
         const seen = new Set();
 
-        // Сначала берём подходящие ники из pool.json с учётом статусов free / fragment
         if (poolItems.length) {
           const shuffledPool = poolItems.slice().sort(function () { return Math.random() - 0.5; });
           const wantFragmentOnly = includeFragment && !onlyFree;
@@ -1674,4 +1665,195 @@
           item.className = "saved-item";
 
           const left = document.createElement("div");
-          left.style.minWidth
+          left.style.minWidth = "0";
+          left.style.display = "flex";
+          left.style.alignItems = "center";
+
+          const nameSpan = document.createElement("span");
+          nameSpan.className = "saved-nick";
+          nameSpan.textContent = entry.nick;
+
+          const metaSpan = document.createElement("span");
+          metaSpan.className = "saved-meta";
+          metaSpan.textContent = entry.time || "";
+
+          left.appendChild(nameSpan);
+          left.appendChild(metaSpan);
+
+          const actions = document.createElement("div");
+          actions.className = "row-actions";
+
+          const copyBtn = document.createElement("button");
+          copyBtn.type = "button";
+          copyBtn.className = "copy-pill";
+          copyBtn.textContent = "Копировать";
+          copyBtn.addEventListener("click", function () {
+            copyNickText(entry.nick);
+            copyBtn.textContent = "Готово";
+            setTimeout(function () { copyBtn.textContent = "Копировать"; }, 1100);
+          });
+
+          actions.appendChild(copyBtn);
+
+          item.appendChild(left);
+          item.appendChild(actions);
+          listEl.appendChild(item);
+        });
+
+        wrap.innerHTML = "";
+        wrap.appendChild(listEl);
+      }
+
+      document.getElementById("clearFavBtn").addEventListener("click", function () {
+        favorites = [];
+        saveJsonArray(FAV_STORAGE_KEY, favorites);
+        renderFavoritesList();
+      });
+
+      document.getElementById("clearHistoryBtn").addEventListener("click", function () {
+        genHistory = [];
+        saveJsonArray(HIST_STORAGE_KEY, genHistory);
+        renderHistoryList();
+      });
+
+      uniqueBtn.addEventListener("click", function () {
+        setActiveModeButton("unique");
+        toastLine.textContent = "Режим: Уникальные — нажми «Сгенерировать»";
+      });
+
+      randomBtn.addEventListener("click", function () {
+        setActiveModeButton("random");
+        toastLine.textContent = "Режим: Случайные — нажми «Сгенерировать»";
+      });
+
+      generateBtn.addEventListener("click", generateTenNicknames);
+
+      updateFavCounter();
+      renderFavoritesList();
+      renderHistoryList();
+    })();
+  </script>
+
+  <!-- Статистика JSONBin.io и загрузка рекламы ad.json -->
+  <script>
+    (function () {
+      const BIN_ID = "6b0938883957a11c13b6397b";
+      const API_KEY = "$2a$10$nbho.No3FFfEiqFA5FQcwuYL/kMVR1KOPuHPv0vsFdgk9eEiLbAVa";
+      const BIN_URL = "https://api.jsonbin.io/v3/b/" + BIN_ID;
+
+      let writeQueue = Promise.resolve();
+
+      function todayKey() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return y + "-" + m + "-" + day;
+      }
+
+      function getUserId() {
+        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+        if (u && u.id) return String(u.id);
+        let localId = localStorage.getItem("nicup_local_uid");
+        if (!localId) {
+          localId = "web_" + Math.random().toString(36).slice(2, 10);
+          localStorage.setItem("nicup_local_uid", localId);
+        }
+        return localId;
+      }
+
+      function fetchLatestRecord() {
+        return fetch(BIN_URL + "/latest?t=" + Date.now(), {
+          cache: "no-store",
+          headers: {
+            "X-Master-Key": API_KEY
+          }
+        })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (body) {
+            if (!body || typeof body !== "object") return {};
+            if (body.record && typeof body.record === "object") return body.record;
+            return body;
+          })
+          .catch(function () { return {}; });
+      }
+
+      function mutateBin(updater) {
+        writeQueue = writeQueue
+          .then(function () { return fetchLatestRecord(); })
+          .then(function (rec) {
+            const base = (rec && typeof rec === "object") ? rec : {};
+            const data = {
+              users: (base.users && typeof base.users === "object") ? base.users : {},
+              days: (base.days && typeof base.days === "object") ? base.days : {},
+              ad_clicks: typeof base.ad_clicks === "number" ? base.ad_clicks : 0
+            };
+            updater(data);
+            return fetch(BIN_URL, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                "X-Master-Key": API_KEY
+              },
+              body: JSON.stringify(data)
+            }).then(function () { return undefined; });
+          })
+          .catch(function () { return undefined; });
+        return writeQueue;
+      }
+
+      const now = Date.now();
+      if (now - Number(sessionStorage.getItem("nicup_open_ts") || 0) > 1500) {
+        sessionStorage.setItem("nicup_open_ts", String(now));
+        const uid = getUserId();
+        const day = todayKey();
+        mutateBin(function (data) {
+          if (!data.users[uid]) {
+            data.users[uid] = { first_seen: day, last_seen: day };
+          } else {
+            data.users[uid].last_seen = day;
+          }
+          if (!data.days[day]) {
+            data.days[day] = { new_users: 0, active_users: [] };
+          }
+          if (!Array.isArray(data.days[day].active_users)) {
+            data.days[day].active_users = [];
+          }
+          if (data.days[day].active_users.indexOf(uid) === -1) {
+            data.days[day].active_users.push(uid);
+          }
+        });
+      }
+
+      fetch("./ad.json?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { return r.json(); })
+        .then(function (cfg) {
+          const banner = document.getElementById("adBanner");
+          if (!banner) return;
+
+          if (cfg.enabled === false) {
+            banner.style.setProperty("display", "none", "important");
+            return;
+          }
+
+          const titleEl = document.getElementById("adTitle");
+          const descEl = document.getElementById("adDesc");
+
+          if (titleEl && cfg.title) titleEl.textContent = cfg.title;
+          if (descEl && cfg.desc) descEl.textContent = cfg.desc;
+          if (cfg.url) banner.href = cfg.url;
+
+          banner.addEventListener("click", function () {
+            mutateBin(function (data) {
+              data.ad_clicks = (typeof data.ad_clicks === "number" ? data.ad_clicks : 0) + 1;
+            });
+          });
+
+          banner.style.setProperty("display", "block", "important");
+        })
+        .catch(function () {});
+    })();
+  </script>
+</body>
+</html>
