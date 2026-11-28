@@ -1011,6 +1011,7 @@
 
       const FAV_STORAGE_KEY = "nicup_favorites_v1";
       const HIST_STORAGE_KEY = "nicup_history_v1";
+      const BUSY_STORAGE_KEY = "nicup_busy_usernames_v1";
 
       function loadJsonArray(key) {
         try {
@@ -1030,6 +1031,23 @@
 
       let favorites = loadJsonArray(FAV_STORAGE_KEY);
       let genHistory = loadJsonArray(HIST_STORAGE_KEY);
+      let busyNicks = new Set(
+        loadJsonArray(BUSY_STORAGE_KEY)
+          .map(function (u) {
+            const clean = String(u || "").trim().toLowerCase().replace(/^@/, "");
+            return clean ? "@" + clean : "";
+          })
+          .filter(Boolean)
+      );
+
+      function saveBusyNicks() {
+        saveJsonArray(BUSY_STORAGE_KEY, Array.from(busyNicks));
+      }
+
+      function isBusyNick(nick) {
+        const clean = String(nick || "").trim().toLowerCase().replace(/^@/, "");
+        return clean ? busyNicks.has("@" + clean) : false;
+      }
 
       function isFavorite(nick) {
         return favorites.indexOf(nick) !== -1;
@@ -1095,18 +1113,24 @@
         "stark", "omega", "alpha", "delta", "titan", "ghost", "spark", "onyx"
       ];
 
-      // Подтягиваем готовый пул из репозитория (если создан через GitHub Actions)
+      function applyPoolData(data) {
+        const items = Array.isArray(data) ? data : (data && Array.isArray(data.usernames) ? data.usernames : []);
+        poolNicks = items
+          .map(function (item) {
+            const raw = typeof item === "string" ? item : (item && item.username ? item.username : "");
+            const clean = String(raw).trim().toLowerCase().replace(/^@/, "");
+            return clean ? "@" + clean : "";
+          })
+          .filter(function (nick) {
+            return Boolean(nick) && !isBusyNick(nick);
+          });
+      }
+
+      // Подтягиваем готовый пул из репозитория (создаётся через GitHub Actions)
       fetch("./pool.json?t=" + Date.now(), { cache: "no-store" })
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (data) {
-          const items = Array.isArray(data) ? data : (data && Array.isArray(data.usernames) ? data.usernames : []);
-          poolNicks = items
-            .map(function (item) {
-              const raw = typeof item === "string" ? item : (item && item.username ? item.username : "");
-              const clean = String(raw).trim().toLowerCase().replace(/^@/, "");
-              return clean ? "@" + clean : "";
-            })
-            .filter(Boolean);
+          if (data) applyPoolData(data);
         })
         .catch(function () {});
 
@@ -1137,16 +1161,23 @@
 
       function markNickBusy(nick, rowEl) {
         if (!nick) return;
-        const targetRow = rowEl || resultsCard.querySelector('.nick-row[data-nick="' + nick.replace(/"/g, '\\"') + '"]');
+        const clean = String(nick).trim().toLowerCase().replace(/^@/, "");
+        if (!clean) return;
+        const normNick = "@" + clean;
+
+        busyNicks.add(normNick);
+        saveBusyNicks();
+
+        const targetRow = rowEl || resultsCard.querySelector('.nick-row[data-nick="' + normNick.replace(/"/g, '\\"') + '"]');
         if (targetRow && targetRow.parentNode) {
           targetRow.parentNode.removeChild(targetRow);
         }
-        poolNicks = poolNicks.filter(function (item) { return item !== nick; });
-        if (pendingCheckNick === nick) {
+        poolNicks = poolNicks.filter(function (item) { return item !== normNick; });
+        if (pendingCheckNick === normNick) {
           pendingCheckNick = null;
           updatePendingBar();
         }
-        toastLine.textContent = nick + " отмечен как занят и убран из списка";
+        toastLine.textContent = normNick + " отмечен как занят и убран из списка";
       }
 
       function triggerNickCheck(nick) {
@@ -1407,12 +1438,12 @@
         const list = [];
         const seen = new Set();
 
-        // Сначала берём подходящие ники из pool.json (если файл подгрузился)
+        // Сначала берём подходящие ники из pool.json (если файл подгрузился и ник не помечен как занятый)
         if (poolNicks.length) {
           const shuffledPool = poolNicks.slice().sort(function () { return Math.random() - 0.5; });
           for (let p = 0; p < shuffledPool.length && list.length < 10; p++) {
             const candidate = shuffledPool[p];
-            if (!seen.has(candidate) && matchesFilters(candidate, len, kw, excl)) {
+            if (!seen.has(candidate) && !isBusyNick(candidate) && matchesFilters(candidate, len, kw, excl)) {
               seen.add(candidate);
               list.push(candidate);
             }
@@ -1425,7 +1456,7 @@
             ? buildRandomUsername(len, kw, excl)
             : buildUniqueUsername(len, kw, excl);
           const plain = nick.replace(/^@/, "");
-          if (!seen.has(nick) && passesExclusions(plain, excl)) {
+          if (!seen.has(nick) && !isBusyNick(nick) && passesExclusions(plain, excl)) {
             seen.add(nick);
             list.push(nick);
           }
@@ -1433,16 +1464,18 @@
         }
 
         const safeLetters = filterAllowedChars("abcdefghijklmnopqrstuvwxyz", excl.bannedChars) || "abcdefg";
-        while (list.length < 10) {
+        let fallbackGuard = 0;
+        while (list.length < 10 && fallbackGuard < 200) {
           let tail = "";
           for (let i = 0; i < len; i++) {
             tail += safeLetters[Math.floor(Math.random() * safeLetters.length)];
           }
           const fallback = "@" + tail;
-          if (!seen.has(fallback)) {
+          if (!seen.has(fallback) && !isBusyNick(fallback)) {
             seen.add(fallback);
             list.push(fallback);
           }
+          fallbackGuard++;
         }
 
         const finalTen = list.slice(0, 10);
