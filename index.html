@@ -22,6 +22,7 @@
       --blue-bright: #38bdf8;
       --green: #34d399;
       --amber: #fbbf24;
+      --pink: #fb7185;
 
       --ios-spring: cubic-bezier(0.22, 1.16, 0.36, 1);
     }
@@ -281,16 +282,17 @@
     }
 
     .section-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
     }
 
     .control-group {
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .control-label {
@@ -313,6 +315,13 @@
       cursor: pointer;
     }
 
+    .inputs-stack {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
     .glass-input {
       width: 100%;
       padding: 11px 14px;
@@ -333,10 +342,15 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .single-toggle-row {
       margin-bottom: 12px;
     }
 
     .pill-toggle {
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -360,7 +374,6 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
 
-    /* Переключатель режима: только выбирает режим, без генерации */
     .mode-switch-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -405,7 +418,6 @@
       transform: scale(0.94);
     }
 
-    /* Главная кнопка генерации: выдаёт ровно 10 ников */
     .generate-main-btn {
       width: 100%;
       padding: 11px 16px;
@@ -445,7 +457,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 11px 14px;
+      padding: 10px 14px;
       border-bottom: 1px solid rgba(96, 165, 250, 0.14);
     }
 
@@ -456,7 +468,7 @@
     .nick-trigger {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       flex: 1;
       min-width: 0;
       background: transparent;
@@ -477,6 +489,40 @@
       text-decoration: underline;
       text-decoration-color: rgba(147, 197, 253, 0.4);
       text-underline-offset: 3px;
+    }
+
+    .row-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .fav-heart-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid rgba(96, 165, 250, 0.28);
+      background: rgba(4, 9, 22, 0.62);
+      color: rgba(219, 234, 254, 0.55);
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s var(--ios-spring), color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .fav-heart-btn.liked {
+      color: var(--pink);
+      border-color: rgba(251, 113, 133, 0.52);
+      background: rgba(251, 113, 133, 0.16);
+      transform: scale(1.06);
+    }
+
+    .fav-heart-btn:active {
+      transform: scale(0.88);
     }
 
     .status-chip {
@@ -503,7 +549,7 @@
     }
 
     .copy-pill {
-      padding: 6px 12px;
+      padding: 6px 11px;
       border-radius: 999px;
       border: 1px solid rgba(96, 165, 250, 0.34);
       background: rgba(37, 99, 235, 0.24);
@@ -518,20 +564,22 @@
       transform: scale(0.94);
     }
 
+    /* Профиль */
     .profile-card {
-      padding: 22px 18px;
+      padding: 20px 18px;
       text-align: center;
+      margin-bottom: 14px;
     }
 
     .profile-avatar {
-      width: 72px;
-      height: 72px;
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
-      margin: 0 auto 12px;
+      margin: 0 auto 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 900;
       background: linear-gradient(135deg, #3b82f6, #1e3a8a);
       border: 2px solid rgba(147, 197, 253, 0.45);
@@ -547,27 +595,28 @@
     }
 
     .profile-name {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 800;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .profile-sub {
       font-size: 13px;
       color: var(--text-sec);
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
 
     .profile-info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
       text-align: left;
+      margin-bottom: 14px;
     }
 
     .info-box {
-      padding: 12px 14px;
-      border-radius: 20px;
+      padding: 11px 13px;
+      border-radius: 18px;
       background: var(--glass-recessed);
       border: 1px solid var(--glass-border);
     }
@@ -575,13 +624,110 @@
     .info-box-label {
       font-size: 11px;
       color: var(--text-sec);
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .info-box-val {
       font-size: 14px;
       font-weight: 800;
       color: #ffffff;
+    }
+
+    /* Быстрые ссылки и поддержка в профиле */
+    .support-links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .support-link-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+      color: #ffffff;
+      background: rgba(37, 99, 235, 0.28);
+      border: 1px solid rgba(96, 165, 250, 0.38);
+      transition: transform 0.2s var(--ios-spring), background 0.2s ease;
+    }
+
+    .support-link-btn.primary {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border-color: rgba(147, 197, 253, 0.5);
+    }
+
+    .support-link-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Секции Избранного и Истории в профиле */
+    .profile-section-card {
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .mini-clear-btn {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(96, 165, 250, 0.28);
+      background: rgba(4, 9, 22, 0.65);
+      color: var(--text-sec);
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .mini-clear-btn:active {
+      transform: scale(0.94);
+    }
+
+    .empty-state {
+      font-size: 12px;
+      color: var(--text-sec);
+      text-align: center;
+      padding: 14px 8px;
+      border-radius: 16px;
+      background: var(--glass-recessed);
+      border: 1px dashed rgba(96, 165, 250, 0.22);
+    }
+
+    .saved-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .saved-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 14px;
+      background: var(--glass-recessed);
+      border: 1px solid rgba(96, 165, 250, 0.18);
+    }
+
+    .saved-nick {
+      font-size: 13px;
+      font-weight: 800;
+      color: #f8fafc;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .saved-meta {
+      font-size: 10px;
+      color: var(--text-sec);
+      margin-left: 6px;
     }
 
     .bottom-dock-wrap {
@@ -658,6 +804,7 @@
       <button id="headerAvatarBtn" type="button" class="header-avatar-btn" title="Профиль">N</button>
     </header>
 
+    <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
     <main id="tabHome" class="tab-view active">
       <a id="adBanner" class="ad-banner" href="https://t.me" target="_blank" rel="noopener">
         <div class="ad-top">
@@ -681,13 +828,18 @@
           <input id="lenRange" type="range" min="5" max="15" value="7" />
         </div>
 
-        <div class="control-group">
+        <div class="inputs-stack">
           <input id="prefixInput" class="glass-input" type="text" maxlength="12" placeholder="Ключевое слово (необязательно)" />
+          <input id="excludeInput" class="glass-input" type="text" maxlength="40" placeholder="Исключить буквы или слова (напр: z, q, cyber)" />
         </div>
 
         <div class="toggles-row">
           <button id="toggleDigits" type="button" class="pill-toggle active">Цифры 0–9</button>
           <button id="toggleUnderscore" type="button" class="pill-toggle">Подчёркивание _</button>
+        </div>
+
+        <div class="single-toggle-row">
+          <button id="toggleNoAt" type="button" class="pill-toggle">Копировать без @</button>
         </div>
 
         <div class="mode-switch-row">
@@ -703,6 +855,7 @@
       <section id="resultsCard" class="glass-card results-card"></section>
     </main>
 
+    <!-- ВКЛАДКА 2: ПРОФИЛЬ -->
     <section id="tabProfile" class="tab-view">
       <div class="glass-card profile-card">
         <div id="profileAvatar" class="profile-avatar">N</div>
@@ -715,10 +868,33 @@
             <div id="profileId" class="info-box-val">—</div>
           </div>
           <div class="info-box">
-            <div class="info-box-label">Статус</div>
-            <div class="info-box-val" style="color: #38bdf8;">Активен</div>
+            <div class="info-box-label">В избранном</div>
+            <div id="profileFavCount" class="info-box-val" style="color: #fb7185;">0</div>
           </div>
         </div>
+
+        <div class="support-links-grid">
+          <a id="supportLinkBtn" class="support-link-btn primary" href="https://t.me" target="_blank" rel="noopener">Чат с поддержкой</a>
+          <a id="channelLinkBtn" class="support-link-btn" href="https://t.me" target="_blank" rel="noopener">Канал NicUp</a>
+        </div>
+      </div>
+
+      <!-- Избранное -->
+      <div class="glass-card profile-section-card">
+        <div class="section-title">
+          <span>♥ Избранное</span>
+          <button id="clearFavBtn" type="button" class="mini-clear-btn">Очистить</button>
+        </div>
+        <div id="favoritesListWrap"></div>
+      </div>
+
+      <!-- История генераций -->
+      <div class="glass-card profile-section-card">
+        <div class="section-title">
+          <span>История генераций</span>
+          <button id="clearHistoryBtn" type="button" class="mini-clear-btn">Очистить</button>
+        </div>
+        <div id="historyListWrap"></div>
       </div>
     </section>
   </div>
@@ -732,6 +908,15 @@
 
   <script>
     (function () {
+      // Ссылки для блока быстрых переходов и поддержки в профиле
+      const SUPPORT_URL = "https://t.me";
+      const CHANNEL_URL = "https://t.me";
+
+      const supportLinkEl = document.getElementById("supportLinkBtn");
+      const channelLinkEl = document.getElementById("channelLinkBtn");
+      if (supportLinkEl) supportLinkEl.href = https://t.me/nicup_support;
+      if (channelLinkEl) channelLinkEl.href = https://t.me/nicup_support;
+
       const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
       if (tg) {
         tg.ready();
@@ -749,6 +934,10 @@
         tabViews.forEach(function (v) {
           v.classList.toggle("active", v.id === targetId);
         });
+        if (targetId === "tabProfile") {
+          renderFavoritesList();
+          renderHistoryList();
+        }
       }
 
       navBtns.forEach(function (btn) {
@@ -789,11 +978,68 @@
         document.getElementById("profileId").textContent = String(tgUser.id);
       }
 
+      // Локальное хранилище Избранного и Истории генераций
+      const FAV_STORAGE_KEY = "nicup_favorites_v1";
+      const HIST_STORAGE_KEY = "nicup_history_v1";
+
+      function loadJsonArray(key) {
+        try {
+          const raw = localStorage.getItem(key);
+          const parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveJsonArray(key, arr) {
+        try {
+          localStorage.setItem(key, JSON.stringify(arr));
+        } catch (e) {}
+      }
+
+      let favorites = loadJsonArray(FAV_STORAGE_KEY);
+      let genHistory = loadJsonArray(HIST_STORAGE_KEY);
+
+      function isFavorite(nick) {
+        return favorites.indexOf(nick) !== -1;
+      }
+
+      function updateFavCounter() {
+        const countEl = document.getElementById("profileFavCount");
+        if (countEl) countEl.textContent = String(favorites.length);
+      }
+
+      function toggleFavorite(nick) {
+        const idx = favorites.indexOf(nick);
+        if (idx === -1) {
+          favorites.unshift(nick);
+        } else {
+          favorites.splice(idx, 1);
+        }
+        saveJsonArray(FAV_STORAGE_KEY, favorites);
+        updateFavCounter();
+      }
+
+      function pushToHistory(nicks, modeLabel) {
+        const nowStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        nicks.forEach(function (nick) {
+          genHistory = genHistory.filter(function (item) { return item.nick !== nick; });
+          genHistory.unshift({ nick: nick, mode: modeLabel, time: nowStr });
+        });
+        if (genHistory.length > 30) {
+          genHistory = genHistory.slice(0, 30);
+        }
+        saveJsonArray(HIST_STORAGE_KEY, genHistory);
+      }
+
       const lenRange = document.getElementById("lenRange");
       const lenLabel = document.getElementById("lenLabel");
       const prefixInput = document.getElementById("prefixInput");
+      const excludeInput = document.getElementById("excludeInput");
       const toggleDigits = document.getElementById("toggleDigits");
       const toggleUnderscore = document.getElementById("toggleUnderscore");
+      const toggleNoAt = document.getElementById("toggleNoAt");
       const uniqueBtn = document.getElementById("uniqueBtn");
       const randomBtn = document.getElementById("randomBtn");
       const generateBtn = document.getElementById("generateBtn");
@@ -802,6 +1048,7 @@
 
       let useDigits = true;
       let useUnderscore = false;
+      let copyWithoutAt = false;
       let activeMode = "unique";
 
       const WORD_ROOTS = [
@@ -810,6 +1057,18 @@
         "shadow", "pulse", "atlas", "hyper", "lunar", "solar", "rift", "byte",
         "stark", "omega", "alpha", "delta", "titan", "ghost", "spark", "onyx"
       ];
+
+      function formatForCopy(nick) {
+        return copyWithoutAt ? nick.replace(/^@/, "") : nick;
+      }
+
+      function copyNickText(nick) {
+        const textToCopy = formatForCopy(nick);
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(textToCopy).catch(function () {});
+        }
+        toastLine.textContent = "Скопировано: " + textToCopy;
+      }
 
       function setActiveModeButton(mode) {
         activeMode = mode;
@@ -831,10 +1090,61 @@
         toggleUnderscore.classList.toggle("active", useUnderscore);
       });
 
-      function sanitizeKeyword(raw) {
+      toggleNoAt.addEventListener("click", function () {
+        copyWithoutAt = !copyWithoutAt;
+        toggleNoAt.classList.toggle("active", copyWithoutAt);
+        toastLine.textContent = copyWithoutAt
+          ? "Копирование без @ включено"
+          : "Копирование с @ включено";
+      });
+
+      function parseExclusions(raw) {
+        const tokens = (raw || "")
+          .toLowerCase()
+          .split(/[\s,;]+/)
+          .map(function (t) { return t.replace(/[^a-z0-9_]/g, ""); })
+          .filter(Boolean);
+
+        const bannedChars = new Set();
+        const bannedWords = [];
+
+        tokens.forEach(function (tok) {
+          if (tok.length === 1) {
+            bannedChars.add(tok);
+          } else {
+            bannedWords.push(tok);
+          }
+        });
+
+        return { bannedChars: bannedChars, bannedWords: bannedWords };
+      }
+
+      function passesExclusions(plainNick, excl) {
+        for (let i = 0; i < plainNick.length; i++) {
+          if (excl.bannedChars.has(plainNick[i])) return false;
+        }
+        for (let j = 0; j < excl.bannedWords.length; j++) {
+          if (plainNick.indexOf(excl.bannedWords[j]) !== -1) return false;
+        }
+        return true;
+      }
+
+      function filterAllowedChars(str, bannedChars) {
+        let out = "";
+        for (let i = 0; i < str.length; i++) {
+          if (!bannedChars.has(str[i])) out += str[i];
+        }
+        return out;
+      }
+
+      function sanitizeKeyword(raw, bannedChars) {
         let s = (raw || "").toLowerCase().replace(/[^a-z0-9_]/g, "");
+        if (bannedChars) {
+          s = filterAllowedChars(s, bannedChars);
+        }
         if (s && !/^[a-z]/.test(s)) {
-          s = "x" + s;
+          const safeFirst = filterAllowedChars("xna", bannedChars);
+          s = (safeFirst ? safeFirst[0] : "a") + s;
         }
         return s;
       }
@@ -843,51 +1153,61 @@
         return arr[Math.floor(Math.random() * arr.length)];
       }
 
-      function buildUniqueUsername(length, rawKeyword) {
-        const digits = "0123456789";
-        const kw = sanitizeKeyword(rawKeyword);
-        const w1 = kw || pick(WORD_ROOTS);
-        let w2 = pick(WORD_ROOTS);
-        while (w2 === w1) {
-          w2 = pick(WORD_ROOTS);
-        }
+      function buildUniqueUsername(length, rawKeyword, excl) {
+        const allowedLetters = filterAllowedChars("abcdefghijklmnopqrstuvwxyz", excl.bannedChars) || "abcdefg";
+        const allowedDigits = filterAllowedChars("0123456789", excl.bannedChars);
+        const allowUnderscore = useUnderscore && !excl.bannedChars.has("_");
 
-        let base = useUnderscore && Math.random() < 0.5 ? (w1 + "_" + w2) : (w1 + w2);
+        const validRoots = WORD_ROOTS.filter(function (w) {
+          return passesExclusions(w, excl);
+        });
+        const rootsPool = validRoots.length ? validRoots : [allowedLetters.slice(0, 4) || "user"];
 
-        if (useDigits && base.length < length) {
-          const maxDig = Math.min(3, length - base.length);
-          const digCount = Math.max(1, Math.floor(Math.random() * maxDig) + 1);
-          for (let i = 0; i < digCount; i++) {
-            base += digits[Math.floor(Math.random() * digits.length)];
+        const kw = sanitizeKeyword(rawKeyword, excl.bannedChars);
+        const w1 = kw || pick(rootsPool);
+        let w2 = pick(rootsPool);
+        if (rootsPool.length > 1) {
+          while (w2 === w1) {
+            w2 = pick(rootsPool);
           }
         }
 
-        const letters = "abcdefghijklmnopqrstuvwxyz";
+        let base = allowUnderscore && Math.random() < 0.5 ? (w1 + "_" + w2) : (w1 + w2);
+
+        if (useDigits && allowedDigits.length > 0 && base.length < length) {
+          const maxDig = Math.min(3, length - base.length);
+          const digCount = Math.max(1, Math.floor(Math.random() * maxDig) + 1);
+          for (let i = 0; i < digCount; i++) {
+            base += allowedDigits[Math.floor(Math.random() * allowedDigits.length)];
+          }
+        }
+
         while (base.length < length) {
-          base += letters[Math.floor(Math.random() * letters.length)];
+          base += allowedLetters[Math.floor(Math.random() * allowedLetters.length)];
         }
 
         let trimmed = base.slice(0, length).replace(/^_+|_+$/g, "");
         if (!trimmed || !/^[a-z]/.test(trimmed)) {
-          trimmed = "n" + trimmed.slice(0, Math.max(1, length - 1));
+          trimmed = allowedLetters[0] + trimmed.slice(0, Math.max(1, length - 1));
         }
         return "@" + trimmed;
       }
 
-      function buildRandomUsername(length, rawKeyword) {
-        const vowels = "aeiouy";
-        const consonants = "bcdfghjklmnpqrstvwxz";
-        const digits = "0123456789";
+      function buildRandomUsername(length, rawKeyword, excl) {
+        const vowels = filterAllowedChars("aeiouy", excl.bannedChars) || "aeo";
+        const consonants = filterAllowedChars("bcdfghjklmnpqrstvwxz", excl.bannedChars) || "kmnrst";
+        const allowedDigits = filterAllowedChars("0123456789", excl.bannedChars);
+        const allowUnderscore = useUnderscore && !excl.bannedChars.has("_");
 
-        let res = sanitizeKeyword(rawKeyword).slice(0, length);
+        let res = sanitizeKeyword(rawKeyword, excl.bannedChars).slice(0, length);
         while (res.length < length) {
           const prev = res[res.length - 1] || "";
-          if (useUnderscore && res.length > 1 && res.length < length - 1 && prev !== "_" && Math.random() < 0.18) {
+          if (allowUnderscore && res.length > 1 && res.length < length - 1 && prev !== "_" && Math.random() < 0.18) {
             res += "_";
             continue;
           }
-          if (useDigits && res.length >= length - 2 && Math.random() < 0.42) {
-            res += digits[Math.floor(Math.random() * digits.length)];
+          if (useDigits && allowedDigits.length > 0 && res.length >= length - 2 && Math.random() < 0.42) {
+            res += allowedDigits[Math.floor(Math.random() * allowedDigits.length)];
             continue;
           }
           const isPrevVowel = vowels.indexOf(prev) !== -1;
@@ -896,7 +1216,7 @@
         }
         res = res.replace(/^_+|_+$/g, "");
         if (!res || !/^[a-z]/.test(res)) {
-          res = "u" + res.slice(0, Math.max(1, length - 1));
+          res = consonants[0] + res.slice(0, Math.max(1, length - 1));
         }
         return "@" + res;
       }
@@ -926,33 +1246,41 @@
       function generateTenNicknames() {
         const len = Number(lenRange.value) || 7;
         const kw = prefixInput.value.trim();
+        const excl = parseExclusions(excludeInput.value);
         const list = [];
         const seen = new Set();
         let guard = 0;
 
-        while (list.length < 10 && guard < 250) {
+        while (list.length < 10 && guard < 400) {
           const nick = activeMode === "random"
-            ? buildRandomUsername(len, kw)
-            : buildUniqueUsername(len, kw);
-          if (!seen.has(nick)) {
+            ? buildRandomUsername(len, kw, excl)
+            : buildUniqueUsername(len, kw, excl);
+          const plain = nick.replace(/^@/, "");
+          if (!seen.has(nick) && passesExclusions(plain, excl)) {
             seen.add(nick);
             list.push(nick);
           }
           guard++;
         }
 
-        // На случай очень короткой длины и ключевого слова добиваем до ровно 10 строк
+        const safeLetters = filterAllowedChars("abcdefghijklmnopqrstuvwxyz", excl.bannedChars) || "abcdefg";
         while (list.length < 10) {
-          const fallback = "@" + (activeMode === "random" ? "u" : "n") +
-            Math.random().toString(36).slice(2, Math.max(4, len + 1));
+          let tail = "";
+          for (let i = 0; i < len; i++) {
+            tail += safeLetters[Math.floor(Math.random() * safeLetters.length)];
+          }
+          const fallback = "@" + tail;
           if (!seen.has(fallback)) {
             seen.add(fallback);
             list.push(fallback);
           }
         }
 
+        const finalTen = list.slice(0, 10);
+        pushToHistory(finalTen, activeMode === "random" ? "случайные" : "уникальные");
+
         resultsCard.innerHTML = "";
-        list.slice(0, 10).forEach(function (nick) {
+        finalTen.forEach(function (nick) {
           const row = document.createElement("div");
           row.className = "nick-row";
 
@@ -975,26 +1303,166 @@
             checkNickHint(nick, chip);
           });
 
+          const actions = document.createElement("div");
+          actions.className = "row-actions";
+
+          const heartBtn = document.createElement("button");
+          heartBtn.type = "button";
+          heartBtn.className = "fav-heart-btn" + (isFavorite(nick) ? " liked" : "");
+          heartBtn.textContent = "♥";
+          heartBtn.title = "В избранное";
+          heartBtn.addEventListener("click", function () {
+            toggleFavorite(nick);
+            const likedNow = isFavorite(nick);
+            heartBtn.classList.toggle("liked", likedNow);
+            toastLine.textContent = likedNow
+              ? "Добавлено в избранное: " + nick
+              : "Убрано из избранного: " + nick;
+          });
+
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "copy-pill";
           btn.textContent = "Копировать";
           btn.addEventListener("click", function () {
-            if (navigator.clipboard) {
-              navigator.clipboard.writeText(nick).catch(function () {});
-            }
-            toastLine.textContent = "Скопировано: " + nick;
+            copyNickText(nick);
           });
 
+          actions.appendChild(heartBtn);
+          actions.appendChild(btn);
+
           row.appendChild(trigger);
-          row.appendChild(btn);
+          row.appendChild(actions);
           resultsCard.appendChild(row);
         });
 
         toastLine.textContent = "Выдано 10 ников (" + (activeMode === "random" ? "случайные" : "уникальные") + ")";
       }
 
-      // Кнопки "Уникальные" и "Случайные" только переключают режим, без генерации
+      function renderFavoritesList() {
+        const wrap = document.getElementById("favoritesListWrap");
+        if (!wrap) return;
+        updateFavCounter();
+
+        if (!favorites.length) {
+          wrap.innerHTML = '<div class="empty-state">Пока пусто. Нажми ♥ рядом с ником на главной, чтобы сохранить сюда.</div>';
+          return;
+        }
+
+        const listEl = document.createElement("div");
+        listEl.className = "saved-list";
+
+        favorites.forEach(function (nick) {
+          const item = document.createElement("div");
+          item.className = "saved-item";
+
+          const nameSpan = document.createElement("span");
+          nameSpan.className = "saved-nick";
+          nameSpan.textContent = nick;
+
+          const actions = document.createElement("div");
+          actions.className = "row-actions";
+
+          const copyBtn = document.createElement("button");
+          copyBtn.type = "button";
+          copyBtn.className = "copy-pill";
+          copyBtn.textContent = "Копировать";
+          copyBtn.addEventListener("click", function () {
+            copyNickText(nick);
+            copyBtn.textContent = "Готово";
+            setTimeout(function () { copyBtn.textContent = "Копировать"; }, 1100);
+          });
+
+          const delBtn = document.createElement("button");
+          delBtn.type = "button";
+          delBtn.className = "fav-heart-btn liked";
+          delBtn.textContent = "♥";
+          delBtn.title = "Убрать из избранного";
+          delBtn.addEventListener("click", function () {
+            toggleFavorite(nick);
+            renderFavoritesList();
+          });
+
+          actions.appendChild(copyBtn);
+          actions.appendChild(delBtn);
+
+          item.appendChild(nameSpan);
+          item.appendChild(actions);
+          listEl.appendChild(item);
+        });
+
+        wrap.innerHTML = "";
+        wrap.appendChild(listEl);
+      }
+
+      function renderHistoryList() {
+        const wrap = document.getElementById("historyListWrap");
+        if (!wrap) return;
+
+        if (!genHistory.length) {
+          wrap.innerHTML = '<div class="empty-state">История генераций пока пуста.</div>';
+          return;
+        }
+
+        const listEl = document.createElement("div");
+        listEl.className = "saved-list";
+
+        genHistory.forEach(function (entry) {
+          const item = document.createElement("div");
+          item.className = "saved-item";
+
+          const left = document.createElement("div");
+          left.style.minWidth = "0";
+          left.style.display = "flex";
+          left.style.alignItems = "center";
+
+          const nameSpan = document.createElement("span");
+          nameSpan.className = "saved-nick";
+          nameSpan.textContent = entry.nick;
+
+          const metaSpan = document.createElement("span");
+          metaSpan.className = "saved-meta";
+          metaSpan.textContent = entry.time || "";
+
+          left.appendChild(nameSpan);
+          left.appendChild(metaSpan);
+
+          const actions = document.createElement("div");
+          actions.className = "row-actions";
+
+          const copyBtn = document.createElement("button");
+          copyBtn.type = "button";
+          copyBtn.className = "copy-pill";
+          copyBtn.textContent = "Копировать";
+          copyBtn.addEventListener("click", function () {
+            copyNickText(entry.nick);
+            copyBtn.textContent = "Готово";
+            setTimeout(function () { copyBtn.textContent = "Копировать"; }, 1100);
+          });
+
+          actions.appendChild(copyBtn);
+
+          item.appendChild(left);
+          item.appendChild(actions);
+          listEl.appendChild(item);
+        });
+
+        wrap.innerHTML = "";
+        wrap.appendChild(listEl);
+      }
+
+      document.getElementById("clearFavBtn").addEventListener("click", function () {
+        favorites = [];
+        saveJsonArray(FAV_STORAGE_KEY, favorites);
+        renderFavoritesList();
+      });
+
+      document.getElementById("clearHistoryBtn").addEventListener("click", function () {
+        genHistory = [];
+        saveJsonArray(HIST_STORAGE_KEY, genHistory);
+        renderHistoryList();
+      });
+
       uniqueBtn.addEventListener("click", function () {
         setActiveModeButton("unique");
         toastLine.textContent = "Режим: Уникальные — нажми «Сгенерировать»";
@@ -1006,6 +1474,10 @@
       });
 
       generateBtn.addEventListener("click", generateTenNicknames);
+
+      updateFavCounter();
+      renderFavoritesList();
+      renderHistoryList();
     })();
   </script>
 
