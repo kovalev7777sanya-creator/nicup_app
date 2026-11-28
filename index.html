@@ -55,7 +55,6 @@
       font-weight: 800;
     }
 
-    /* Фоновые световые пятна для жидкого стекла */
     .bg-orb {
       position: fixed;
       border-radius: 50%;
@@ -92,7 +91,6 @@
       margin: 0 auto;
     }
 
-    /* Верхняя шапка: логотип NicUp слева без чёрного фона + онлайн справа */
     .top-header {
       display: flex;
       align-items: center;
@@ -134,7 +132,7 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 7px 13px;
+      padding: 7px 14px;
       border-radius: 999px;
       background: var(--glass-surface);
       backdrop-filter: blur(20px) saturate(180%);
@@ -157,7 +155,6 @@
       box-shadow: 0 0 10px var(--green);
     }
 
-    /* Стеклянные карточки */
     .glass-card {
       background: var(--glass-surface);
       backdrop-filter: blur(26px) saturate(185%);
@@ -169,7 +166,6 @@
         0 14px 32px rgba(0, 0, 0, 0.45);
     }
 
-    /* Увеличенный блок рекламы */
     .ad-banner {
       display: block;
       position: relative;
@@ -263,7 +259,6 @@
         0 8px 18px rgba(29, 78, 216, 0.45);
     }
 
-    /* Переключение вкладок */
     .tab-view {
       display: none;
     }
@@ -277,7 +272,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Блок генератора */
     .gen-card {
       padding: 18px;
       margin-bottom: 14px;
@@ -393,7 +387,6 @@
       text-align: center;
     }
 
-    /* Список сгенерированных ников */
     .results-card {
       overflow: hidden;
     }
@@ -433,7 +426,6 @@
       transform: scale(0.94);
     }
 
-    /* Вкладка Профиль */
     .profile-card {
       padding: 22px 18px;
       text-align: center;
@@ -492,7 +484,6 @@
       color: #ffffff;
     }
 
-    /* Нижняя плавающая панель с 2 круглыми кнопками */
     .bottom-dock-wrap {
       position: fixed;
       left: 0;
@@ -557,7 +548,6 @@
   <div class="bg-orb orb-3"></div>
 
   <div class="app-wrap">
-    <!-- Шапка: логотип NicUp слева + онлайн с 0 справа -->
     <header class="top-header">
       <div class="brand-logo" aria-label="NicUp">
         <span class="brand-wordmark">
@@ -571,9 +561,7 @@
       </div>
     </header>
 
-    <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
     <main id="tabHome" class="tab-view active">
-      <!-- Увеличенный рекламный баннер -->
       <a id="adBanner" class="ad-banner" href="https://t.me" target="_blank" rel="noopener">
         <div class="ad-top">
           <span class="ad-tag">Реклама</span>
@@ -583,7 +571,6 @@
         <span class="ad-cta">Перейти →</span>
       </a>
 
-      <!-- Генератор юзернеймов -->
       <section class="glass-card gen-card">
         <div class="section-title">
           <span>Генератор юзернеймов</span>
@@ -614,7 +601,6 @@
       <section id="resultsCard" class="glass-card results-card"></section>
     </main>
 
-    <!-- ВКЛАДКА 2: ПРОФИЛЬ -->
     <section id="tabProfile" class="tab-view">
       <div class="glass-card profile-card">
         <div id="profileAvatar" class="profile-avatar">N</div>
@@ -635,7 +621,6 @@
     </section>
   </div>
 
-  <!-- Нижняя панель с 2 круглыми кнопками -->
   <div class="bottom-dock-wrap">
     <nav class="bottom-dock" aria-label="Навигация">
       <button type="button" class="nav-pill-btn active" data-tab="tabHome">Главная</button>
@@ -651,7 +636,6 @@
         tg.expand();
       }
 
-      // Навигация между вкладками "Главная" и "Профиль"
       const navBtns = document.querySelectorAll(".nav-pill-btn");
       const tabViews = document.querySelectorAll(".tab-view");
 
@@ -666,7 +650,6 @@
         });
       });
 
-      // Заполнение данных профиля из Telegram WebApp
       const tgUser = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
       if (tgUser) {
         const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || "Пользователь";
@@ -676,7 +659,6 @@
         document.getElementById("profileId").textContent = String(tgUser.id);
       }
 
-      // Логика генератора ников
       const lenRange = document.getElementById("lenRange");
       const lenLabel = document.getElementById("lenLabel");
       const prefixInput = document.getElementById("prefixInput");
@@ -777,7 +759,7 @@
     })();
   </script>
 
-  <!-- Статистика JSONBin.io, живой онлайн с 0 каждые 5 сек и загрузка рекламы ad.json -->
+  <!-- Статистика JSONBin.io, живой онлайн с 0 каждые 5 сек (с очередью записи) и ad.json -->
   <script>
     (function () {
       const BIN_ID = "6b0938883957a11c13b6397b";
@@ -787,10 +769,10 @@
       const ONLINE_BASE = 0;
       const ONLINE_TTL_MS = 25000;
       const POLL_INTERVAL_MS = 5000;
-      const PING_INTERVAL_MS = 8000;
+      const PING_INTERVAL_MS = 7000;
 
       let lastPingSentAt = 0;
-      let isWriting = false;
+      let writeQueue = Promise.resolve();
 
       function todayKey() {
         const d = new Date();
@@ -812,13 +794,13 @@
         return localId;
       }
 
-      function getSessionKey() {
-        let sid = sessionStorage.getItem("nicup_live_sid");
-        if (!sid) {
-          sid = "s_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
-          sessionStorage.setItem("nicup_live_sid", sid);
+      function getClientKey() {
+        let cid = sessionStorage.getItem("nicup_client_cid");
+        if (!cid) {
+          cid = "c_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+          sessionStorage.setItem("nicup_client_cid", cid);
         }
-        return getUserId() + "__" + sid;
+        return getUserId() + "_" + cid;
       }
 
       function countActiveUsers(onlineMap, nowTs) {
@@ -840,30 +822,31 @@
       }
 
       function fetchLatestRecord() {
-        return fetch(BIN_URL + "/latest", {
+        return fetch(BIN_URL + "/latest?t=" + Date.now(), {
           cache: "no-store",
-          headers: { "X-Master-Key": API_KEY }
+          headers: {
+            "X-Master-Key": API_KEY,
+            "X-Bin-Meta": "false"
+          }
         })
           .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (res) {
-            return (res && res.record && typeof res.record === "object") ? res.record : null;
+          .then(function (body) {
+            if (!body || typeof body !== "object") return null;
+            return (body.record && typeof body.record === "object") ? body.record : body;
           })
           .catch(function () { return null; });
       }
 
       function mutateBin(updater) {
-        if (isWriting) {
-          return Promise.resolve();
-        }
-        isWriting = true;
-        return fetchLatestRecord()
+        writeQueue = writeQueue
+          .then(function () { return fetchLatestRecord(); })
           .then(function (rec) {
-            const base = rec || {};
+            if (!rec) return;
             const data = {
-              users: (base.users && typeof base.users === "object") ? base.users : {},
-              days: (base.days && typeof base.days === "object") ? base.days : {},
-              ad_clicks: typeof base.ad_clicks === "number" ? base.ad_clicks : 0,
-              online_map: (base.online_map && typeof base.online_map === "object") ? base.online_map : {}
+              users: (rec.users && typeof rec.users === "object") ? rec.users : {},
+              days: (rec.days && typeof rec.days === "object") ? rec.days : {},
+              ad_clicks: typeof rec.ad_clicks === "number" ? rec.ad_clicks : 0,
+              online_map: (rec.online_map && typeof rec.online_map === "object") ? rec.online_map : {}
             };
             updater(data);
             renderOnlineCount(data.online_map);
@@ -874,12 +857,10 @@
                 "X-Master-Key": API_KEY
               },
               body: JSON.stringify(data)
-            });
+            }).then(function () { return undefined; });
           })
-          .catch(function () {})
-          .finally(function () {
-            isWriting = false;
-          });
+          .catch(function () { return undefined; });
+        return writeQueue;
       }
 
       function refreshOnlineOnly() {
@@ -894,14 +875,14 @@
         if (document.hidden) return;
         if (!force && nowTs - lastPingSentAt < PING_INTERVAL_MS) return;
 
-        const skey = getSessionKey();
+        const ckey = getClientKey();
         lastPingSentAt = nowTs;
 
         mutateBin(function (data) {
           if (!data.online_map || typeof data.online_map !== "object") {
             data.online_map = {};
           }
-          data.online_map[skey] = nowTs;
+          data.online_map[ckey] = nowTs;
           Object.keys(data.online_map).forEach(function (k) {
             if (nowTs - Number(data.online_map[k] || 0) > ONLINE_TTL_MS) {
               delete data.online_map[k];
@@ -915,7 +896,7 @@
       if (isNewSession) {
         sessionStorage.setItem("nicup_open_ts", String(now));
         const uid = getUserId();
-        const skey = getSessionKey();
+        const ckey = getClientKey();
         const day = todayKey();
         lastPingSentAt = now;
         mutateBin(function (data) {
@@ -933,7 +914,7 @@
           if (data.days[day].active_users.indexOf(uid) === -1) {
             data.days[day].active_users.push(uid);
           }
-          data.online_map[skey] = now;
+          data.online_map[ckey] = now;
           Object.keys(data.online_map).forEach(function (k) {
             if (now - Number(data.online_map[k] || 0) > ONLINE_TTL_MS) {
               delete data.online_map[k];
