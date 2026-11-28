@@ -21,6 +21,8 @@
       --text-sec: rgba(219, 234, 254, 0.74);
       --blue-bright: #38bdf8;
       --pink: #fb7185;
+      --green: #4ade80;
+      --amber: #fbbf24;
 
       --ios-spring: cubic-bezier(0.22, 1.16, 0.36, 1);
     }
@@ -521,8 +523,9 @@
 
     .nick-trigger {
       display: flex;
-      align-items: center;
-      gap: 7px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
       flex: 1;
       min-width: 0;
       background: transparent;
@@ -540,9 +543,24 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      max-width: 100%;
       text-decoration: underline;
       text-decoration-color: rgba(147, 197, 253, 0.4);
       text-underline-offset: 3px;
+    }
+
+    .nick-substatus {
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .nick-substatus.free {
+      color: var(--green);
+    }
+
+    .nick-substatus.fragment {
+      color: var(--amber);
     }
 
     .row-actions {
@@ -865,6 +883,11 @@
           <button id="toggleUnderscore" type="button" class="pill-toggle">Подчёркивание _</button>
         </div>
 
+        <div class="toggles-row">
+          <button id="toggleFragment" type="button" class="pill-toggle active">Фрагмент</button>
+          <button id="toggleOnlyFree" type="button" class="pill-toggle">Только свободные</button>
+        </div>
+
         <div class="single-toggle-row">
           <button id="toggleNoAt" type="button" class="pill-toggle">Копировать без @</button>
         </div>
@@ -1071,7 +1094,8 @@
 
       function pushToHistory(nicks, modeLabel) {
         const nowStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-        nicks.forEach(function (nick) {
+        nicks.forEach(function (entry) {
+          const nick = typeof entry === "string" ? entry : entry.nick;
           genHistory = genHistory.filter(function (item) { return item.nick !== nick; });
           genHistory.unshift({ nick: nick, mode: modeLabel, time: nowStr });
         });
@@ -1087,6 +1111,8 @@
       const excludeInput = document.getElementById("excludeInput");
       const toggleDigits = document.getElementById("toggleDigits");
       const toggleUnderscore = document.getElementById("toggleUnderscore");
+      const toggleFragment = document.getElementById("toggleFragment");
+      const toggleOnlyFree = document.getElementById("toggleOnlyFree");
       const toggleNoAt = document.getElementById("toggleNoAt");
       const uniqueBtn = document.getElementById("uniqueBtn");
       const randomBtn = document.getElementById("randomBtn");
@@ -1100,9 +1126,11 @@
 
       let useDigits = true;
       let useUnderscore = false;
+      let includeFragment = true;
+      let onlyFree = false;
       let copyWithoutAt = false;
       let activeMode = "unique";
-      let poolNicks = [];
+      let poolItems = [];
       let revealTimers = [];
       let pendingCheckNick = null;
 
@@ -1113,17 +1141,29 @@
         "stark", "omega", "alpha", "delta", "titan", "ghost", "spark", "onyx"
       ];
 
+      function normalizePoolStatus(rawStatus) {
+        const s = String(rawStatus || "").trim().toLowerCase();
+        if (s === "fragment" || s === "on_fragment" || s === "sale" || s === "auction") {
+          return "fragment";
+        }
+        return "free";
+      }
+
       function applyPoolData(data) {
         const items = Array.isArray(data) ? data : (data && Array.isArray(data.usernames) ? data.usernames : []);
-        poolNicks = items
+        poolItems = items
           .map(function (item) {
-            const raw = typeof item === "string" ? item : (item && item.username ? item.username : "");
+            const raw = typeof item === "string"
+              ? item
+              : (item && (item.username || item.nick) ? (item.username || item.nick) : "");
             const clean = String(raw).trim().toLowerCase().replace(/^@/, "");
-            return clean ? "@" + clean : "";
+            if (!clean) return null;
+            const nick = "@" + clean;
+            if (isBusyNick(nick)) return null;
+            const status = typeof item === "object" && item !== null ? normalizePoolStatus(item.status) : "free";
+            return { nick: nick, status: status };
           })
-          .filter(function (nick) {
-            return Boolean(nick) && !isBusyNick(nick);
-          });
+          .filter(Boolean);
       }
 
       // Подтягиваем готовый пул из репозитория (создаётся через GitHub Actions)
@@ -1172,7 +1212,7 @@
         if (targetRow && targetRow.parentNode) {
           targetRow.parentNode.removeChild(targetRow);
         }
-        poolNicks = poolNicks.filter(function (item) { return item !== normNick; });
+        poolItems = poolItems.filter(function (item) { return item.nick !== normNick; });
         if (pendingCheckNick === normNick) {
           pendingCheckNick = null;
           updatePendingBar();
@@ -1220,6 +1260,30 @@
       toggleUnderscore.addEventListener("click", function () {
         useUnderscore = !useUnderscore;
         toggleUnderscore.classList.toggle("active", useUnderscore);
+      });
+
+      function updateAvailabilityToast() {
+        if (onlyFree && includeFragment) {
+          toastLine.textContent = "Режим: Свободные + Фрагмент";
+        } else if (onlyFree) {
+          toastLine.textContent = "Режим: Только свободные (Фрагмент скрыт)";
+        } else if (includeFragment) {
+          toastLine.textContent = "Режим: Фрагмент включён";
+        } else {
+          toastLine.textContent = "Режим: Фрагмент выключен";
+        }
+      }
+
+      toggleFragment.addEventListener("click", function () {
+        includeFragment = !includeFragment;
+        toggleFragment.classList.toggle("active", includeFragment);
+        updateAvailabilityToast();
+      });
+
+      toggleOnlyFree.addEventListener("click", function () {
+        onlyFree = !onlyFree;
+        toggleOnlyFree.classList.toggle("active", onlyFree);
+        updateAvailabilityToast();
       });
 
       toggleNoAt.addEventListener("click", function () {
@@ -1363,7 +1427,22 @@
         return passesExclusions(plain, excl);
       }
 
-      function appendNickRow(nick) {
+      function allowsStatus(status) {
+        if (status === "fragment") {
+          // Если включено "Только свободные" и НЕ включено "Фрагмент" — Fragment не выдаём
+          if (onlyFree && !includeFragment) return false;
+          // Если включено "Только свободные" И "Фрагмент" одновременно — выдаём оба
+          if (onlyFree && includeFragment) return true;
+          // Если "Только свободные" выключено — смотрим на кнопку "Фрагмент"
+          return includeFragment;
+        }
+        return true;
+      }
+
+      function appendNickRow(entry) {
+        const nick = entry.nick;
+        const status = entry.status === "fragment" ? "fragment" : "free";
+
         const row = document.createElement("div");
         row.className = "nick-row";
         row.setAttribute("data-nick", nick);
@@ -1376,10 +1455,22 @@
         span.className = "nick-text";
         span.textContent = nick;
 
+        const subStatus = document.createElement("span");
+        if (status === "fragment") {
+          subStatus.className = "nick-substatus fragment";
+          subStatus.textContent = "Занят на Fragment";
+        } else {
+          subStatus.className = "nick-substatus free";
+          subStatus.textContent = "Свободен";
+        }
+
         trigger.appendChild(span);
+        trigger.appendChild(subStatus);
 
         trigger.addEventListener("click", function () {
-          toastLine.textContent = "Аккаунта с таким юз не найдено";
+          toastLine.textContent = status === "fragment"
+            ? "Юзернейм занят / выставлен на Fragment"
+            : "Аккаунта с таким юз не найдено";
         });
 
         const actions = document.createElement("div");
@@ -1438,14 +1529,27 @@
         const list = [];
         const seen = new Set();
 
-        // Сначала берём подходящие ники из pool.json (если файл подгрузился и ник не помечен как занятый)
-        if (poolNicks.length) {
-          const shuffledPool = poolNicks.slice().sort(function () { return Math.random() - 0.5; });
-          for (let p = 0; p < shuffledPool.length && list.length < 10; p++) {
-            const candidate = shuffledPool[p];
-            if (!seen.has(candidate) && !isBusyNick(candidate) && matchesFilters(candidate, len, kw, excl)) {
-              seen.add(candidate);
-              list.push(candidate);
+        // Сначала берём подходящие ники из pool.json с учётом статусов free / fragment
+        if (poolItems.length) {
+          const shuffledPool = poolItems.slice().sort(function () { return Math.random() - 0.5; });
+          const wantFragmentOnly = includeFragment && !onlyFree;
+
+          const prioritized = wantFragmentOnly
+            ? shuffledPool.filter(function (it) { return it.status === "fragment"; }).concat(
+                shuffledPool.filter(function (it) { return it.status !== "fragment"; })
+              )
+            : shuffledPool;
+
+          for (let p = 0; p < prioritized.length && list.length < 10; p++) {
+            const candidate = prioritized[p];
+            if (
+              !seen.has(candidate.nick) &&
+              !isBusyNick(candidate.nick) &&
+              allowsStatus(candidate.status) &&
+              matchesFilters(candidate.nick, len, kw, excl)
+            ) {
+              seen.add(candidate.nick);
+              list.push({ nick: candidate.nick, status: candidate.status });
             }
           }
         }
@@ -1458,7 +1562,7 @@
           const plain = nick.replace(/^@/, "");
           if (!seen.has(nick) && !isBusyNick(nick) && passesExclusions(plain, excl)) {
             seen.add(nick);
-            list.push(nick);
+            list.push({ nick: nick, status: "free" });
           }
           guard++;
         }
@@ -1473,7 +1577,7 @@
           const fallback = "@" + tail;
           if (!seen.has(fallback) && !isBusyNick(fallback)) {
             seen.add(fallback);
-            list.push(fallback);
+            list.push({ nick: fallback, status: "free" });
           }
           fallbackGuard++;
         }
@@ -1484,9 +1588,9 @@
         resultsCard.innerHTML = "";
         toastLine.textContent = "Генерация: 1 / 10";
 
-        finalTen.forEach(function (nick, idx) {
+        finalTen.forEach(function (entry, idx) {
           const timer = setTimeout(function () {
-            appendNickRow(nick);
+            appendNickRow(entry);
             if (idx === finalTen.length - 1) {
               toastLine.textContent = "Готово: выдано 10 ников";
             } else {
@@ -1570,195 +1674,4 @@
           item.className = "saved-item";
 
           const left = document.createElement("div");
-          left.style.minWidth = "0";
-          left.style.display = "flex";
-          left.style.alignItems = "center";
-
-          const nameSpan = document.createElement("span");
-          nameSpan.className = "saved-nick";
-          nameSpan.textContent = entry.nick;
-
-          const metaSpan = document.createElement("span");
-          metaSpan.className = "saved-meta";
-          metaSpan.textContent = entry.time || "";
-
-          left.appendChild(nameSpan);
-          left.appendChild(metaSpan);
-
-          const actions = document.createElement("div");
-          actions.className = "row-actions";
-
-          const copyBtn = document.createElement("button");
-          copyBtn.type = "button";
-          copyBtn.className = "copy-pill";
-          copyBtn.textContent = "Копировать";
-          copyBtn.addEventListener("click", function () {
-            copyNickText(entry.nick);
-            copyBtn.textContent = "Готово";
-            setTimeout(function () { copyBtn.textContent = "Копировать"; }, 1100);
-          });
-
-          actions.appendChild(copyBtn);
-
-          item.appendChild(left);
-          item.appendChild(actions);
-          listEl.appendChild(item);
-        });
-
-        wrap.innerHTML = "";
-        wrap.appendChild(listEl);
-      }
-
-      document.getElementById("clearFavBtn").addEventListener("click", function () {
-        favorites = [];
-        saveJsonArray(FAV_STORAGE_KEY, favorites);
-        renderFavoritesList();
-      });
-
-      document.getElementById("clearHistoryBtn").addEventListener("click", function () {
-        genHistory = [];
-        saveJsonArray(HIST_STORAGE_KEY, genHistory);
-        renderHistoryList();
-      });
-
-      uniqueBtn.addEventListener("click", function () {
-        setActiveModeButton("unique");
-        toastLine.textContent = "Режим: Уникальные — нажми «Сгенерировать»";
-      });
-
-      randomBtn.addEventListener("click", function () {
-        setActiveModeButton("random");
-        toastLine.textContent = "Режим: Случайные — нажми «Сгенерировать»";
-      });
-
-      generateBtn.addEventListener("click", generateTenNicknames);
-
-      updateFavCounter();
-      renderFavoritesList();
-      renderHistoryList();
-    })();
-  </script>
-
-  <!-- Статистика JSONBin.io и загрузка рекламы ad.json -->
-  <script>
-    (function () {
-      const BIN_ID = "6b0938883957a11c13b6397b";
-      const API_KEY = "$2a$10$nbho.No3FFfEiqFA5FQcwuYL/kMVR1KOPuHPv0vsFdgk9eEiLbAVa";
-      const BIN_URL = "https://api.jsonbin.io/v3/b/" + BIN_ID;
-
-      let writeQueue = Promise.resolve();
-
-      function todayKey() {
-        const d = new Date();
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        const day = String(d.getDate()).padStart(2, "0");
-        return y + "-" + m + "-" + day;
-      }
-
-      function getUserId() {
-        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-        const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
-        if (u && u.id) return String(u.id);
-        let localId = localStorage.getItem("nicup_local_uid");
-        if (!localId) {
-          localId = "web_" + Math.random().toString(36).slice(2, 10);
-          localStorage.setItem("nicup_local_uid", localId);
-        }
-        return localId;
-      }
-
-      function fetchLatestRecord() {
-        return fetch(BIN_URL + "/latest?t=" + Date.now(), {
-          cache: "no-store",
-          headers: {
-            "X-Master-Key": API_KEY
-          }
-        })
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (body) {
-            if (!body || typeof body !== "object") return {};
-            if (body.record && typeof body.record === "object") return body.record;
-            return body;
-          })
-          .catch(function () { return {}; });
-      }
-
-      function mutateBin(updater) {
-        writeQueue = writeQueue
-          .then(function () { return fetchLatestRecord(); })
-          .then(function (rec) {
-            const base = (rec && typeof rec === "object") ? rec : {};
-            const data = {
-              users: (base.users && typeof base.users === "object") ? base.users : {},
-              days: (base.days && typeof base.days === "object") ? base.days : {},
-              ad_clicks: typeof base.ad_clicks === "number" ? base.ad_clicks : 0
-            };
-            updater(data);
-            return fetch(BIN_URL, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-                "X-Master-Key": API_KEY
-              },
-              body: JSON.stringify(data)
-            }).then(function () { return undefined; });
-          })
-          .catch(function () { return undefined; });
-        return writeQueue;
-      }
-
-      const now = Date.now();
-      if (now - Number(sessionStorage.getItem("nicup_open_ts") || 0) > 1500) {
-        sessionStorage.setItem("nicup_open_ts", String(now));
-        const uid = getUserId();
-        const day = todayKey();
-        mutateBin(function (data) {
-          if (!data.users[uid]) {
-            data.users[uid] = { first_seen: day, last_seen: day };
-          } else {
-            data.users[uid].last_seen = day;
-          }
-          if (!data.days[day]) {
-            data.days[day] = { new_users: 0, active_users: [] };
-          }
-          if (!Array.isArray(data.days[day].active_users)) {
-            data.days[day].active_users = [];
-          }
-          if (data.days[day].active_users.indexOf(uid) === -1) {
-            data.days[day].active_users.push(uid);
-          }
-        });
-      }
-
-      fetch("./ad.json?t=" + Date.now(), { cache: "no-store" })
-        .then(function (r) { return r.json(); })
-        .then(function (cfg) {
-          const banner = document.getElementById("adBanner");
-          if (!banner) return;
-
-          if (cfg.enabled === false) {
-            banner.style.setProperty("display", "none", "important");
-            return;
-          }
-
-          const titleEl = document.getElementById("adTitle");
-          const descEl = document.getElementById("adDesc");
-
-          if (titleEl && cfg.title) titleEl.textContent = cfg.title;
-          if (descEl && cfg.desc) descEl.textContent = cfg.desc;
-          if (cfg.url) banner.href = cfg.url;
-
-          banner.addEventListener("click", function () {
-            mutateBin(function (data) {
-              data.ad_clicks = (typeof data.ad_clicks === "number" ? data.ad_clicks : 0) + 1;
-            });
-          });
-
-          banner.style.setProperty("display", "block", "important");
-        })
-        .catch(function () {});
-    })();
-  </script>
-</body>
-</html>
+          left.style.minWidth
