@@ -8,6 +8,7 @@
   <style>
     :root {
       --bg-deep: #040711;
+      --bg-grad-top: #0b1b3d;
       --orb-blue: rgba(37, 99, 235, 0.34);
       --orb-cyan: rgba(56, 189, 248, 0.22);
       --orb-indigo: rgba(29, 78, 216, 0.26);
@@ -24,7 +25,55 @@
       --green: #4ade80;
       --amber: #fbbf24;
 
+      --brand-nic: #ffffff;
+      --dock-bg: rgba(10, 18, 38, 0.78);
+      --dock-border: rgba(96, 165, 250, 0.28);
+      --row-border: rgba(96, 165, 250, 0.14);
+      --nick-text: #f8fafc;
+      --nick-underline: rgba(147, 197, 253, 0.4);
+      --pending-bg: rgba(14, 24, 48, 0.78);
+      --pending-text: #e2e8f0;
+      --mode-row-bg: rgba(4, 9, 22, 0.58);
+      --mode-row-border: rgba(96, 165, 250, 0.18);
+      --ad-bg: radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.34), transparent 52%),
+        linear-gradient(135deg, rgba(15, 29, 64, 0.9) 0%, rgba(29, 78, 216, 0.58) 100%);
+      --ad-border: rgba(96, 165, 250, 0.38);
+
       --ios-spring: cubic-bezier(0.22, 1.16, 0.36, 1);
+    }
+
+    body.light-theme {
+      --bg-deep: #e8eef8;
+      --bg-grad-top: #f8fbff;
+      --orb-blue: rgba(59, 130, 246, 0.18);
+      --orb-cyan: rgba(14, 165, 233, 0.14);
+      --orb-indigo: rgba(99, 102, 241, 0.14);
+
+      --glass-surface: rgba(255, 255, 255, 0.74);
+      --glass-recessed: rgba(226, 236, 250, 0.82);
+      --glass-border: rgba(59, 130, 246, 0.22);
+      --glass-highlight: rgba(255, 255, 255, 0.85);
+
+      --text-main: #0f172a;
+      --text-sec: rgba(30, 41, 59, 0.76);
+      --blue-bright: #0284c7;
+      --pink: #e11d48;
+      --green: #16a34a;
+      --amber: #d97706;
+
+      --brand-nic: #0f172a;
+      --dock-bg: rgba(255, 255, 255, 0.86);
+      --dock-border: rgba(59, 130, 246, 0.24);
+      --row-border: rgba(15, 23, 42, 0.08);
+      --nick-text: #0f172a;
+      --nick-underline: rgba(37, 99, 235, 0.35);
+      --pending-bg: rgba(255, 255, 255, 0.9);
+      --pending-text: #0f172a;
+      --mode-row-bg: rgba(226, 236, 250, 0.85);
+      --mode-row-border: rgba(59, 130, 246, 0.2);
+      --ad-bg: radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.26), transparent 52%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(219, 234, 254, 0.86) 100%);
+      --ad-border: rgba(59, 130, 246, 0.32);
     }
 
     * {
@@ -36,13 +85,14 @@
 
     body {
       min-height: 100vh;
-      background: radial-gradient(circle at 20% 0%, #0b1b3d 0%, var(--bg-deep) 62%);
+      background: radial-gradient(circle at 20% 0%, var(--bg-grad-top) 0%, var(--bg-deep) 62%);
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
       font-weight: 600;
       overflow-x: hidden;
       padding: 14px 16px 104px;
       position: relative;
+      transition: background 0.25s ease, color 0.2s ease;
     }
 
     button,
@@ -119,7 +169,7 @@
     }
 
     .brand-nic {
-      color: #ffffff;
+      color: var(--brand-nic);
     }
 
     .brand-up {
@@ -143,7 +193,7 @@
       cursor: pointer;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.3),
-        0 8px 18px rgba(0, 0, 0, 0.4);
+        0 8px 18px rgba(0, 0, 0, 0.25);
       transition: transform 0.2s var(--ios-spring), border-color 0.2s ease;
     }
 
@@ -166,7 +216,7 @@
       border-radius: 26px;
       box-shadow:
         inset 0 1px 0 var(--glass-highlight),
-        0 14px 32px rgba(0, 0, 0, 0.45);
+        0 14px 32px rgba(0, 0, 0, 0.22);
     }
 
     .ad-banner {
@@ -178,15 +228,13 @@
       min-height: 164px;
       border-radius: 28px;
       margin-bottom: 16px;
-      background:
-        radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.34), transparent 52%),
-        linear-gradient(135deg, rgba(15, 29, 64, 0.9) 0%, rgba(29, 78, 216, 0.58) 100%);
+      background: var(--ad-bg);
       backdrop-filter: blur(28px) saturate(190%);
       -webkit-backdrop-filter: blur(28px) saturate(190%);
-      border: 1px solid rgba(96, 165, 250, 0.38);
+      border: 1px solid var(--ad-border);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.28),
-        0 16px 36px rgba(3, 10, 28, 0.55);
+        0 16px 36px rgba(3, 10, 28, 0.24);
       overflow: hidden;
       transition: transform 0.24s var(--ios-spring), border-color 0.2s ease;
     }
@@ -221,9 +269,9 @@
       font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #bae6fd;
-      background: rgba(37, 99, 235, 0.38);
-      border: 1px solid rgba(125, 211, 252, 0.32);
+      color: var(--blue-bright);
+      background: rgba(37, 99, 235, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.35);
       padding: 4px 10px;
       border-radius: 999px;
     }
@@ -301,6 +349,39 @@
       gap: 8px;
     }
 
+    .gear-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-recessed);
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.25s var(--ios-spring), border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .gear-btn.collapsed {
+      color: var(--text-sec);
+      transform: rotate(-45deg);
+    }
+
+    .gear-btn:active {
+      transform: scale(0.9);
+    }
+
+    .gen-options-panel {
+      display: block;
+    }
+
+    .gen-options-panel.hidden {
+      display: none;
+    }
+
     .control-group {
       margin-bottom: 12px;
     }
@@ -338,7 +419,7 @@
       border-radius: 16px;
       border: 1px solid var(--glass-border);
       background: var(--glass-recessed);
-      color: #fff;
+      color: var(--text-main);
       font-size: 13px;
       outline: none;
       transition: border-color 0.2s ease;
@@ -380,7 +461,7 @@
     .pill-toggle.active {
       background: rgba(37, 99, 235, 0.3);
       border-color: rgba(96, 165, 250, 0.65);
-      color: #ffffff;
+      color: var(--text-main);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
 
@@ -390,8 +471,8 @@
       gap: 8px;
       padding: 4px;
       border-radius: 999px;
-      background: rgba(4, 9, 22, 0.58);
-      border: 1px solid rgba(96, 165, 250, 0.18);
+      background: var(--mode-row-bg);
+      border: 1px solid var(--mode-row-border);
       margin-bottom: 12px;
     }
 
@@ -466,10 +547,10 @@
       padding: 9px 12px;
       margin-bottom: 10px;
       border-radius: 16px;
-      background: rgba(14, 24, 48, 0.78);
+      background: var(--pending-bg);
       border: 1px solid rgba(96, 165, 250, 0.34);
       font-size: 12px;
-      color: #e2e8f0;
+      color: var(--pending-text);
     }
 
     .pending-bar.show {
@@ -488,7 +569,7 @@
       border-radius: 999px;
       border: 1px solid rgba(251, 113, 133, 0.45);
       background: rgba(251, 113, 133, 0.16);
-      color: #fda4af;
+      color: var(--pink);
       font-size: 11px;
       font-weight: 800;
       cursor: pointer;
@@ -513,7 +594,7 @@
       justify-content: space-between;
       gap: 6px;
       padding: 10px 12px;
-      border-bottom: 1px solid rgba(96, 165, 250, 0.14);
+      border-bottom: 1px solid var(--row-border);
       animation: nickAppear 0.28s var(--ios-spring) both;
     }
 
@@ -539,13 +620,13 @@
       font-size: 14px;
       font-weight: 800;
       letter-spacing: 0.01em;
-      color: #f8fafc;
+      color: var(--nick-text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 100%;
       text-decoration: underline;
-      text-decoration-color: rgba(147, 197, 253, 0.4);
+      text-decoration-color: var(--nick-underline);
       text-underline-offset: 3px;
     }
 
@@ -574,9 +655,9 @@
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      border: 1px solid rgba(96, 165, 250, 0.28);
-      background: rgba(4, 9, 22, 0.65);
-      color: rgba(219, 234, 254, 0.55);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-recessed);
+      color: var(--text-sec);
       font-size: 14px;
       line-height: 1;
       display: inline-flex;
@@ -601,8 +682,8 @@
       padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid rgba(96, 165, 250, 0.34);
-      background: rgba(37, 99, 235, 0.24);
-      color: #bae6fd;
+      background: rgba(37, 99, 235, 0.2);
+      color: var(--blue-bright);
       font-size: 11px;
       font-weight: 800;
       cursor: pointer;
@@ -630,6 +711,7 @@
       font-size: 26px;
       font-weight: 900;
       background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+      color: #ffffff;
       border: 2px solid rgba(147, 197, 253, 0.45);
       box-shadow: 0 10px 24px rgba(37, 99, 235, 0.4);
       overflow: hidden;
@@ -678,7 +760,7 @@
     .info-box-val {
       font-size: 14px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--text-main);
     }
 
     .support-links-grid {
@@ -697,14 +779,15 @@
       text-decoration: none;
       font-size: 12px;
       font-weight: 800;
-      color: #ffffff;
-      background: rgba(37, 99, 235, 0.28);
-      border: 1px solid rgba(96, 165, 250, 0.38);
+      color: var(--text-main);
+      background: rgba(37, 99, 235, 0.22);
+      border: 1px solid var(--glass-border);
       transition: transform 0.2s var(--ios-spring);
     }
 
     .support-link-btn.primary {
       background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: #ffffff;
       border-color: rgba(147, 197, 253, 0.5);
     }
 
@@ -720,8 +803,8 @@
     .mini-clear-btn {
       padding: 5px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(96, 165, 250, 0.28);
-      background: rgba(4, 9, 22, 0.65);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-recessed);
       color: var(--text-sec);
       font-size: 11px;
       font-weight: 800;
@@ -739,7 +822,7 @@
       padding: 14px 8px;
       border-radius: 16px;
       background: var(--glass-recessed);
-      border: 1px dashed rgba(96, 165, 250, 0.22);
+      border: 1px dashed var(--glass-border);
     }
 
     .saved-list {
@@ -758,13 +841,13 @@
       padding: 9px 12px;
       border-radius: 14px;
       background: var(--glass-recessed);
-      border: 1px solid rgba(96, 165, 250, 0.18);
+      border: 1px solid var(--row-border);
     }
 
     .saved-nick {
       font-size: 13px;
       font-weight: 800;
-      color: #f8fafc;
+      color: var(--nick-text);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -776,6 +859,19 @@
       margin-left: 6px;
     }
 
+    .settings-desc {
+      font-size: 12px;
+      color: var(--text-sec);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .theme-switch-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
     .bottom-dock-wrap {
       position: fixed;
       left: 0;
@@ -784,7 +880,7 @@
       z-index: 50;
       display: flex;
       justify-content: center;
-      padding: 0 16px;
+      padding: 0 12px;
       pointer-events: none;
     }
 
@@ -792,37 +888,38 @@
       pointer-events: auto;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       padding: 5px;
       border-radius: 999px;
-      background: rgba(10, 18, 38, 0.78);
+      background: var(--dock-bg);
       backdrop-filter: blur(28px) saturate(200%);
       -webkit-backdrop-filter: blur(28px) saturate(200%);
-      border: 1px solid rgba(96, 165, 250, 0.28);
+      border: 1px solid var(--dock-border);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.24),
-        0 14px 34px rgba(0, 0, 0, 0.65);
+        0 14px 34px rgba(0, 0, 0, 0.35);
     }
 
     .nav-pill-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      min-width: 118px;
-      padding: 10px 18px;
+      gap: 5px;
+      min-width: 96px;
+      padding: 10px 13px;
       border: none;
       border-radius: 999px;
       background: transparent;
       color: var(--text-sec);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       cursor: pointer;
+      white-space: nowrap;
       transition: all 0.24s var(--ios-spring);
     }
 
     .nav-pill-btn.active {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.48), rgba(29, 78, 216, 0.58));
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.55), rgba(29, 78, 216, 0.72));
       color: #ffffff;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.3),
@@ -863,38 +960,41 @@
       <section class="glass-card gen-card">
         <div class="section-title">
           <span>Генератор юзернеймов</span>
+          <button id="gearToggleBtn" type="button" class="gear-btn" title="Скрыть/показать настройки генератора" aria-label="Настройки генератора">⚙</button>
         </div>
 
-        <div class="control-group">
-          <div class="control-label">
-            <span>Длина ника</span>
-            <span id="lenLabel" class="length-val">7 символов</span>
+        <div id="genOptionsPanel" class="gen-options-panel">
+          <div class="control-group">
+            <div class="control-label">
+              <span>Длина ника</span>
+              <span id="lenLabel" class="length-val">7 символов</span>
+            </div>
+            <input id="lenRange" type="range" min="5" max="15" value="7" />
           </div>
-          <input id="lenRange" type="range" min="5" max="15" value="7" />
-        </div>
 
-        <div class="inputs-stack">
-          <input id="prefixInput" class="glass-input" type="text" maxlength="12" placeholder="Ключевое слово (необязательно)" />
-          <input id="excludeInput" class="glass-input" type="text" maxlength="40" placeholder="Исключить буквы или слова (напр: z, q, cyber)" />
-        </div>
+          <div class="inputs-stack">
+            <input id="prefixInput" class="glass-input" type="text" maxlength="12" placeholder="Ключевое слово (необязательно)" />
+            <input id="excludeInput" class="glass-input" type="text" maxlength="40" placeholder="Исключить буквы или слова (напр: z, q, cyber)" />
+          </div>
 
-        <div class="toggles-row">
-          <button id="toggleDigits" type="button" class="pill-toggle active">Цифры 0–9</button>
-          <button id="toggleUnderscore" type="button" class="pill-toggle">Подчёркивание _</button>
-        </div>
+          <div class="toggles-row">
+            <button id="toggleDigits" type="button" class="pill-toggle active">Цифры 0–9</button>
+            <button id="toggleUnderscore" type="button" class="pill-toggle">Подчёркивание _</button>
+          </div>
 
-        <div class="toggles-row">
-          <button id="toggleFragment" type="button" class="pill-toggle active">Фрагмент</button>
-          <button id="toggleOnlyFree" type="button" class="pill-toggle">Только свободные</button>
-        </div>
+          <div class="toggles-row">
+            <button id="toggleFragment" type="button" class="pill-toggle active">Фрагмент</button>
+            <button id="toggleOnlyFree" type="button" class="pill-toggle">Только свободные</button>
+          </div>
 
-        <div class="single-toggle-row">
-          <button id="toggleNoAt" type="button" class="pill-toggle">Копировать без @</button>
-        </div>
+          <div class="single-toggle-row">
+            <button id="toggleNoAt" type="button" class="pill-toggle">Копировать без @</button>
+          </div>
 
-        <div class="mode-switch-row">
-          <button id="uniqueBtn" type="button" class="mode-pill-btn active">Уникальные</button>
-          <button id="randomBtn" type="button" class="mode-pill-btn">Случайные</button>
+          <div class="mode-switch-row">
+            <button id="uniqueBtn" type="button" class="mode-pill-btn active">Уникальные</button>
+            <button id="randomBtn" type="button" class="mode-pill-btn">Случайные</button>
+          </div>
         </div>
 
         <button id="generateBtn" type="button" class="generate-main-btn">Сгенерировать</button>
@@ -952,12 +1052,26 @@
         <div id="historyListWrap"></div>
       </div>
     </section>
+
+    <section id="tabSettings" class="tab-view">
+      <div class="glass-card profile-section-card">
+        <div class="section-title">
+          <span>Тема приложения</span>
+        </div>
+        <div class="settings-desc">Выбери оформление интерфейса. Настройка сохраняется автоматически.</div>
+        <div class="theme-switch-row">
+          <button id="themeDarkBtn" type="button" class="pill-toggle active">Тёмная</button>
+          <button id="themeLightBtn" type="button" class="pill-toggle">Светлая</button>
+        </div>
+      </div>
+    </section>
   </div>
 
   <div class="bottom-dock-wrap">
     <nav class="bottom-dock" aria-label="Навигация">
       <button type="button" class="nav-pill-btn active" data-tab="tabHome">Главная</button>
       <button type="button" class="nav-pill-btn" data-tab="tabProfile">Профиль</button>
+      <button type="button" class="nav-pill-btn" data-tab="tabSettings">Настройки</button>
     </nav>
   </div>
 
@@ -976,6 +1090,38 @@
         tg.ready();
         tg.expand();
       }
+
+      const THEME_STORAGE_KEY = "nicup_theme_v1";
+      const themeDarkBtn = document.getElementById("themeDarkBtn");
+      const themeLightBtn = document.getElementById("themeLightBtn");
+
+      function applyTheme(theme) {
+        const isLight = theme === "light";
+        document.body.classList.toggle("light-theme", isLight);
+        if (themeDarkBtn) themeDarkBtn.classList.toggle("active", !isLight);
+        if (themeLightBtn) themeLightBtn.classList.toggle("active", isLight);
+        try {
+          localStorage.setItem(THEME_STORAGE_KEY, isLight ? "light" : "dark");
+        } catch (e) {}
+      }
+
+      if (themeDarkBtn) {
+        themeDarkBtn.addEventListener("click", function () {
+          applyTheme("dark");
+        });
+      }
+
+      if (themeLightBtn) {
+        themeLightBtn.addEventListener("click", function () {
+          applyTheme("light");
+        });
+      }
+
+      let savedTheme = "dark";
+      try {
+        savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "dark";
+      } catch (e) {}
+      applyTheme(savedTheme);
 
       const navBtns = document.querySelectorAll(".nav-pill-btn");
       const tabViews = document.querySelectorAll(".tab-view");
@@ -1105,6 +1251,8 @@
         saveJsonArray(HIST_STORAGE_KEY, genHistory);
       }
 
+      const gearToggleBtn = document.getElementById("gearToggleBtn");
+      const genOptionsPanel = document.getElementById("genOptionsPanel");
       const lenRange = document.getElementById("lenRange");
       const lenLabel = document.getElementById("lenLabel");
       const prefixInput = document.getElementById("prefixInput");
@@ -1123,6 +1271,15 @@
       const pendingCheckLabel = document.getElementById("pendingCheckLabel");
       const pendingBusyBtn = document.getElementById("pendingBusyBtn");
       const pendingDismissBtn = document.getElementById("pendingDismissBtn");
+
+      let optionsHidden = false;
+      if (gearToggleBtn && genOptionsPanel) {
+        gearToggleBtn.addEventListener("click", function () {
+          optionsHidden = !optionsHidden;
+          genOptionsPanel.classList.toggle("hidden", optionsHidden);
+          gearToggleBtn.classList.toggle("collapsed", optionsHidden);
+        });
+      }
 
       let useDigits = true;
       let useUnderscore = false;
