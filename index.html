@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NicUp — Генератор юзернеймов</title>
+  <title>NicUp — Генератор</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -13,14 +13,14 @@
       --orb-cyan: rgba(56, 189, 248, 0.22);
       --orb-indigo: rgba(29, 78, 216, 0.26);
 
-      --glass-surface: rgba(14, 24, 48, 0.56);
-      --glass-surface-strong: rgba(20, 36, 72, 0.72);
-      --glass-recessed: rgba(4, 9, 22, 0.66);
-      --glass-border: rgba(96, 165, 250, 0.22);
-      --glass-highlight: rgba(186, 230, 253, 0.26);
+      --glass-surface: rgba(14, 24, 48, 0.58);
+      --glass-surface-strong: rgba(20, 36, 72, 0.74);
+      --glass-recessed: rgba(4, 9, 22, 0.68);
+      --glass-border: rgba(96, 165, 250, 0.24);
+      --glass-highlight: rgba(186, 230, 253, 0.28);
 
       --text-main: #ffffff;
-      --text-sec: rgba(219, 234, 254, 0.7);
+      --text-sec: rgba(219, 234, 254, 0.74);
       --blue-main: #2563eb;
       --blue-bright: #38bdf8;
       --green: #34d399;
@@ -40,9 +40,19 @@
       background: radial-gradient(circle at 20% 0%, #0b1b3d 0%, var(--bg-deep) 62%);
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      font-weight: 600;
       overflow-x: hidden;
-      padding: 14px 16px 104px;
+      padding: 14px 16px 106px;
       position: relative;
+    }
+
+    button,
+    input,
+    .nick-text,
+    .section-title,
+    .ad-title,
+    .nav-pill-btn {
+      font-weight: 800;
     }
 
     /* Фоновые световые пятна для жидкого стекла */
@@ -82,44 +92,41 @@
       margin: 0 auto;
     }
 
-    /* Верхняя шапка с логотипом слева */
+    /* Верхняя шапка с логотипом NicUp слева без чёрного фона */
     .top-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
-      padding: 4px 2px;
+      padding: 6px 2px 12px;
+      margin-bottom: 6px;
+      background: transparent;
     }
 
     .brand-logo {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      text-decoration: none;
+      background: transparent;
       user-select: none;
+      line-height: 1;
     }
 
     .brand-wordmark {
-      font-size: 27px;
+      display: inline-block;
+      font-family: "Arial Black", "Segoe UI Black", "SF Pro Display", Impact, sans-serif;
+      font-size: 29px;
       font-weight: 900;
       font-style: italic;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.045em;
       line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      text-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+      background: transparent;
     }
 
     .brand-nic {
-      background: linear-gradient(180deg, #ffffff 10%, #cbd5e1 92%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #ffffff;
     }
 
     .brand-up {
-      background: linear-gradient(180deg, #60a5fa 0%, #1d4ed8 95%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #1677ff;
       margin-left: 1px;
     }
 
@@ -141,16 +148,16 @@
       position: relative;
       text-decoration: none;
       color: var(--text-main);
-      padding: 22px 20px;
-      min-height: 148px;
+      padding: 24px 22px;
+      min-height: 164px;
       border-radius: 28px;
       margin-bottom: 16px;
       background:
         radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.34), transparent 52%),
-        linear-gradient(135deg, rgba(15, 29, 64, 0.88) 0%, rgba(29, 78, 216, 0.56) 100%);
+        linear-gradient(135deg, rgba(15, 29, 64, 0.9) 0%, rgba(29, 78, 216, 0.58) 100%);
       backdrop-filter: blur(28px) saturate(190%);
       -webkit-backdrop-filter: blur(28px) saturate(190%);
-      border: 1px solid rgba(96, 165, 250, 0.36);
+      border: 1px solid rgba(96, 165, 250, 0.38);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.28),
         0 16px 36px rgba(3, 10, 28, 0.55);
@@ -189,28 +196,28 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: #bae6fd;
-      background: rgba(37, 99, 235, 0.35);
-      border: 1px solid rgba(125, 211, 252, 0.3);
+      background: rgba(37, 99, 235, 0.38);
+      border: 1px solid rgba(125, 211, 252, 0.32);
       padding: 4px 10px;
       border-radius: 999px;
     }
 
     .ad-title {
       position: relative;
-      font-size: 20px;
+      font-size: 21px;
       font-weight: 800;
       letter-spacing: -0.02em;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
       line-height: 1.2;
     }
 
     .ad-desc {
       position: relative;
-      font-size: 13.5px;
+      font-size: 14px;
       color: var(--text-sec);
-      line-height: 1.4;
-      margin-bottom: 14px;
-      max-width: 88%;
+      line-height: 1.42;
+      margin-bottom: 16px;
+      max-width: 90%;
     }
 
     .ad-cta {
@@ -218,10 +225,10 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 9px 18px;
+      padding: 10px 19px;
       border-radius: 999px;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       color: #ffffff;
       background: linear-gradient(135deg, #3b82f6, #1d4ed8);
       box-shadow:
@@ -251,7 +258,7 @@
 
     .section-title {
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
@@ -268,7 +275,7 @@
       font-size: 13px;
       color: var(--text-sec);
       margin-bottom: 8px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .length-val {
@@ -316,17 +323,17 @@
       border: 1px solid var(--glass-border);
       color: var(--text-sec);
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 800;
       cursor: pointer;
       transition: all 0.2s var(--ios-spring);
       user-select: none;
     }
 
     .pill-toggle.active {
-      background: rgba(37, 99, 235, 0.28);
-      border-color: rgba(96, 165, 250, 0.6);
+      background: rgba(37, 99, 235, 0.3);
+      border-color: rgba(96, 165, 250, 0.65);
       color: #ffffff;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
 
     .primary-btn {
@@ -337,7 +344,7 @@
       background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
       color: #ffffff;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.35),
@@ -354,7 +361,7 @@
       padding: 0 6px;
       margin-bottom: 8px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--green);
       text-align: center;
     }
@@ -369,7 +376,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 13px 16px;
-      border-bottom: 1px solid rgba(96, 165, 250, 0.12);
+      border-bottom: 1px solid rgba(96, 165, 250, 0.14);
     }
 
     .nick-row:last-child {
@@ -378,7 +385,7 @@
 
     .nick-text {
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.01em;
       color: #f8fafc;
     }
@@ -386,11 +393,11 @@
     .copy-pill {
       padding: 7px 14px;
       border-radius: 999px;
-      border: 1px solid rgba(96, 165, 250, 0.32);
-      background: rgba(37, 99, 235, 0.22);
+      border: 1px solid rgba(96, 165, 250, 0.34);
+      background: rgba(37, 99, 235, 0.24);
       color: #bae6fd;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       transition: transform 0.18s var(--ios-spring), background 0.18s ease;
     }
@@ -414,7 +421,7 @@
       align-items: center;
       justify-content: center;
       font-size: 28px;
-      font-weight: 800;
+      font-weight: 900;
       background: linear-gradient(135deg, #3b82f6, #1e3a8a);
       border: 2px solid rgba(147, 197, 253, 0.45);
       box-shadow: 0 10px 24px rgba(37, 99, 235, 0.4);
@@ -454,7 +461,7 @@
 
     .info-box-val {
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 800;
       color: #ffffff;
     }
 
@@ -478,7 +485,7 @@
       gap: 8px;
       padding: 6px;
       border-radius: 999px;
-      background: rgba(10, 18, 38, 0.76);
+      background: rgba(10, 18, 38, 0.78);
       backdrop-filter: blur(28px) saturate(200%);
       -webkit-backdrop-filter: blur(28px) saturate(200%);
       border: 1px solid rgba(96, 165, 250, 0.28);
@@ -492,20 +499,20 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      min-width: 134px;
+      min-width: 136px;
       padding: 12px 22px;
       border: none;
       border-radius: 999px;
       background: transparent;
       color: var(--text-sec);
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       transition: all 0.24s var(--ios-spring);
     }
 
     .nav-pill-btn.active {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.45), rgba(29, 78, 216, 0.55));
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.48), rgba(29, 78, 216, 0.58));
       color: #ffffff;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.3),
@@ -523,9 +530,9 @@
   <div class="bg-orb orb-3"></div>
 
   <div class="app-wrap">
-    <!-- Шапка: логотип слева -->
+    <!-- Шапка: логотип NicUp слева без чёрного фона -->
     <header class="top-header">
-      <div class="brand-logo">
+      <div class="brand-logo" aria-label="NicUp">
         <span class="brand-wordmark">
           <span class="brand-nic">Nic</span><span class="brand-up">Up</span>
         </span>
@@ -665,7 +672,6 @@
       });
 
       function buildUsername(length, rawPrefix) {
-        const letters = "abcdefghijklmnopqrstuvwxyz";
         const vowels = "aeiouy";
         const consonants = "bcdfghjklmnpqrstvwxz";
         const digits = "0123456789";
