@@ -2,754 +2,790 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NicUp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>NicUp — Генератор</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
+    :root {
+      --bg-deep: #040711;
+      --bg-mid: #081226;
+      --orb-blue: rgba(37, 99, 235, 0.34);
+      --orb-cyan: rgba(56, 189, 248, 0.22);
+      --orb-indigo: rgba(29, 78, 216, 0.26);
+
+      --glass-surface: rgba(14, 24, 48, 0.58);
+      --glass-surface-strong: rgba(20, 36, 72, 0.74);
+      --glass-recessed: rgba(4, 9, 22, 0.68);
+      --glass-border: rgba(96, 165, 250, 0.24);
+      --glass-highlight: rgba(186, 230, 253, 0.28);
+
+      --text-main: #ffffff;
+      --text-sec: rgba(219, 234, 254, 0.74);
+      --blue-main: #2563eb;
+      --blue-bright: #38bdf8;
+      --green: #34d399;
+
+      --ios-spring: cubic-bezier(0.22, 1.16, 0.36, 1);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background: #060b19;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      padding: 14px 14px 90px;
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 0%, #0b1b3d 0%, var(--bg-deep) 62%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      font-weight: 600;
+      overflow-x: hidden;
+      padding: 14px 16px 106px;
+      position: relative;
     }
 
-    .wrap {
+    button,
+    input,
+    .nick-text,
+    .section-title,
+    .ad-title,
+    .nav-pill-btn {
+      font-weight: 800;
+    }
+
+    /* Фоновые световые пятна для жидкого стекла */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(75px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 {
+      width: 260px;
+      height: 260px;
+      top: -60px;
+      left: -50px;
+      background: var(--orb-blue);
+    }
+    .orb-2 {
+      width: 240px;
+      height: 240px;
+      top: 220px;
+      right: -70px;
+      background: var(--orb-cyan);
+    }
+    .orb-3 {
+      width: 280px;
+      height: 280px;
+      bottom: 40px;
+      left: 10%;
+      background: var(--orb-indigo);
+    }
+
+    .app-wrap {
+      position: relative;
+      z-index: 1;
       max-width: 460px;
       margin: 0 auto;
     }
 
-    .header {
+    /* Верхняя шапка с логотипом NicUp слева без чёрного фона */
+    .top-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      padding: 6px 2px 12px;
+      margin-bottom: 6px;
+      background: transparent;
     }
 
-    .logo {
-      font-size: 26px;
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      user-select: none;
+      line-height: 1;
+    }
+
+    .brand-wordmark {
+      display: inline-block;
+      font-family: "Arial Black", "Segoe UI Black", "SF Pro Display", Impact, sans-serif;
+      font-size: 29px;
       font-weight: 900;
       font-style: italic;
+      letter-spacing: -0.045em;
+      line-height: 1;
+      background: transparent;
     }
 
-    .logo span {
-      color: #3b82f6;
+    .brand-nic {
+      color: #ffffff;
     }
 
-    .avatar-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: 1px solid #60a5fa;
-      background: #1d4ed8;
-      color: #fff;
-      font-weight: 800;
-      cursor: pointer;
-      overflow: hidden;
+    .brand-up {
+      color: #1677ff;
+      margin-left: 1px;
     }
 
-    .avatar-btn img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    /* Стеклянные карточки */
+    .glass-card {
+      background: var(--glass-surface);
+      backdrop-filter: blur(26px) saturate(185%);
+      -webkit-backdrop-filter: blur(26px) saturate(185%);
+      border: 1px solid var(--glass-border);
+      border-radius: 26px;
+      box-shadow:
+        inset 0 1px 0 var(--glass-highlight),
+        0 14px 32px rgba(0, 0, 0, 0.45);
     }
 
-    .ad-box {
+    /* Увеличенный блок рекламы */
+    .ad-banner {
       display: block;
+      position: relative;
       text-decoration: none;
-      color: #fff;
-      background: #11224a;
-      border: 1px solid #2563eb;
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 14px;
+      color: var(--text-main);
+      padding: 24px 22px;
+      min-height: 164px;
+      border-radius: 28px;
+      margin-bottom: 16px;
+      background:
+        radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.34), transparent 52%),
+        linear-gradient(135deg, rgba(15, 29, 64, 0.9) 0%, rgba(29, 78, 216, 0.58) 100%);
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      border: 1px solid rgba(96, 165, 250, 0.38);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 16px 36px rgba(3, 10, 28, 0.55);
+      overflow: hidden;
+      transition: transform 0.24s var(--ios-spring), border-color 0.2s ease;
+    }
+
+    .ad-banner::before {
+      content: "";
+      position: absolute;
+      top: -48%;
+      left: -25%;
+      width: 150%;
+      height: 88%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0));
+      transform: rotate(-4deg);
+      pointer-events: none;
+    }
+
+    .ad-banner:active {
+      transform: scale(0.98);
+    }
+
+    .ad-top {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
     .ad-tag {
-      display: inline-block;
       font-size: 10px;
       font-weight: 800;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      background: #1d4ed8;
-      padding: 3px 8px;
+      color: #bae6fd;
+      background: rgba(37, 99, 235, 0.38);
+      border: 1px solid rgba(125, 211, 252, 0.32);
+      padding: 4px 10px;
       border-radius: 999px;
-      margin-bottom: 8px;
     }
 
     .ad-title {
-      font-size: 18px;
+      position: relative;
+      font-size: 21px;
       font-weight: 800;
-      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+      margin-bottom: 7px;
+      line-height: 1.2;
     }
 
     .ad-desc {
-      font-size: 13px;
-      color: #cbd5e1;
-      margin-bottom: 10px;
+      position: relative;
+      font-size: 14px;
+      color: var(--text-sec);
+      line-height: 1.42;
+      margin-bottom: 16px;
+      max-width: 90%;
     }
 
-    .ad-btn {
-      display: inline-block;
-      background: #2563eb;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 800;
-      padding: 7px 14px;
+    .ad-cta {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 19px;
       border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 8px 18px rgba(29, 78, 216, 0.45);
     }
 
-    .card {
-      background: #0d172e;
-      border: 1px solid #1e3a8a;
-      border-radius: 18px;
-      padding: 14px;
+    /* Переключение вкладок */
+    .tab-view {
+      display: none;
+    }
+    .tab-view.active {
+      display: block;
+      animation: fadeSlide 0.25s ease;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Блок генератора */
+    .gen-card {
+      padding: 18px;
       margin-bottom: 14px;
     }
 
-    .card-title {
-      font-size: 15px;
+    .section-title {
+      font-size: 16px;
       font-weight: 800;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
 
-    .label-row {
+    .control-group {
+      margin-bottom: 14px;
+    }
+
+    .control-label {
       display: flex;
       justify-content: space-between;
       font-size: 13px;
-      color: #cbd5e1;
-      margin-bottom: 6px;
+      color: var(--text-sec);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .length-val {
+      color: var(--blue-bright);
+      font-weight: 800;
     }
 
     input[type="range"] {
       width: 100%;
-      margin-bottom: 12px;
+      accent-color: #3b82f6;
+      cursor: pointer;
     }
 
-    .inp {
+    .glass-input {
       width: 100%;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid #1e3a8a;
-      background: #070d1c;
+      padding: 12px 15px;
+      border-radius: 18px;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-recessed);
       color: #fff;
-      font-size: 13px;
-      margin-bottom: 10px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease;
     }
 
-    .row-2 {
+    .glass-input:focus {
+      border-color: var(--blue-bright);
+    }
+
+    .toggles-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 10px;
+      gap: 10px;
+      margin-bottom: 16px;
     }
 
-    .btn {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid #2563eb;
-      background: #132244;
-      color: #e2e8f0;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .btn.active {
-      background: #2563eb;
-      color: #fff;
-      border-color: #60a5fa;
-    }
-
-    .gen-btn {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: none;
-      background: #2563eb;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .status-msg {
-      text-align: center;
-      font-size: 12px;
-      color: #38bdf8;
-      margin-bottom: 10px;
-      min-height: 18px;
-    }
-
-    .nick-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 10px 12px;
-      border-bottom: 1px solid #172544;
-    }
-
-    .nick-item:last-child {
-      border-bottom: none;
-    }
-
-    .nick-check {
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 800;
-      text-align: left;
-      cursor: pointer;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .nick-tag {
-      font-size: 11px;
-      color: #38bdf8;
-      margin-left: 6px;
-    }
-
-    .mini-btn {
-      padding: 6px 10px;
-      border-radius: 10px;
-      border: 1px solid #2563eb;
-      background: #132244;
-      color: #fff;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .heart-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 10px;
-      border: 1px solid #2563eb;
-      background: #132244;
-      color: #94a3b8;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .heart-btn.on {
-      color: #fb7185;
-      border-color: #fb7185;
-    }
-
-    .tab-pane {
-      display: none;
-    }
-
-    .tab-pane.show {
-      display: block;
-    }
-
-    .profile-box {
-      text-align: center;
-      margin-bottom: 12px;
-    }
-
-    .profile-ava {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: #2563eb;
-      color: #fff;
-      font-size: 24px;
-      font-weight: 900;
+    .pill-toggle {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 8px;
+      gap: 8px;
+      padding: 11px 12px;
+      border-radius: 999px;
+      background: var(--glass-recessed);
+      border: 1px solid var(--glass-border);
+      color: var(--text-sec);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s var(--ios-spring);
+      user-select: none;
+    }
+
+    .pill-toggle.active {
+      background: rgba(37, 99, 235, 0.3);
+      border-color: rgba(96, 165, 250, 0.65);
+      color: #ffffff;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 10px 24px rgba(37, 99, 235, 0.45);
+      transition: transform 0.2s var(--ios-spring);
+    }
+
+    .primary-btn:active {
+      transform: scale(0.97);
+    }
+
+    .toast-line {
+      min-height: 20px;
+      padding: 0 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--green);
+      text-align: center;
+    }
+
+    /* Список сгенерированных ников */
+    .results-card {
       overflow: hidden;
     }
 
-    .profile-ava img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .saved-row {
+    .nick-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      padding: 8px 0;
-      border-bottom: 1px solid #172544;
-      font-size: 13px;
+      padding: 13px 16px;
+      border-bottom: 1px solid rgba(96, 165, 250, 0.14);
     }
 
-    .saved-row:last-child {
+    .nick-row:last-child {
       border-bottom: none;
     }
 
-    .bottom-bar {
+    .nick-text {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      color: #f8fafc;
+    }
+
+    .copy-pill {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(96, 165, 250, 0.34);
+      background: rgba(37, 99, 235, 0.24);
+      color: #bae6fd;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.18s var(--ios-spring), background 0.18s ease;
+    }
+
+    .copy-pill:active {
+      transform: scale(0.94);
+    }
+
+    /* Вкладка Профиль */
+    .profile-card {
+      padding: 22px 18px;
+      text-align: center;
+    }
+
+    .profile-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+      border: 2px solid rgba(147, 197, 253, 0.45);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.4);
+    }
+
+    .profile-name {
+      font-size: 19px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .profile-sub {
+      font-size: 13px;
+      color: var(--text-sec);
+      margin-bottom: 18px;
+    }
+
+    .profile-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .info-box {
+      padding: 12px 14px;
+      border-radius: 20px;
+      background: var(--glass-recessed);
+      border: 1px solid var(--glass-border);
+    }
+
+    .info-box-label {
+      font-size: 11px;
+      color: var(--text-sec);
+      margin-bottom: 4px;
+    }
+
+    .info-box-val {
+      font-size: 14px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    /* Нижняя плавающая панель с 2 круглыми кнопками */
+    .bottom-dock-wrap {
       position: fixed;
       left: 0;
       right: 0;
-      bottom: 0;
-      background: #091124;
-      border-top: 1px solid #1e3a8a;
-      padding: 8px 14px;
+      bottom: 14px;
+      z-index: 50;
       display: flex;
-      gap: 8px;
       justify-content: center;
+      padding: 0 16px;
+      pointer-events: none;
     }
 
-    .bottom-bar button {
-      flex: 1;
-      max-width: 220px;
-      padding: 10px;
-      border-radius: 12px;
-      border: 1px solid #2563eb;
-      background: #132244;
-      color: #cbd5e1;
-      font-size: 13px;
+    .bottom-dock {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 999px;
+      background: rgba(10, 18, 38, 0.78);
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      border: 1px solid rgba(96, 165, 250, 0.28);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.24),
+        0 14px 34px rgba(0, 0, 0, 0.65);
+    }
+
+    .nav-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 136px;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-sec);
+      font-size: 14px;
       font-weight: 800;
       cursor: pointer;
+      transition: all 0.24s var(--ios-spring);
     }
 
-    .bottom-bar button.active {
-      background: #2563eb;
-      color: #fff;
+    .nav-pill-btn.active {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.48), rgba(29, 78, 216, 0.58));
+      color: #ffffff;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 6px 16px rgba(37, 99, 235, 0.35);
+    }
+
+    .nav-pill-btn:active {
+      transform: scale(0.95);
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="header">
-      <div class="logo">Nic<span>Up</span></div>
-      <button id="topAvaBtn" class="avatar-btn" type="button" onclick="showTab('profile')">N</button>
-    </div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
 
-    <div id="pane-home" class="tab-pane show">
-      <a id="adLink" class="ad-box" href="https://t.me" target="_blank" rel="noopener noreferrer">
-        <div class="ad-tag">Реклама</div>
+  <div class="app-wrap">
+    <!-- Шапка: логотип NicUp слева без чёрного фона -->
+    <header class="top-header">
+      <div class="brand-logo" aria-label="NicUp">
+        <span class="brand-wordmark">
+          <span class="brand-nic">Nic</span><span class="brand-up">Up</span>
+        </span>
+      </div>
+    </header>
+
+    <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
+    <main id="tabHome" class="tab-view active">
+      <!-- Увеличенный рекламный баннер -->
+      <a id="adBanner" class="ad-banner" href="https://t.me" target="_blank" rel="noopener">
+        <div class="ad-top">
+          <span class="ad-tag">Реклама</span>
+        </div>
         <div id="adTitle" class="ad-title">Подпишись на наш канал</div>
-        <div id="adDesc" class="ad-desc">Свежие подборки ников и обновления NicUp</div>
-        <div class="ad-btn">Перейти →</div>
+        <div id="adDesc" class="ad-desc">Свежие подборки редких юзернеймов и обновления NicUp каждый день</div>
+        <span class="ad-cta">Перейти →</span>
       </a>
 
-      <div class="card">
-        <div class="card-title">Генератор юзернеймов</div>
-
-        <div class="label-row">
-          <span>Длина ника</span>
-          <strong id="lenText">7 символов</strong>
-        </div>
-        <input id="lenInput" type="range" min="5" max="15" value="7" oninput="document.getElementById('lenText').textContent = this.value + ' символов'" />
-
-        <input id="wordInput" class="inp" type="text" maxlength="12" placeholder="Ключевое слово (необязательно)" />
-        <input id="exclInput" class="inp" type="text" maxlength="40" placeholder="Исключить буквы или слова (напр: z, q, cyber)" />
-
-        <div class="row-2">
-          <button id="btnDigits" class="btn active" type="button" onclick="toggleOpt('digits')">Цифры 0–9</button>
-          <button id="btnUnder" class="btn" type="button" onclick="toggleOpt('under')">Подчёркивание _</button>
+      <!-- Генератор юзернеймов -->
+      <section class="glass-card gen-card">
+        <div class="section-title">
+          <span>Генератор юзернеймов</span>
         </div>
 
-        <button id="btnNoAt" class="btn" style="margin-bottom:10px;" type="button" onclick="toggleOpt('noAt')">Копировать без @</button>
-
-        <div class="row-2">
-          <button id="btnModeUnique" class="btn active" type="button" onclick="setMode('unique')">Уникальные</button>
-          <button id="btnModeRandom" class="btn" type="button" onclick="setMode('random')">Случайные</button>
+        <div class="control-group">
+          <div class="control-label">
+            <span>Длина ника</span>
+            <span id="lenLabel" class="length-val">7 символов</span>
+          </div>
+          <input id="lenRange" type="range" min="5" max="15" value="7" />
         </div>
 
-        <button class="gen-btn" type="button" onclick="generateTen()">Сгенерировать</button>
+        <div class="control-group">
+          <input id="prefixInput" class="glass-input" type="text" maxlength="10" placeholder="Ключевое слово (необязательно)" />
+        </div>
+
+        <div class="toggles-row">
+          <button id="toggleDigits" type="button" class="pill-toggle active">Цифры 0–9</button>
+          <button id="toggleUnderscore" type="button" class="pill-toggle">Подчёркивание _</button>
+        </div>
+
+        <button id="generateBtn" type="button" class="primary-btn">Сгенерировать ники</button>
+      </section>
+
+      <div id="toastLine" class="toast-line"></div>
+
+      <section id="resultsCard" class="glass-card results-card"></section>
+    </main>
+
+    <!-- ВКЛАДКА 2: ПРОФИЛЬ -->
+    <section id="tabProfile" class="tab-view">
+      <div class="glass-card profile-card">
+        <div id="profileAvatar" class="profile-avatar">N</div>
+        <div id="profileName" class="profile-name">Пользователь Telegram</div>
+        <div id="profileUsername" class="profile-sub">@nicup_user</div>
+
+        <div class="profile-info-grid">
+          <div class="info-box">
+            <div class="info-box-label">Ваш ID</div>
+            <div id="profileId" class="info-box-val">—</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-label">Статус</div>
+            <div class="info-box-val" style="color: #38bdf8;">Активен</div>
+          </div>
+        </div>
       </div>
-
-      <div id="msgBox" class="status-msg">Выбери режим и нажми «Сгенерировать»</div>
-      <div id="listBox" class="card" style="padding:0; display:none;"></div>
-    </div>
-
-    <div id="pane-profile" class="tab-pane">
-      <div class="card profile-box">
-        <div id="profAva" class="profile-ava">N</div>
-        <div id="profName" style="font-size:18px;font-weight:800;margin-bottom:4px;">Пользователь</div>
-        <div id="profUser" style="font-size:13px;color:#94a3b8;margin-bottom:12px;">@telegram</div>
-        <div style="font-size:12px;color:#cbd5e1;margin-bottom:12px;">ID: <span id="profId">—</span></div>
-        <div class="row-2" style="margin-bottom:0;">
-          <a id="supportUrlBtn" class="btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center;" href="https://t.me" target="_blank" rel="noopener noreferrer">Поддержка</a>
-          <a id="channelUrlBtn" class="btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center;" href="https://t.me" target="_blank" rel="noopener noreferrer">Канал</a>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">
-          <span>Избранное</span>
-          <button class="mini-btn" type="button" onclick="clearFavs()">Очистить</button>
-        </div>
-        <div id="favBox"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">
-          <span>История</span>
-          <button class="mini-btn" type="button" onclick="clearHist()">Очистить</button>
-        </div>
-        <div id="histBox"></div>
-      </div>
-    </div>
+    </section>
   </div>
 
-  <div class="bottom-bar">
-    <button id="tabBtnHome" class="active" type="button" onclick="showTab('home')">Главная</button>
-    <button id="tabBtnProfile" type="button" onclick="showTab('profile')">Профиль</button>
+  <!-- Нижняя панель с 2 круглыми кнопками -->
+  <div class="bottom-dock-wrap">
+    <nav class="bottom-dock" aria-label="Навигация">
+      <button type="button" class="nav-pill-btn active" data-tab="tabHome">Главная</button>
+      <button type="button" class="nav-pill-btn" data-tab="tabProfile">Профиль</button>
+    </nav>
   </div>
 
   <script>
-    // Вставь сюда свои ссылки:
-    const SUPPORT_LINK = "https://t.me";
-    const CHANNEL_LINK = "https://t.me";
-
-    document.getElementById("supportUrlBtn").href = SUPPORT_LINK;
-    document.getElementById("channelUrlBtn").href = CHANNEL_LINK;
-
-    let optDigits = true;
-    let optUnder = false;
-    let optNoAt = false;
-    let genMode = "unique";
-
-    const ROOTS = [
-      "cyber", "neon", "void", "flux", "nova", "drift", "zen", "apex",
-      "kuro", "lux", "vibe", "echo", "orbit", "pixel", "storm", "frost",
-      "shadow", "pulse", "atlas", "hyper", "lunar", "solar", "rift", "byte"
-    ];
-
-    let favs = JSON.parse(localStorage.getItem("nicup_fav_simple") || "[]");
-    let hist = JSON.parse(localStorage.getItem("nicup_hist_simple") || "[]");
-
-    try {
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-        const u = window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user;
-        if (u) {
-          const name = [u.first_name, u.last_name].filter(Boolean).join(" ") || "Пользователь";
-          const letter = name.charAt(0).toUpperCase() || "N";
-          document.getElementById("profName").textContent = name;
-          document.getElementById("profUser").textContent = u.username ? "@" + u.username : "Без ника";
-          document.getElementById("profId").textContent = String(u.id || "—");
-          document.getElementById("topAvaBtn").textContent = letter;
-          document.getElementById("profAva").textContent = letter;
-          if (u.photo_url) {
-            document.getElementById("topAvaBtn").innerHTML = '<img src="' + u.photo_url + '" alt="">';
-            document.getElementById("profAva").innerHTML = '<img src="' + u.photo_url + '" alt="">';
-          }
-        }
-      }
-    } catch (e) {}
-
-    function showTab(tab) {
-      document.getElementById("pane-home").classList.toggle("show", tab === "home");
-      document.getElementById("pane-profile").classList.toggle("show", tab === "profile");
-      document.getElementById("tabBtnHome").classList.toggle("active", tab === "home");
-      document.getElementById("tabBtnProfile").classList.toggle("active", tab === "profile");
-      if (tab === "profile") {
-        renderSaved();
-      }
-    }
-
-    function toggleOpt(name) {
-      if (name === "digits") {
-        optDigits = !optDigits;
-        document.getElementById("btnDigits").classList.toggle("active", optDigits);
-      } else if (name === "under") {
-        optUnder = !optUnder;
-        document.getElementById("btnUnder").classList.toggle("active", optUnder);
-      } else if (name === "noAt") {
-        optNoAt = !optNoAt;
-        document.getElementById("btnNoAt").classList.toggle("active", optNoAt);
-      }
-    }
-
-    function setMode(mode) {
-      genMode = mode;
-      document.getElementById("btnModeUnique").classList.toggle("active", mode === "unique");
-      document.getElementById("btnModeRandom").classList.toggle("active", mode === "random");
-      document.getElementById("msgBox").textContent = "Режим: " + (mode === "unique" ? "Уникальные" : "Случайные") + ". Нажми «Сгенерировать»";
-    }
-
-    function getExcl() {
-      const parts = (document.getElementById("exclInput").value || "")
-        .toLowerCase()
-        .split(/[\s,;]+/)
-        .map(s => s.replace(/[^a-z0-9_]/g, ""))
-        .filter(Boolean);
-      return {
-        chars: new Set(parts.filter(p => p.length === 1)),
-        words: parts.filter(p => p.length > 1)
-      };
-    }
-
-    function allowedStr(str, chars) {
-      return str.split("").filter(ch => !chars.has(ch)).join("");
-    }
-
-    function okNick(plain, ex) {
-      for (const ch of plain) {
-        if (ex.chars.has(ch)) return false;
-      }
-      for (const w of ex.words) {
-        if (plain.includes(w)) return false;
-      }
-      return true;
-    }
-
-    function makeOne(len, kwRaw, ex) {
-      const letters = allowedStr("abcdefghijklmnopqrstuvwxyz", ex.chars) || "abcdefg";
-      const digits = allowedStr("0123456789", ex.chars);
-      const canUnder = optUnder && !ex.chars.has("_");
-      let kw = allowedStr((kwRaw || "").toLowerCase().replace(/[^a-z0-9_]/g, ""), ex.chars);
-      if (kw && !/^[a-z]/.test(kw)) kw = letters[0] + kw;
-
-      let out = "";
-      if (genMode === "unique") {
-        const pool = ROOTS.filter(w => okNick(w, ex));
-        const words = pool.length ? pool : [letters.slice(0, 4) || "user"];
-        const a = kw || words[Math.floor(Math.random() * words.length)];
-        const b = words[Math.floor(Math.random() * words.length)];
-        out = canUnder && Math.random() < 0.5 ? (a + "_" + b) : (a + b);
-        if (optDigits && digits.length && out.length < len) {
-          out += digits[Math.floor(Math.random() * digits.length)];
-        }
-        while (out.length < len) {
-          out += letters[Math.floor(Math.random() * letters.length)];
-        }
-      } else {
-        const vowels = allowedStr("aeiouy", ex.chars) || "aeo";
-        const cons = allowedStr("bcdfghjklmnpqrstvwxz", ex.chars) || "kmnrst";
-        out = kw.slice(0, len);
-        while (out.length < len) {
-          const prev = out[out.length - 1] || "";
-          if (canUnder && out.length > 1 && out.length < len - 1 && prev !== "_" && Math.random() < 0.18) {
-            out += "_";
-          } else if (optDigits && digits.length && out.length >= len - 2 && Math.random() < 0.4) {
-            out += digits[Math.floor(Math.random() * digits.length)];
-          } else {
-            const set = vowels.includes(prev) ? cons : vowels;
-            out += set[Math.floor(Math.random() * set.length)];
-          }
-        }
+    (function () {
+      const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+      if (tg) {
+        tg.ready();
+        tg.expand();
       }
 
-      out = out.slice(0, len).replace(/^_+|_+$/g, "");
-      if (!out || !/^[a-z]/.test(out)) {
-        out = letters[0] + out.slice(1);
-      }
-      return "@" + out;
-    }
+      // Навигация между вкладками "Главная" и "Профиль"
+      const navBtns = document.querySelectorAll(".nav-pill-btn");
+      const tabViews = document.querySelectorAll(".tab-view");
 
-    function generateTen() {
-      const len = Number(document.getElementById("lenInput").value) || 7;
-      const kw = document.getElementById("wordInput").value.trim();
-      const ex = getExcl();
-      const list = [];
-      const used = new Set();
-      let guard = 0;
-
-      while (list.length < 10 && guard < 400) {
-        const nick = makeOne(len, kw, ex);
-        if (!used.has(nick) && okNick(nick.slice(1), ex)) {
-          used.add(nick);
-          list.push(nick);
-        }
-        guard++;
-      }
-
-      const letters = allowedStr("abcdefghijklmnopqrstuvwxyz", ex.chars) || "abcdefg";
-      while (list.length < 10) {
-        let s = "";
-        for (let i = 0; i < len; i++) s += letters[Math.floor(Math.random() * letters.length)];
-        const nick = "@" + s;
-        if (!used.has(nick)) {
-          used.add(nick);
-          list.push(nick);
-        }
-      }
-
-      list.forEach(n => {
-        hist = [n].concat(hist.filter(x => x !== n)).slice(0, 30);
-      });
-      localStorage.setItem("nicup_hist_simple", JSON.stringify(hist));
-
-      const box = document.getElementById("listBox");
-      box.style.display = "block";
-      box.innerHTML = "";
-
-      list.forEach(nick => {
-        const row = document.createElement("div");
-        row.className = "nick-item";
-
-        const checkBtn = document.createElement("button");
-        checkBtn.type = "button";
-        checkBtn.className = "nick-check";
-        checkBtn.innerHTML = nick + '<span class="nick-tag">[проверить]</span>';
-        checkBtn.onclick = function () {
-          const tag = checkBtn.querySelector(".nick-tag");
-          tag.textContent = "[...]";
-          fetch("https://t.me/" + nick.slice(1), { mode: "no-cors" })
-            .then(() => {
-              tag.textContent = "[t.me ок]";
-              document.getElementById("msgBox").textContent = "Проверено: https://t.me/" + nick.slice(1);
-            })
-            .catch(() => {
-              tag.textContent = "[нет отклика]";
-              document.getElementById("msgBox").textContent = "Нет отклика от t.me/" + nick.slice(1);
-            });
-        };
-
-        const heartBtn = document.createElement("button");
-        heartBtn.type = "button";
-        heartBtn.className = "heart-btn" + (favs.includes(nick) ? " on" : "");
-        heartBtn.textContent = "♥";
-        heartBtn.onclick = function () {
-          if (favs.includes(nick)) {
-            favs = favs.filter(x => x !== nick);
-            heartBtn.classList.remove("on");
-          } else {
-            favs.unshift(nick);
-            heartBtn.classList.add("on");
-          }
-          localStorage.setItem("nicup_fav_simple", JSON.stringify(favs));
-        };
-
-        const copyBtn = document.createElement("button");
-        copyBtn.type = "button";
-        copyBtn.className = "mini-btn";
-        copyBtn.textContent = "Копировать";
-        copyBtn.onclick = function () {
-          copyVal(nick, copyBtn);
-        };
-
-        row.appendChild(checkBtn);
-        row.appendChild(heartBtn);
-        row.appendChild(copyBtn);
-        box.appendChild(row);
+      navBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          const targetId = btn.getAttribute("data-tab");
+          navBtns.forEach(function (b) { b.classList.remove("active"); });
+          tabViews.forEach(function (v) { v.classList.remove("active"); });
+          btn.classList.add("active");
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) targetEl.classList.add("active");
+        });
       });
 
-      document.getElementById("msgBox").textContent = "Готово: 10 вариантов";
-    }
-
-    function copyVal(nick, btn) {
-      const val = optNoAt ? nick.slice(1) : nick;
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(val).catch(() => {});
+      // Заполнение данных профиля из Telegram WebApp
+      const tgUser = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+      if (tgUser) {
+        const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || "Пользователь";
+        document.getElementById("profileName").textContent = fullName;
+        document.getElementById("profileAvatar").textContent = fullName.charAt(0).toUpperCase();
+        document.getElementById("profileUsername").textContent = tgUser.username ? "@" + tgUser.username : "Без юзернейма";
+        document.getElementById("profileId").textContent = String(tgUser.id);
       }
-      document.getElementById("msgBox").textContent = "Скопировано: " + val;
-      if (btn) {
-        btn.textContent = "Ок";
-        setTimeout(() => { btn.textContent = "Копировать"; }, 900);
+
+      // Логика генератора ников
+      const lenRange = document.getElementById("lenRange");
+      const lenLabel = document.getElementById("lenLabel");
+      const prefixInput = document.getElementById("prefixInput");
+      const toggleDigits = document.getElementById("toggleDigits");
+      const toggleUnderscore = document.getElementById("toggleUnderscore");
+      const generateBtn = document.getElementById("generateBtn");
+      const resultsCard = document.getElementById("resultsCard");
+      const toastLine = document.getElementById("toastLine");
+
+      let useDigits = true;
+      let useUnderscore = false;
+
+      lenRange.addEventListener("input", function () {
+        lenLabel.textContent = lenRange.value + " символов";
+      });
+
+      toggleDigits.addEventListener("click", function () {
+        useDigits = !useDigits;
+        toggleDigits.classList.toggle("active", useDigits);
+      });
+
+      toggleUnderscore.addEventListener("click", function () {
+        useUnderscore = !useUnderscore;
+        toggleUnderscore.classList.toggle("active", useUnderscore);
+      });
+
+      function buildUsername(length, rawPrefix) {
+        const vowels = "aeiouy";
+        const consonants = "bcdfghjklmnpqrstvwxz";
+        const digits = "0123456789";
+
+        let cleanPrefix = (rawPrefix || "").toLowerCase().replace(/[^a-z0-9_]/g, "");
+        if (cleanPrefix && !/^[a-z]/.test(cleanPrefix)) {
+          cleanPrefix = "x" + cleanPrefix;
+        }
+
+        let res = cleanPrefix.slice(0, length);
+        while (res.length < length) {
+          const prev = res[res.length - 1] || "";
+          if (useUnderscore && res.length > 2 && res.length < length - 2 && prev !== "_" && Math.random() < 0.14) {
+            res += "_";
+            continue;
+          }
+          if (useDigits && res.length >= length - 2 && Math.random() < 0.35) {
+            res += digits[Math.floor(Math.random() * digits.length)];
+            continue;
+          }
+          const isPrevVowel = vowels.indexOf(prev) !== -1;
+          const pool = isPrevVowel ? consonants : vowels;
+          res += pool[Math.floor(Math.random() * pool.length)];
+        }
+        return "@" + res;
       }
-    }
 
-    function toggleFavSimple(nick) {
-      if (favs.includes(nick)) favs = favs.filter(x => x !== nick);
-      else favs.unshift(nick);
-      localStorage.setItem("nicup_fav_simple", JSON.stringify(favs));
-      renderSaved();
-    }
+      function renderNicknames() {
+        const len = Number(lenRange.value) || 7;
+        const prefix = prefixInput.value.trim();
+        const set = new Set();
+        let guard = 0;
+        while (set.size < 6 && guard < 80) {
+          set.add(buildUsername(len, prefix));
+          guard++;
+        }
 
-    function clearFavs() {
-      favs = [];
-      localStorage.setItem("nicup_fav_simple", "[]");
-      renderSaved();
-    }
+        resultsCard.innerHTML = "";
+        set.forEach(function (nick) {
+          const row = document.createElement("div");
+          row.className = "nick-row";
 
-    function clearHist() {
-      hist = [];
-      localStorage.setItem("nicup_hist_simple", "[]");
-      renderSaved();
-    }
+          const span = document.createElement("span");
+          span.className = "nick-text";
+          span.textContent = nick;
 
-    function renderSaved() {
-      const favBox = document.getElementById("favBox");
-      if (!favs.length) {
-        favBox.innerHTML = '<div style="font-size:12px;color:#94a3b8;">Пусто</div>';
-      } else {
-        favBox.innerHTML = "";
-        favs.forEach(nick => {
-          const r = document.createElement("div");
-          r.className = "saved-row";
-          r.innerHTML = '<strong>' + nick + '</strong><div style="display:flex;gap:6px;"><button class="mini-btn" type="button">Копировать</button><button class="heart-btn on" type="button">♥</button></div>';
-          r.querySelectorAll("button")[0].onclick = function () { copyVal(nick, this); };
-          r.querySelectorAll("button")[1].onclick = function () { toggleFavSimple(nick); };
-          favBox.appendChild(r);
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "copy-pill";
+          btn.textContent = "Копировать";
+          btn.addEventListener("click", function () {
+            if (navigator.clipboard) {
+              navigator.clipboard.writeText(nick).catch(function () {});
+            }
+            toastLine.textContent = "Скопировано: " + nick;
+            setTimeout(function () {
+              if (toastLine.textContent === "Скопировано: " + nick) {
+                toastLine.textContent = "";
+              }
+            }, 1800);
+          });
+
+          row.appendChild(span);
+          row.appendChild(btn);
+          resultsCard.appendChild(row);
         });
       }
 
-      const histBox = document.getElementById("histBox");
-      if (!hist.length) {
-        histBox.innerHTML = '<div style="font-size:12px;color:#94a3b8;">Пусто</div>';
-      } else {
-        histBox.innerHTML = "";
-        hist.forEach(nick => {
-          const r = document.createElement("div");
-          r.className = "saved-row";
-          r.innerHTML = '<span>' + nick + '</span><button class="mini-btn" type="button">Копировать</button>';
-          r.querySelector("button").onclick = function () { copyVal(nick, this); };
-          histBox.appendChild(r);
-        });
-      }
-    }
+      generateBtn.addEventListener("click", renderNicknames);
+      renderNicknames();
+    })();
+  </script>
 
-    // Статистика JSONBin.io и ad.json
+  <!-- Статистика JSONBin.io и загрузка рекламы ad.json -->
+  <script>
     (function () {
       const BIN_ID = "6b0938883957a11c13b6397b";
       const API_KEY = "$2a$10$nbho.No3FFfEiqFA5FQcwuYL/kMVR1KOPuHPv0vsFdgk9eEiLbAVa";
       const BIN_URL = "https://api.jsonbin.io/v3/b/" + BIN_ID;
 
-      function dayStr() {
+      function todayKey() {
         const d = new Date();
-        return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return y + "-" + m + "-" + day;
       }
 
-      function uidStr() {
-        try {
-          const u = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user;
-          if (u && u.id) return String(u.id);
-        } catch (e) {}
-        let id = localStorage.getItem("nicup_uid_simple");
-        if (!id) {
-          id = "u_" + Math.random().toString(36).slice(2, 9);
-          localStorage.setItem("nicup_uid_simple", id);
+      function getUserId() {
+        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+        if (u && u.id) return String(u.id);
+        let localId = localStorage.getItem("nicup_local_uid");
+        if (!localId) {
+          localId = "web_" + Math.random().toString(36).slice(2, 10);
+          localStorage.setItem("nicup_local_uid", localId);
         }
-        return id;
+        return localId;
       }
 
-      function saveStat(incAd) {
-        fetch(BIN_URL + "/latest?t=" + Date.now(), {
+      function mutateBin(updater) {
+        return fetch(BIN_URL + "/latest", {
           cache: "no-store",
           headers: { "X-Master-Key": API_KEY }
         })
-          .then(r => r.ok ? r.json() : null)
-          .then(body => {
-            const rec = (body && body.record && typeof body.record === "object") ? body.record : (body || {});
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (res) {
+            const rec = (res && res.record && typeof res.record === "object") ? res.record : {};
             const data = {
               users: (rec.users && typeof rec.users === "object") ? rec.users : {},
               days: (rec.days && typeof rec.days === "object") ? rec.days : {},
               ad_clicks: typeof rec.ad_clicks === "number" ? rec.ad_clicks : 0
             };
-            const uid = uidStr();
-            const day = dayStr();
-            if (!data.users[uid]) data.users[uid] = { first_seen: day, last_seen: day };
-            else data.users[uid].last_seen = day;
-            if (!data.days[day]) data.days[day] = { new_users: 0, active_users: [] };
-            if (!Array.isArray(data.days[day].active_users)) data.days[day].active_users = [];
-            if (!data.days[day].active_users.includes(uid)) data.days[day].active_users.push(uid);
-            if (incAd) data.ad_clicks += 1;
-
+            updater(data);
             return fetch(BIN_URL, {
               method: "PUT",
               headers: {
@@ -759,26 +795,59 @@
               body: JSON.stringify(data)
             });
           })
-          .catch(() => {});
+          .catch(function () {});
       }
 
-      saveStat(false);
+      const now = Date.now();
+      if (now - Number(sessionStorage.getItem("nicup_open_ts") || 0) > 1500) {
+        sessionStorage.setItem("nicup_open_ts", String(now));
+        const uid = getUserId();
+        const day = todayKey();
+        mutateBin(function (data) {
+          if (!data.users[uid]) {
+            data.users[uid] = { first_seen: day, last_seen: day };
+          } else {
+            data.users[uid].last_seen = day;
+          }
+          if (!data.days[day]) {
+            data.days[day] = { new_users: 0, active_users: [] };
+          }
+          if (!Array.isArray(data.days[day].active_users)) {
+            data.days[day].active_users = [];
+          }
+          if (data.days[day].active_users.indexOf(uid) === -1) {
+            data.days[day].active_users.push(uid);
+          }
+        });
+      }
 
       fetch("./ad.json?t=" + Date.now(), { cache: "no-store" })
-        .then(r => r.json())
-        .then(cfg => {
-          const adEl = document.getElementById("adLink");
-          if (!adEl || !cfg) return;
+        .then(function (r) { return r.json(); })
+        .then(function (cfg) {
+          const banner = document.getElementById("adBanner");
+          if (!banner) return;
+
           if (cfg.enabled === false) {
-            adEl.style.display = "none";
+            banner.style.setProperty("display", "none", "important");
             return;
           }
-          if (cfg.title) document.getElementById("adTitle").textContent = cfg.title;
-          if (cfg.desc) document.getElementById("adDesc").textContent = cfg.desc;
-          if (cfg.url) adEl.href = cfg.url;
-          adEl.addEventListener("click", () => saveStat(true));
+
+          const titleEl = document.getElementById("adTitle");
+          const descEl = document.getElementById("adDesc");
+
+          if (titleEl && cfg.title) titleEl.textContent = cfg.title;
+          if (descEl && cfg.desc) descEl.textContent = cfg.desc;
+          if (cfg.url) banner.href = cfg.url;
+
+          banner.addEventListener("click", function () {
+            mutateBin(function (data) {
+              data.ad_clicks = (typeof data.ad_clicks === "number" ? data.ad_clicks : 0) + 1;
+            });
+          });
+
+          banner.style.setProperty("display", "block", "important");
         })
-        .catch(() => {});
+        .catch(function () {});
     })();
   </script>
 </body>
