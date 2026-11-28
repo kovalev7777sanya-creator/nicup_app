@@ -942,7 +942,6 @@
     (function () {
       const SUPPORT_URL = "https://t.me";
       const CHANNEL_URL = "https://t.me";
-      const TG_SETTINGS_URL = "https://t.me/settings";
 
       const supportLinkEl = document.getElementById("supportLinkBtn");
       const channelLinkEl = document.getElementById("channelLinkBtn");
@@ -1150,19 +1149,11 @@
         toastLine.textContent = nick + " отмечен как занят и убран из списка";
       }
 
-      function openTelegramSettingsForCheck(nick) {
+      function triggerNickCheck(nick) {
         const copied = copyNickText(nick, true);
         pendingCheckNick = nick;
         updatePendingBar();
-        toastLine.textContent = "Скопировано (" + copied + ") — открываю настройки Telegram";
-
-        if (tg && typeof tg.openLink === "function") {
-          try {
-            tg.openLink(TG_SETTINGS_URL);
-            return;
-          } catch (e) {}
-        }
-        window.open(TG_SETTINGS_URL, "_blank", "noopener");
+        toastLine.textContent = "Скопировано (" + copied + "). Вставь в Профиль -> Имя пользователя в ТГ; если занят — нажми «Занят»";
       }
 
       if (pendingBusyBtn) {
@@ -1382,7 +1373,7 @@
         checkBtn.className = "copy-pill";
         checkBtn.textContent = "Проверить";
         checkBtn.addEventListener("click", function () {
-          openTelegramSettingsForCheck(nick);
+          triggerNickCheck(nick);
         });
 
         const busyBtn = document.createElement("button");
