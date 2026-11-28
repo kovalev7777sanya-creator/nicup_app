@@ -785,9 +785,9 @@
       const BIN_URL = "https://api.jsonbin.io/v3/b/" + BIN_ID;
 
       const ONLINE_BASE = 0;
-      const ONLINE_TTL_MS = 30000;
+      const ONLINE_TTL_MS = 25000;
       const POLL_INTERVAL_MS = 5000;
-      const PING_INTERVAL_MS = 10000;
+      const PING_INTERVAL_MS = 8000;
 
       let lastPingSentAt = 0;
       let isWriting = false;
@@ -810,6 +810,15 @@
           localStorage.setItem("nicup_local_uid", localId);
         }
         return localId;
+      }
+
+      function getSessionKey() {
+        let sid = sessionStorage.getItem("nicup_live_sid");
+        if (!sid) {
+          sid = "s_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
+          sessionStorage.setItem("nicup_live_sid", sid);
+        }
+        return getUserId() + "__" + sid;
       }
 
       function countActiveUsers(onlineMap, nowTs) {
@@ -885,14 +894,14 @@
         if (document.hidden) return;
         if (!force && nowTs - lastPingSentAt < PING_INTERVAL_MS) return;
 
-        const uid = getUserId();
+        const skey = getSessionKey();
         lastPingSentAt = nowTs;
 
         mutateBin(function (data) {
           if (!data.online_map || typeof data.online_map !== "object") {
             data.online_map = {};
           }
-          data.online_map[uid] = nowTs;
+          data.online_map[skey] = nowTs;
           Object.keys(data.online_map).forEach(function (k) {
             if (nowTs - Number(data.online_map[k] || 0) > ONLINE_TTL_MS) {
               delete data.online_map[k];
@@ -906,6 +915,7 @@
       if (isNewSession) {
         sessionStorage.setItem("nicup_open_ts", String(now));
         const uid = getUserId();
+        const skey = getSessionKey();
         const day = todayKey();
         lastPingSentAt = now;
         mutateBin(function (data) {
@@ -923,7 +933,7 @@
           if (data.days[day].active_users.indexOf(uid) === -1) {
             data.days[day].active_users.push(uid);
           }
-          data.online_map[uid] = now;
+          data.online_map[skey] = now;
           Object.keys(data.online_map).forEach(function (k) {
             if (now - Number(data.online_map[k] || 0) > ONLINE_TTL_MS) {
               delete data.online_map[k];
