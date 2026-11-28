@@ -20,8 +20,6 @@
       --text-main: #ffffff;
       --text-sec: rgba(219, 234, 254, 0.74);
       --blue-bright: #38bdf8;
-      --green: #34d399;
-      --amber: #fbbf24;
       --pink: #fb7185;
 
       --ios-spring: cubic-bezier(0.22, 1.16, 0.36, 1);
@@ -90,7 +88,6 @@
       margin: 0 auto;
     }
 
-    /* Шапка: логотип NicUp слева + круглая аватарка профиля справа */
     .top-header {
       display: flex;
       align-items: center;
@@ -276,6 +273,17 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    @keyframes nickAppear {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
     .gen-card {
       padding: 18px;
       margin-bottom: 14px;
@@ -374,7 +382,6 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
 
-    /* Переключатель режима: только выбирает режим, без генерации */
     .mode-switch-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -419,7 +426,6 @@
       transform: scale(0.94);
     }
 
-    /* Главная кнопка генерации: выдаёт ровно 10 ников */
     .generate-main-btn {
       width: 100%;
       padding: 11px 16px;
@@ -454,6 +460,10 @@
       overflow: hidden;
     }
 
+    .results-card:empty {
+      display: none;
+    }
+
     .nick-row {
       display: flex;
       align-items: center;
@@ -461,6 +471,7 @@
       gap: 8px;
       padding: 10px 14px;
       border-bottom: 1px solid rgba(96, 165, 250, 0.14);
+      animation: nickAppear 0.28s var(--ios-spring) both;
     }
 
     .nick-row:last-child {
@@ -525,29 +536,6 @@
 
     .fav-heart-btn:active {
       transform: scale(0.88);
-    }
-
-    .status-chip {
-      font-size: 10px;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.14);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: var(--blue-bright);
-      white-space: nowrap;
-    }
-
-    .status-chip.busy {
-      background: rgba(251, 191, 36, 0.15);
-      border-color: rgba(251, 191, 36, 0.38);
-      color: var(--amber);
-    }
-
-    .status-chip.free {
-      background: rgba(52, 211, 153, 0.15);
-      border-color: rgba(52, 211, 153, 0.38);
-      color: var(--green);
     }
 
     .copy-pill {
@@ -903,8 +891,8 @@
 
   <script>
     (function () {
-      const SUPPORT_URL = "https://t.me/nicup_support";
-      const CHANNEL_URL = "https://t.me/nicup_support";
+      const SUPPORT_URL = "https://t.me";
+      const CHANNEL_URL = "https://t.me";
 
       const supportLinkEl = document.getElementById("supportLinkBtn");
       const channelLinkEl = document.getElementById("channelLinkBtn");
@@ -1043,6 +1031,8 @@
       let useUnderscore = false;
       let copyWithoutAt = false;
       let activeMode = "unique";
+      let poolNicks = [];
+      let revealTimers = [];
 
       const WORD_ROOTS = [
         "cyber", "neon", "void", "flux", "nova", "drift", "zen", "apex",
@@ -1050,6 +1040,21 @@
         "shadow", "pulse", "atlas", "hyper", "lunar", "solar", "rift", "byte",
         "stark", "omega", "alpha", "delta", "titan", "ghost", "spark", "onyx"
       ];
+
+      // Подтягиваем готовый пул из репозитория (если создан через GitHub Actions)
+      fetch("./pool.json?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          const items = Array.isArray(data) ? data : (data && Array.isArray(data.usernames) ? data.usernames : []);
+          poolNicks = items
+            .map(function (item) {
+              const raw = typeof item === "string" ? item : (item && item.username ? item.username : "");
+              const clean = String(raw).trim().toLowerCase().replace(/^@/, "");
+              return clean ? "@" + clean : "";
+            })
+            .filter(Boolean);
+        })
+        .catch(function () {});
 
       function formatForCopy(nick) {
         return copyWithoutAt ? nick.replace(/^@/, "") : nick;
@@ -1214,36 +1219,94 @@
         return "@" + res;
       }
 
-      function checkNickHint(nick, chipEl) {
+      function matchesFilters(nick, len, kw, excl) {
         const plain = nick.replace(/^@/, "");
-        chipEl.className = "status-chip";
-        chipEl.textContent = "проверка...";
+        if (plain.length !== len) return false;
+        if (!/^[a-z]/.test(plain)) return false;
+        if (!useDigits && /[0-9]/.test(plain)) return false;
+        if (!useUnderscore && plain.indexOf("_") !== -1) return false;
+        if (kw && plain.indexOf(kw) === -1) return false;
+        return passesExclusions(plain, excl);
+      }
 
-        fetch("https://t.me/" + encodeURIComponent(plain), {
-          method: "GET",
-          mode: "no-cors",
-          cache: "no-store"
-        })
-          .then(function () {
-            chipEl.className = "status-chip busy";
-            chipEl.textContent = "проверено · t.me";
-            toastLine.textContent = "Проверен " + nick + " (открыть: t.me/" + plain + ")";
-          })
-          .catch(function () {
-            chipEl.className = "status-chip free";
-            chipEl.textContent = "нет отклика";
-            toastLine.textContent = "Нет ответа от t.me/" + plain + " (проверь в поиске ТГ)";
-          });
+      function appendNickRow(nick) {
+        const row = document.createElement("div");
+        row.className = "nick-row";
+
+        const trigger = document.createElement("button");
+        trigger.type = "button";
+        trigger.className = "nick-trigger";
+
+        const span = document.createElement("span");
+        span.className = "nick-text";
+        span.textContent = nick;
+
+        trigger.appendChild(span);
+
+        trigger.addEventListener("click", function () {
+          toastLine.textContent = "Аккаунта с таким юз не найдено";
+        });
+
+        const actions = document.createElement("div");
+        actions.className = "row-actions";
+
+        const heartBtn = document.createElement("button");
+        heartBtn.type = "button";
+        heartBtn.className = "fav-heart-btn" + (isFavorite(nick) ? " liked" : "");
+        heartBtn.textContent = "♥";
+        heartBtn.title = "В избранное";
+        heartBtn.addEventListener("click", function () {
+          toggleFavorite(nick);
+          const likedNow = isFavorite(nick);
+          heartBtn.classList.toggle("liked", likedNow);
+          toastLine.textContent = likedNow
+            ? "Добавлено в избранное: " + nick
+            : "Убрано из избранного: " + nick;
+        });
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "copy-pill";
+        btn.textContent = "Копировать";
+        btn.addEventListener("click", function () {
+          copyNickText(nick);
+        });
+
+        actions.appendChild(heartBtn);
+        actions.appendChild(btn);
+
+        row.appendChild(trigger);
+        row.appendChild(actions);
+        resultsCard.appendChild(row);
+      }
+
+      function clearRevealTimers() {
+        revealTimers.forEach(function (t) { clearTimeout(t); });
+        revealTimers = [];
       }
 
       function generateTenNicknames() {
+        clearRevealTimers();
+
         const len = Number(lenRange.value) || 7;
-        const kw = prefixInput.value.trim();
+        const kw = sanitizeKeyword(prefixInput.value.trim(), parseExclusions(excludeInput.value).bannedChars);
         const excl = parseExclusions(excludeInput.value);
         const list = [];
         const seen = new Set();
-        let guard = 0;
 
+        // Сначала берём подходящие ники из pool.json (если файл подгрузился)
+        if (poolNicks.length) {
+          const shuffledPool = poolNicks.slice().sort(function () { return Math.random() - 0.5; });
+          for (let p = 0; p < shuffledPool.length && list.length < 10; p++) {
+            const candidate = shuffledPool[p];
+            if (!seen.has(candidate) && matchesFilters(candidate, len, kw, excl)) {
+              seen.add(candidate);
+              list.push(candidate);
+            }
+          }
+        }
+
+        let guard = 0;
         while (list.length < 10 && guard < 400) {
           const nick = activeMode === "random"
             ? buildRandomUsername(len, kw, excl)
@@ -1273,63 +1336,19 @@
         pushToHistory(finalTen, activeMode === "random" ? "случайные" : "уникальные");
 
         resultsCard.innerHTML = "";
-        finalTen.forEach(function (nick) {
-          const row = document.createElement("div");
-          row.className = "nick-row";
+        toastLine.textContent = "Генерация: 1 / 10";
 
-          const trigger = document.createElement("button");
-          trigger.type = "button";
-          trigger.className = "nick-trigger";
-
-          const span = document.createElement("span");
-          span.className = "nick-text";
-          span.textContent = nick;
-
-          const chip = document.createElement("span");
-          chip.className = "status-chip";
-          chip.textContent = "проверить";
-
-          trigger.appendChild(span);
-          trigger.appendChild(chip);
-
-          trigger.addEventListener("click", function () {
-            checkNickHint(nick, chip);
-          });
-
-          const actions = document.createElement("div");
-          actions.className = "row-actions";
-
-          const heartBtn = document.createElement("button");
-          heartBtn.type = "button";
-          heartBtn.className = "fav-heart-btn" + (isFavorite(nick) ? " liked" : "");
-          heartBtn.textContent = "♥";
-          heartBtn.title = "В избранное";
-          heartBtn.addEventListener("click", function () {
-            toggleFavorite(nick);
-            const likedNow = isFavorite(nick);
-            heartBtn.classList.toggle("liked", likedNow);
-            toastLine.textContent = likedNow
-              ? "Добавлено в избранное: " + nick
-              : "Убрано из избранного: " + nick;
-          });
-
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "copy-pill";
-          btn.textContent = "Копировать";
-          btn.addEventListener("click", function () {
-            copyNickText(nick);
-          });
-
-          actions.appendChild(heartBtn);
-          actions.appendChild(btn);
-
-          row.appendChild(trigger);
-          row.appendChild(actions);
-          resultsCard.appendChild(row);
+        finalTen.forEach(function (nick, idx) {
+          const timer = setTimeout(function () {
+            appendNickRow(nick);
+            if (idx === finalTen.length - 1) {
+              toastLine.textContent = "Готово: выдано 10 ников";
+            } else {
+              toastLine.textContent = "Генерация: " + (idx + 1) + " / 10";
+            }
+          }, idx * 1000);
+          revealTimers.push(timer);
         });
-
-        toastLine.textContent = "Выдано 10 ников (" + (activeMode === "random" ? "случайные" : "уникальные") + ")";
       }
 
       function renderFavoritesList() {
@@ -1456,7 +1475,6 @@
         renderHistoryList();
       });
 
-      // Кнопки "Уникальные" и "Случайные" только переключают режим, без генерации
       uniqueBtn.addEventListener("click", function () {
         setActiveModeButton("unique");
         toastLine.textContent = "Режим: Уникальные — нажми «Сгенерировать»";
