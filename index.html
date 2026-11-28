@@ -557,7 +557,7 @@
   <div class="bg-orb orb-3"></div>
 
   <div class="app-wrap">
-    <!-- Шапка: логотип NicUp слева + онлайн справа -->
+    <!-- Шапка: логотип NicUp слева + онлайн с 0 справа -->
     <header class="top-header">
       <div class="brand-logo" aria-label="NicUp">
         <span class="brand-wordmark">
@@ -567,7 +567,7 @@
 
       <div class="online-badge" title="Онлайн в приложении">
         <span class="online-dot"></span>
-        <span id="onlineCounter">100</span>
+        <span id="onlineCounter">0</span>
       </div>
     </header>
 
@@ -777,15 +777,20 @@
     })();
   </script>
 
-  <!-- Статистика JSONBin.io, онлайн от 100 и загрузка рекламы ad.json -->
+  <!-- Статистика JSONBin.io, живой онлайн с 0 каждые 5 сек и загрузка рекламы ad.json -->
   <script>
     (function () {
       const BIN_ID = "6b0938883957a11c13b6397b";
       const API_KEY = "$2a$10$nbho.No3FFfEiqFA5FQcwuYL/kMVR1KOPuHPv0vsFdgk9eEiLbAVa";
       const BIN_URL = "https://api.jsonbin.io/v3/b/" + BIN_ID;
 
-      const ONLINE_BASE = 100;
-      const ONLINE_TTL_MS = 60000;
+      const ONLINE_BASE = 0;
+      const ONLINE_TTL_MS = 30000;
+      const POLL_INTERVAL_MS = 5000;
+      const PING_INTERVAL_MS = 10000;
+
+      let lastPingSentAt = 0;
+      let isWriting = false;
 
       function todayKey() {
         const d = new Date();
@@ -807,32 +812,49 @@
         return localId;
       }
 
-      function renderOnlineCount(onlineMap) {
-        const el = document.getElementById("onlineCounter");
-        if (!el) return;
-        const nowTs = Date.now();
+      function countActiveUsers(onlineMap, nowTs) {
         let active = 0;
-        Object.keys(onlineMap || {}).forEach(function (k) {
+        if (!onlineMap || typeof onlineMap !== "object") return 0;
+        Object.keys(onlineMap).forEach(function (k) {
           if (nowTs - Number(onlineMap[k] || 0) <= ONLINE_TTL_MS) {
             active++;
           }
         });
+        return active;
+      }
+
+      function renderOnlineCount(onlineMap) {
+        const el = document.getElementById("onlineCounter");
+        if (!el) return;
+        const active = countActiveUsers(onlineMap, Date.now());
         el.textContent = String(ONLINE_BASE + active);
       }
 
-      function mutateBin(updater) {
+      function fetchLatestRecord() {
         return fetch(BIN_URL + "/latest", {
           cache: "no-store",
           headers: { "X-Master-Key": API_KEY }
         })
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (res) {
-            const rec = (res && res.record && typeof res.record === "object") ? res.record : {};
+            return (res && res.record && typeof res.record === "object") ? res.record : null;
+          })
+          .catch(function () { return null; });
+      }
+
+      function mutateBin(updater) {
+        if (isWriting) {
+          return Promise.resolve();
+        }
+        isWriting = true;
+        return fetchLatestRecord()
+          .then(function (rec) {
+            const base = rec || {};
             const data = {
-              users: (rec.users && typeof rec.users === "object") ? rec.users : {},
-              days: (rec.days && typeof rec.days === "object") ? rec.days : {},
-              ad_clicks: typeof rec.ad_clicks === "number" ? rec.ad_clicks : 0,
-              online_map: (rec.online_map && typeof rec.online_map === "object") ? rec.online_map : {}
+              users: (base.users && typeof base.users === "object") ? base.users : {},
+              days: (base.days && typeof base.days === "object") ? base.days : {},
+              ad_clicks: typeof base.ad_clicks === "number" ? base.ad_clicks : 0,
+              online_map: (base.online_map && typeof base.online_map === "object") ? base.online_map : {}
             };
             updater(data);
             renderOnlineCount(data.online_map);
@@ -845,19 +867,32 @@
               body: JSON.stringify(data)
             });
           })
-          .catch(function () {});
+          .catch(function () {})
+          .finally(function () {
+            isWriting = false;
+          });
       }
 
-      function syncOnline(shouldPing) {
-        const uid = getUserId();
+      function refreshOnlineOnly() {
+        fetchLatestRecord().then(function (rec) {
+          if (!rec) return;
+          renderOnlineCount(rec.online_map);
+        });
+      }
+
+      function pingOnline(force) {
         const nowTs = Date.now();
+        if (document.hidden) return;
+        if (!force && nowTs - lastPingSentAt < PING_INTERVAL_MS) return;
+
+        const uid = getUserId();
+        lastPingSentAt = nowTs;
+
         mutateBin(function (data) {
           if (!data.online_map || typeof data.online_map !== "object") {
             data.online_map = {};
           }
-          if (shouldPing && !document.hidden) {
-            data.online_map[uid] = nowTs;
-          }
+          data.online_map[uid] = nowTs;
           Object.keys(data.online_map).forEach(function (k) {
             if (nowTs - Number(data.online_map[k] || 0) > ONLINE_TTL_MS) {
               delete data.online_map[k];
@@ -867,10 +902,12 @@
       }
 
       const now = Date.now();
-      if (now - Number(sessionStorage.getItem("nicup_open_ts") || 0) > 1500) {
+      const isNewSession = (now - Number(sessionStorage.getItem("nicup_open_ts") || 0)) > 1500;
+      if (isNewSession) {
         sessionStorage.setItem("nicup_open_ts", String(now));
         const uid = getUserId();
         const day = todayKey();
+        lastPingSentAt = now;
         mutateBin(function (data) {
           if (!data.users[uid]) {
             data.users[uid] = { first_seen: day, last_seen: day };
@@ -886,19 +923,27 @@
           if (data.days[day].active_users.indexOf(uid) === -1) {
             data.days[day].active_users.push(uid);
           }
-          data.online_map[uid] = Date.now();
+          data.online_map[uid] = now;
+          Object.keys(data.online_map).forEach(function (k) {
+            if (now - Number(data.online_map[k] || 0) > ONLINE_TTL_MS) {
+              delete data.online_map[k];
+            }
+          });
         });
       } else {
-        syncOnline(true);
+        refreshOnlineOnly();
+        pingOnline(true);
       }
 
       setInterval(function () {
-        syncOnline(true);
-      }, 20000);
+        refreshOnlineOnly();
+        pingOnline(false);
+      }, POLL_INTERVAL_MS);
 
       document.addEventListener("visibilitychange", function () {
         if (!document.hidden) {
-          syncOnline(true);
+          refreshOnlineOnly();
+          pingOnline(true);
         }
       });
 
