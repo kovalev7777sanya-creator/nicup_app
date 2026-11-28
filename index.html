@@ -2,1605 +2,754 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NicUp — Генератор юзернеймов</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NicUp</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    :root {
-      --bg-deep: #040711;
-      --orb-blue: rgba(37, 99, 235, 0.34);
-      --orb-cyan: rgba(56, 189, 248, 0.22);
-      --orb-indigo: rgba(29, 78, 216, 0.26);
-
-      --glass-surface: rgba(14, 24, 48, 0.64);
-      --glass-recessed: rgba(4, 9, 22, 0.74);
-      --glass-border: rgba(96, 165, 250, 0.26);
-      --glass-highlight: rgba(186, 230, 253, 0.28);
-
-      --text-main: #ffffff;
-      --text-sec: rgba(219, 234, 254, 0.78);
-      --blue-bright: #38bdf8;
-      --green: #34d399;
-      --amber: #fbbf24;
-      --pink: #fb7185;
-
-      --ios-spring: cubic-bezier(0.22, 1.16, 0.36, 1);
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-      min-height: 100%;
     }
 
     body {
-      background: radial-gradient(circle at 20% 0%, #0b1b3d 0%, var(--bg-deep) 62%);
-      color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-      font-weight: 600;
-      overflow-x: hidden;
-      padding: 14px 16px 104px;
-      position: relative;
-      touch-action: manipulation;
+      background: #060b19;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 14px 14px 90px;
     }
 
-    button,
-    input,
-    a,
-    .nick-text,
-    .section-title,
-    .ad-title,
-    .nav-pill-btn {
-      font-weight: 800;
-    }
-
-    button,
-    a {
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-
-    .bg-orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(75px);
-      pointer-events: none;
-      z-index: 0;
-      user-select: none;
-    }
-    .orb-1 {
-      width: 260px;
-      height: 260px;
-      top: -60px;
-      left: -50px;
-      background: var(--orb-blue);
-    }
-    .orb-2 {
-      width: 240px;
-      height: 240px;
-      top: 220px;
-      right: -70px;
-      background: var(--orb-cyan);
-    }
-    .orb-3 {
-      width: 280px;
-      height: 280px;
-      bottom: 40px;
-      left: 10%;
-      background: var(--orb-indigo);
-    }
-
-    .app-wrap {
-      position: relative;
-      z-index: 2;
+    .wrap {
       max-width: 460px;
       margin: 0 auto;
     }
 
-    .top-header {
-      position: relative;
-      z-index: 3;
+    .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px 2px 12px;
-      margin-bottom: 6px;
-      background: transparent;
+      margin-bottom: 14px;
     }
 
-    .brand-logo {
-      display: inline-flex;
-      align-items: center;
-      background: transparent;
-      user-select: none;
-      line-height: 1;
-    }
-
-    .brand-wordmark {
-      display: inline-block;
-      font-family: "Arial Black", "Segoe UI Black", "SF Pro Display", Impact, sans-serif;
-      font-size: 29px;
+    .logo {
+      font-size: 26px;
       font-weight: 900;
       font-style: italic;
-      letter-spacing: -0.045em;
-      line-height: 1;
-      background: transparent;
     }
 
-    .brand-nic {
-      color: #ffffff;
+    .logo span {
+      color: #3b82f6;
     }
 
-    .brand-up {
-      color: #1677ff;
-      margin-left: 1px;
-    }
-
-    .header-avatar-btn {
-      position: relative;
-      z-index: 4;
+    .avatar-btn {
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      border: 1.5px solid rgba(147, 197, 253, 0.48);
-      background: linear-gradient(135deg, #3b82f6, #1e3a8a);
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 900;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.3),
-        0 8px 18px rgba(0, 0, 0, 0.4);
-      transition: transform 0.2s var(--ios-spring);
-    }
-
-    .header-avatar-btn:active {
-      transform: scale(0.92);
-    }
-
-    .header-avatar-btn img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      pointer-events: none;
-    }
-
-    .glass-card {
-      position: relative;
-      z-index: 2;
-      background: var(--glass-surface);
-      backdrop-filter: blur(26px) saturate(185%);
-      -webkit-backdrop-filter: blur(26px) saturate(185%);
-      border: 1px solid var(--glass-border);
-      border-radius: 26px;
-      box-shadow:
-        inset 0 1px 0 var(--glass-highlight),
-        0 14px 32px rgba(0, 0, 0, 0.45);
-    }
-
-    .ad-banner {
-      display: block;
-      position: relative;
-      z-index: 2;
-      text-decoration: none;
-      color: var(--text-main);
-      padding: 24px 22px;
-      min-height: 164px;
-      border-radius: 28px;
-      margin-bottom: 16px;
-      background:
-        radial-gradient(circle at 88% 22%, rgba(56, 189, 248, 0.34), transparent 52%),
-        linear-gradient(135deg, rgba(15, 29, 64, 0.9) 0%, rgba(29, 78, 216, 0.58) 100%);
-      backdrop-filter: blur(28px) saturate(190%);
-      -webkit-backdrop-filter: blur(28px) saturate(190%);
-      border: 1px solid rgba(96, 165, 250, 0.38);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.28),
-        0 16px 36px rgba(3, 10, 28, 0.55);
-      overflow: hidden;
-      transition: transform 0.24s var(--ios-spring);
-    }
-
-    .ad-banner::before {
-      content: "";
-      position: absolute;
-      top: -48%;
-      left: -25%;
-      width: 150%;
-      height: 88%;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0));
-      transform: rotate(-4deg);
-      pointer-events: none;
-    }
-
-    .ad-banner:active {
-      transform: scale(0.98);
-    }
-
-    .ad-top {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 10px;
-      pointer-events: none;
-    }
-
-    .ad-tag {
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #bae6fd;
-      background: rgba(37, 99, 235, 0.38);
-      border: 1px solid rgba(125, 211, 252, 0.32);
-      padding: 4px 10px;
-      border-radius: 999px;
-    }
-
-    .ad-title {
-      position: relative;
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 7px;
-      line-height: 1.2;
-      pointer-events: none;
-    }
-
-    .ad-desc {
-      position: relative;
-      font-size: 14px;
-      color: var(--text-sec);
-      line-height: 1.42;
-      margin-bottom: 16px;
-      max-width: 90%;
-      pointer-events: none;
-    }
-
-    .ad-cta {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 8px 15px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
-      color: #ffffff;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.35),
-        0 6px 14px rgba(29, 78, 216, 0.42);
-      pointer-events: none;
-    }
-
-    .tab-view {
-      display: none;
-      position: relative;
-      z-index: 2;
-    }
-    .tab-view.active {
-      display: block;
-      animation: fadeSlide 0.2s ease;
-    }
-
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .gen-card {
-      padding: 18px;
-      margin-bottom: 14px;
-    }
-
-    .section-title {
-      font-size: 15px;
-      font-weight: 800;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .control-group {
-      margin-bottom: 12px;
-    }
-
-    .control-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      color: var(--text-sec);
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
-    .length-val {
-      color: var(--blue-bright);
-      font-weight: 800;
-    }
-
-    input[type="range"] {
-      width: 100%;
-      accent-color: #3b82f6;
-      cursor: pointer;
-    }
-
-    .inputs-stack {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .glass-input {
-      width: 100%;
-      padding: 11px 14px;
-      border-radius: 16px;
-      border: 1px solid var(--glass-border);
-      background: var(--glass-recessed);
+      border: 1px solid #60a5fa;
+      background: #1d4ed8;
       color: #fff;
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-
-    .glass-input:focus {
-      border-color: var(--blue-bright);
-    }
-
-    .toggles-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .single-toggle-row {
-      margin-bottom: 12px;
-    }
-
-    .pill-toggle {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 9px 10px;
-      border-radius: 999px;
-      background: var(--glass-recessed);
-      border: 1px solid var(--glass-border);
-      color: var(--text-sec);
-      font-size: 12px;
       font-weight: 800;
-      transition: all 0.2s var(--ios-spring);
-      user-select: none;
-    }
-
-    .pill-toggle.active {
-      background: rgba(37, 99, 235, 0.34);
-      border-color: rgba(96, 165, 250, 0.68);
-      color: #ffffff;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
-    }
-
-    .mode-switch-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      padding: 4px;
-      border-radius: 999px;
-      background: rgba(4, 9, 22, 0.65);
-      border: 1px solid rgba(96, 165, 250, 0.2);
-      margin-bottom: 12px;
-    }
-
-    .mode-pill-btn {
-      width: 100%;
-      padding: 9px 12px;
-      border: 1px solid transparent;
-      border-radius: 999px;
-      background: transparent;
-      color: var(--text-sec);
-      font-size: 12px;
-      font-weight: 800;
-      transform: scale(0.98);
-      transition:
-        background 0.26s var(--ios-spring),
-        color 0.22s ease,
-        border-color 0.24s ease,
-        box-shadow 0.26s var(--ios-spring),
-        transform 0.24s var(--ios-spring);
-    }
-
-    .mode-pill-btn.active {
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      border-color: rgba(147, 197, 253, 0.55);
-      color: #ffffff;
-      transform: scale(1);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.36),
-        0 6px 18px rgba(37, 99, 235, 0.45);
-    }
-
-    .mode-pill-btn:active {
-      transform: scale(0.94);
-    }
-
-    .generate-main-btn {
-      width: 100%;
-      padding: 11px 16px;
-      border: none;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 800;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.36),
-        0 8px 20px rgba(37, 99, 235, 0.42);
-      transition: transform 0.2s var(--ios-spring);
-    }
-
-    .generate-main-btn:active {
-      transform: scale(0.97);
-    }
-
-    .toast-line {
-      min-height: 20px;
-      padding: 0 6px;
-      margin-bottom: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-sec);
-      text-align: center;
-    }
-
-    .results-card {
+      cursor: pointer;
       overflow: hidden;
     }
 
-    .nick-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 10px 14px;
-      border-bottom: 1px solid rgba(96, 165, 250, 0.14);
-    }
-
-    .nick-row:last-child {
-      border-bottom: none;
-    }
-
-    .nick-trigger {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      flex: 1;
-      min-width: 0;
-      background: transparent;
-      border: none;
-      text-align: left;
-      padding: 2px 0;
-    }
-
-    .nick-trigger * {
-      pointer-events: none;
-    }
-
-    .nick-text {
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: 0.01em;
-      color: #f8fafc;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-decoration: underline;
-      text-decoration-color: rgba(147, 197, 253, 0.4);
-      text-underline-offset: 3px;
-    }
-
-    .row-actions {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .fav-heart-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: 1px solid rgba(96, 165, 250, 0.28);
-      background: rgba(4, 9, 22, 0.65);
-      color: rgba(219, 234, 254, 0.55);
-      font-size: 14px;
-      line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s var(--ios-spring), color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-    }
-
-    .fav-heart-btn.liked {
-      color: var(--pink);
-      border-color: rgba(251, 113, 133, 0.52);
-      background: rgba(251, 113, 133, 0.16);
-      transform: scale(1.06);
-    }
-
-    .fav-heart-btn:active {
-      transform: scale(0.88);
-    }
-
-    .status-chip {
-      font-size: 10px;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.14);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: var(--blue-bright);
-      white-space: nowrap;
-    }
-
-    .status-chip.busy {
-      background: rgba(251, 191, 36, 0.15);
-      border-color: rgba(251, 191, 36, 0.38);
-      color: var(--amber);
-    }
-
-    .status-chip.free {
-      background: rgba(52, 211, 153, 0.15);
-      border-color: rgba(52, 211, 153, 0.38);
-      color: var(--green);
-    }
-
-    .copy-pill {
-      padding: 6px 11px;
-      border-radius: 999px;
-      border: 1px solid rgba(96, 165, 250, 0.34);
-      background: rgba(37, 99, 235, 0.24);
-      color: #bae6fd;
-      font-size: 11px;
-      font-weight: 800;
-      transition: transform 0.18s var(--ios-spring), background 0.18s ease;
-    }
-
-    .copy-pill:active {
-      transform: scale(0.94);
-    }
-
-    .profile-card {
-      padding: 20px 18px;
-      text-align: center;
-      margin-bottom: 14px;
-    }
-
-    .profile-avatar {
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      margin: 0 auto 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      font-weight: 900;
-      background: linear-gradient(135deg, #3b82f6, #1e3a8a);
-      border: 2px solid rgba(147, 197, 253, 0.45);
-      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.4);
-      overflow: hidden;
-    }
-
-    .profile-avatar img {
+    .avatar-btn img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+
+    .ad-box {
       display: block;
-    }
-
-    .profile-name {
-      font-size: 18px;
-      font-weight: 800;
-      margin-bottom: 3px;
-    }
-
-    .profile-sub {
-      font-size: 13px;
-      color: var(--text-sec);
-      margin-bottom: 14px;
-    }
-
-    .profile-info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      text-align: left;
-      margin-bottom: 14px;
-    }
-
-    .info-box {
-      padding: 11px 13px;
-      border-radius: 18px;
-      background: var(--glass-recessed);
-      border: 1px solid var(--glass-border);
-    }
-
-    .info-box-label {
-      font-size: 11px;
-      color: var(--text-sec);
-      margin-bottom: 3px;
-    }
-
-    .info-box-val {
-      font-size: 14px;
-      font-weight: 800;
-      color: #ffffff;
-    }
-
-    .support-links-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .support-link-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 10px 12px;
-      border-radius: 999px;
       text-decoration: none;
-      font-size: 12px;
-      font-weight: 800;
-      color: #ffffff;
-      background: rgba(37, 99, 235, 0.28);
-      border: 1px solid rgba(96, 165, 250, 0.38);
-      transition: transform 0.2s var(--ios-spring);
-    }
-
-    .support-link-btn.primary {
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      border-color: rgba(147, 197, 253, 0.5);
-    }
-
-    .support-link-btn:active {
-      transform: scale(0.95);
-    }
-
-    .profile-section-card {
+      color: #fff;
+      background: #11224a;
+      border: 1px solid #2563eb;
+      border-radius: 18px;
       padding: 16px;
       margin-bottom: 14px;
     }
 
-    .mini-clear-btn {
-      padding: 5px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(96, 165, 250, 0.28);
-      background: rgba(4, 9, 22, 0.65);
-      color: var(--text-sec);
-      font-size: 11px;
+    .ad-tag {
+      display: inline-block;
+      font-size: 10px;
       font-weight: 800;
+      text-transform: uppercase;
+      background: #1d4ed8;
+      padding: 3px 8px;
+      border-radius: 999px;
+      margin-bottom: 8px;
     }
 
-    .mini-clear-btn:active {
-      transform: scale(0.94);
+    .ad-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 4px;
     }
 
-    .empty-state {
+    .ad-desc {
+      font-size: 13px;
+      color: #cbd5e1;
+      margin-bottom: 10px;
+    }
+
+    .ad-btn {
+      display: inline-block;
+      background: #2563eb;
+      color: #fff;
       font-size: 12px;
-      color: var(--text-sec);
-      text-align: center;
-      padding: 14px 8px;
-      border-radius: 16px;
-      background: var(--glass-recessed);
-      border: 1px dashed rgba(96, 165, 250, 0.22);
+      font-weight: 800;
+      padding: 7px 14px;
+      border-radius: 999px;
     }
 
-    .saved-list {
+    .card {
+      background: #0d172e;
+      border: 1px solid #1e3a8a;
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 10px;
       display: flex;
-      flex-direction: column;
-      gap: 7px;
-      max-height: 260px;
-      overflow-y: auto;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .saved-item {
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .inp {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #1e3a8a;
+      background: #070d1c;
+      color: #fff;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #2563eb;
+      background: #132244;
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #60a5fa;
+    }
+
+    .gen-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: #2563eb;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .status-msg {
+      text-align: center;
+      font-size: 12px;
+      color: #38bdf8;
+      margin-bottom: 10px;
+      min-height: 18px;
+    }
+
+    .nick-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 9px 12px;
-      border-radius: 14px;
-      background: var(--glass-recessed);
-      border: 1px solid rgba(96, 165, 250, 0.18);
+      padding: 10px 12px;
+      border-bottom: 1px solid #172544;
     }
 
-    .saved-nick {
-      font-size: 13px;
+    .nick-item:last-child {
+      border-bottom: none;
+    }
+
+    .nick-check {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 14px;
       font-weight: 800;
-      color: #f8fafc;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      text-align: left;
+      cursor: pointer;
+      flex: 1;
+      min-width: 0;
     }
 
-    .saved-meta {
-      font-size: 10px;
-      color: var(--text-sec);
+    .nick-tag {
+      font-size: 11px;
+      color: #38bdf8;
       margin-left: 6px;
     }
 
-    .bottom-dock-wrap {
+    .mini-btn {
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid #2563eb;
+      background: #132244;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .heart-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      border: 1px solid #2563eb;
+      background: #132244;
+      color: #94a3b8;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .heart-btn.on {
+      color: #fb7185;
+      border-color: #fb7185;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.show {
+      display: block;
+    }
+
+    .profile-box {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .profile-ava {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 8px;
+      overflow: hidden;
+    }
+
+    .profile-ava img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .saved-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #172544;
+      font-size: 13px;
+    }
+
+    .saved-row:last-child {
+      border-bottom: none;
+    }
+
+    .bottom-bar {
       position: fixed;
       left: 0;
       right: 0;
-      bottom: 14px;
-      z-index: 50;
+      bottom: 0;
+      background: #091124;
+      border-top: 1px solid #1e3a8a;
+      padding: 8px 14px;
       display: flex;
+      gap: 8px;
       justify-content: center;
-      padding: 0 16px;
-      pointer-events: none;
     }
 
-    .bottom-dock {
-      pointer-events: auto;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px;
-      border-radius: 999px;
-      background: rgba(10, 18, 38, 0.84);
-      backdrop-filter: blur(28px) saturate(200%);
-      -webkit-backdrop-filter: blur(28px) saturate(200%);
-      border: 1px solid rgba(96, 165, 250, 0.28);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.24),
-        0 14px 34px rgba(0, 0, 0, 0.65);
-    }
-
-    .nav-pill-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      min-width: 118px;
-      padding: 10px 18px;
-      border: none;
-      border-radius: 999px;
-      background: transparent;
-      color: var(--text-sec);
+    .bottom-bar button {
+      flex: 1;
+      max-width: 220px;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #2563eb;
+      background: #132244;
+      color: #cbd5e1;
       font-size: 13px;
       font-weight: 800;
-      transition: all 0.24s var(--ios-spring);
+      cursor: pointer;
     }
 
-    .nav-pill-btn.active {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.48), rgba(29, 78, 216, 0.58));
-      color: #ffffff;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.3),
-        0 6px 16px rgba(37, 99, 235, 0.35);
-    }
-
-    .nav-pill-btn:active {
-      transform: scale(0.95);
+    .bottom-bar button.active {
+      background: #2563eb;
+      color: #fff;
     }
   </style>
 </head>
 <body>
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
-  <div class="bg-orb orb-3"></div>
+  <div class="wrap">
+    <div class="header">
+      <div class="logo">Nic<span>Up</span></div>
+      <button id="topAvaBtn" class="avatar-btn" type="button" onclick="showTab('profile')">N</button>
+    </div>
 
-  <div class="app-wrap">
-    <header class="top-header">
-      <div class="brand-logo" aria-label="NicUp">
-        <span class="brand-wordmark">
-          <span class="brand-nic">Nic</span><span class="brand-up">Up</span>
-        </span>
-      </div>
-
-      <button id="headerAvatarBtn" type="button" class="header-avatar-btn" data-action="open-profile" title="Профиль">N</button>
-    </header>
-
-    <main id="tabHome" class="tab-view active">
-      <a id="adBanner" class="ad-banner" href="https://t.me" target="_blank" rel="noopener noreferrer">
-        <div class="ad-top">
-          <span class="ad-tag">Реклама</span>
-        </div>
+    <div id="pane-home" class="tab-pane show">
+      <a id="adLink" class="ad-box" href="https://t.me" target="_blank" rel="noopener noreferrer">
+        <div class="ad-tag">Реклама</div>
         <div id="adTitle" class="ad-title">Подпишись на наш канал</div>
-        <div id="adDesc" class="ad-desc">Свежие подборки редких юзернеймов и обновления NicUp каждый день</div>
-        <span class="ad-cta">Перейти →</span>
+        <div id="adDesc" class="ad-desc">Свежие подборки ников и обновления NicUp</div>
+        <div class="ad-btn">Перейти →</div>
       </a>
 
-      <section class="glass-card gen-card">
-        <div class="section-title">
-          <span>Генератор юзернеймов</span>
+      <div class="card">
+        <div class="card-title">Генератор юзернеймов</div>
+
+        <div class="label-row">
+          <span>Длина ника</span>
+          <strong id="lenText">7 символов</strong>
+        </div>
+        <input id="lenInput" type="range" min="5" max="15" value="7" oninput="document.getElementById('lenText').textContent = this.value + ' символов'" />
+
+        <input id="wordInput" class="inp" type="text" maxlength="12" placeholder="Ключевое слово (необязательно)" />
+        <input id="exclInput" class="inp" type="text" maxlength="40" placeholder="Исключить буквы или слова (напр: z, q, cyber)" />
+
+        <div class="row-2">
+          <button id="btnDigits" class="btn active" type="button" onclick="toggleOpt('digits')">Цифры 0–9</button>
+          <button id="btnUnder" class="btn" type="button" onclick="toggleOpt('under')">Подчёркивание _</button>
         </div>
 
-        <div class="control-group">
-          <div class="control-label">
-            <span>Длина ника</span>
-            <span id="lenLabel" class="length-val">7 символов</span>
-          </div>
-          <input id="lenRange" type="range" min="5" max="15" value="7" />
+        <button id="btnNoAt" class="btn" style="margin-bottom:10px;" type="button" onclick="toggleOpt('noAt')">Копировать без @</button>
+
+        <div class="row-2">
+          <button id="btnModeUnique" class="btn active" type="button" onclick="setMode('unique')">Уникальные</button>
+          <button id="btnModeRandom" class="btn" type="button" onclick="setMode('random')">Случайные</button>
         </div>
 
-        <div class="inputs-stack">
-          <input id="prefixInput" class="glass-input" type="text" maxlength="12" placeholder="Ключевое слово (необязательно)" />
-          <input id="excludeInput" class="glass-input" type="text" maxlength="40" placeholder="Исключить буквы или слова (напр: z, q, cyber)" />
-        </div>
+        <button class="gen-btn" type="button" onclick="generateTen()">Сгенерировать</button>
+      </div>
 
-        <div class="toggles-row">
-          <button id="toggleDigits" type="button" class="pill-toggle active" data-action="toggle-digits">Цифры 0–9</button>
-          <button id="toggleUnderscore" type="button" class="pill-toggle" data-action="toggle-underscore">Подчёркивание _</button>
-        </div>
+      <div id="msgBox" class="status-msg">Выбери режим и нажми «Сгенерировать»</div>
+      <div id="listBox" class="card" style="padding:0; display:none;"></div>
+    </div>
 
-        <div class="single-toggle-row">
-          <button id="toggleNoAt" type="button" class="pill-toggle" data-action="toggle-no-at">Копировать без @</button>
-        </div>
-
-        <div class="mode-switch-row">
-          <button id="uniqueBtn" type="button" class="mode-pill-btn active" data-action="mode-unique">Уникальные</button>
-          <button id="randomBtn" type="button" class="mode-pill-btn" data-action="mode-random">Случайные</button>
-        </div>
-
-        <button id="generateBtn" type="button" class="generate-main-btn" data-action="generate">Сгенерировать</button>
-      </section>
-
-      <div id="toastLine" class="toast-line">Выбери режим и нажми «Сгенерировать»</div>
-
-      <section id="resultsCard" class="glass-card results-card"></section>
-    </main>
-
-    <section id="tabProfile" class="tab-view">
-      <div class="glass-card profile-card">
-        <div id="profileAvatar" class="profile-avatar">N</div>
-        <div id="profileName" class="profile-name">Пользователь Telegram</div>
-        <div id="profileUsername" class="profile-sub">@nicup_user</div>
-
-        <div class="profile-info-grid">
-          <div class="info-box">
-            <div class="info-box-label">Ваш ID</div>
-            <div id="profileId" class="info-box-val">—</div>
-          </div>
-          <div class="info-box">
-            <div class="info-box-label">В избранном</div>
-            <div id="profileFavCount" class="info-box-val" style="color: #fb7185;">0</div>
-          </div>
-        </div>
-
-        <div class="support-links-grid">
-          <a id="supportLinkBtn" class="support-link-btn primary" data-ext-link="support" href="https://t.me" target="_blank" rel="noopener noreferrer">Чат с поддержкой</a>
-          <a id="channelLinkBtn" class="support-link-btn" data-ext-link="channel" href="https://t.me" target="_blank" rel="noopener noreferrer">Канал NicUp</a>
+    <div id="pane-profile" class="tab-pane">
+      <div class="card profile-box">
+        <div id="profAva" class="profile-ava">N</div>
+        <div id="profName" style="font-size:18px;font-weight:800;margin-bottom:4px;">Пользователь</div>
+        <div id="profUser" style="font-size:13px;color:#94a3b8;margin-bottom:12px;">@telegram</div>
+        <div style="font-size:12px;color:#cbd5e1;margin-bottom:12px;">ID: <span id="profId">—</span></div>
+        <div class="row-2" style="margin-bottom:0;">
+          <a id="supportUrlBtn" class="btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center;" href="https://t.me" target="_blank" rel="noopener noreferrer">Поддержка</a>
+          <a id="channelUrlBtn" class="btn" style="text-decoration:none;display:flex;align-items:center;justify-content:center;" href="https://t.me" target="_blank" rel="noopener noreferrer">Канал</a>
         </div>
       </div>
 
-      <div class="glass-card profile-section-card">
-        <div class="section-title">
-          <span>♥ Избранное</span>
-          <button id="clearFavBtn" type="button" class="mini-clear-btn" data-action="clear-fav">Очистить</button>
+      <div class="card">
+        <div class="card-title">
+          <span>Избранное</span>
+          <button class="mini-btn" type="button" onclick="clearFavs()">Очистить</button>
         </div>
-        <div id="favoritesListWrap"></div>
+        <div id="favBox"></div>
       </div>
 
-      <div class="glass-card profile-section-card">
-        <div class="section-title">
-          <span>История генераций</span>
-          <button id="clearHistoryBtn" type="button" class="mini-clear-btn" data-action="clear-history">Очистить</button>
+      <div class="card">
+        <div class="card-title">
+          <span>История</span>
+          <button class="mini-btn" type="button" onclick="clearHist()">Очистить</button>
         </div>
-        <div id="historyListWrap"></div>
+        <div id="histBox"></div>
       </div>
-    </section>
+    </div>
   </div>
 
-  <div class="bottom-dock-wrap">
-    <nav class="bottom-dock" aria-label="Навигация">
-      <button type="button" class="nav-pill-btn active" data-action="switch-tab" data-tab="tabHome">Главная</button>
-      <button type="button" class="nav-pill-btn" data-action="switch-tab" data-tab="tabProfile">Профиль</button>
-    </nav>
+  <div class="bottom-bar">
+    <button id="tabBtnHome" class="active" type="button" onclick="showTab('home')">Главная</button>
+    <button id="tabBtnProfile" type="button" onclick="showTab('profile')">Профиль</button>
   </div>
 
   <script>
-    (function () {
-      // Вставь сюда реальные ссылки на профиль/чат поддержки и канал:
-      const SUPPORT_URL = "https://t.me";
-      const CHANNEL_URL = "https://t.me";
+    // Вставь сюда свои ссылки:
+    const SUPPORT_LINK = "https://t.me";
+    const CHANNEL_LINK = "https://t.me";
 
-      let tg = null;
-      try {
-        if (window.Telegram && window.Telegram.WebApp) {
-          tg = window.Telegram.WebApp;
-          tg.ready();
-          tg.expand();
-        }
-      } catch (e) {}
+    document.getElementById("supportUrlBtn").href = SUPPORT_LINK;
+    document.getElementById("channelUrlBtn").href = CHANNEL_LINK;
 
-      const supportLinkEl = document.getElementById("supportLinkBtn");
-      const channelLinkEl = document.getElementById("channelLinkBtn");
-      if (supportLinkEl) supportLinkEl.href = https://t.me/nicup_support;
-      if (channelLinkEl) channelLinkEl.href = CHANNEL_URL;
+    let optDigits = true;
+    let optUnder = false;
+    let optNoAt = false;
+    let genMode = "unique";
 
-      function openExternalUrl(url) {
-        if (!url) return;
-        try {
-          if (tg && typeof tg.openLink === "function") {
-            tg.openLink(url);
-            return;
+    const ROOTS = [
+      "cyber", "neon", "void", "flux", "nova", "drift", "zen", "apex",
+      "kuro", "lux", "vibe", "echo", "orbit", "pixel", "storm", "frost",
+      "shadow", "pulse", "atlas", "hyper", "lunar", "solar", "rift", "byte"
+    ];
+
+    let favs = JSON.parse(localStorage.getItem("nicup_fav_simple") || "[]");
+    let hist = JSON.parse(localStorage.getItem("nicup_hist_simple") || "[]");
+
+    try {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+        const u = window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user;
+        if (u) {
+          const name = [u.first_name, u.last_name].filter(Boolean).join(" ") || "Пользователь";
+          const letter = name.charAt(0).toUpperCase() || "N";
+          document.getElementById("profName").textContent = name;
+          document.getElementById("profUser").textContent = u.username ? "@" + u.username : "Без ника";
+          document.getElementById("profId").textContent = String(u.id || "—");
+          document.getElementById("topAvaBtn").textContent = letter;
+          document.getElementById("profAva").textContent = letter;
+          if (u.photo_url) {
+            document.getElementById("topAvaBtn").innerHTML = '<img src="' + u.photo_url + '" alt="">';
+            document.getElementById("profAva").innerHTML = '<img src="' + u.photo_url + '" alt="">';
           }
-        } catch (e) {}
-        window.open(url, "_blank", "noopener,noreferrer");
-      }
-
-      const navBtns = document.querySelectorAll(".nav-pill-btn");
-      const tabViews = document.querySelectorAll(".tab-view");
-      const headerAvatarBtn = document.getElementById("headerAvatarBtn");
-
-      function openTab(targetId) {
-        navBtns.forEach(function (b) {
-          b.classList.toggle("active", b.getAttribute("data-tab") === targetId);
-        });
-        tabViews.forEach(function (v) {
-          v.classList.toggle("active", v.id === targetId);
-        });
-        if (targetId === "tabProfile") {
-          renderFavoritesList();
-          renderHistoryList();
-        }
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      function setAvatarContent(el, photoUrl, initial) {
-        if (!el) return;
-        el.innerHTML = "";
-        if (photoUrl) {
-          const img = document.createElement("img");
-          img.src = photoUrl;
-          img.alt = initial;
-          img.addEventListener("error", function () {
-            el.innerHTML = "";
-            el.textContent = initial;
-          });
-          el.appendChild(img);
-        } else {
-          el.textContent = initial;
         }
       }
+    } catch (e) {}
 
-      try {
-        const tgUser = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
-        if (tgUser) {
-          const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(" ") || "Пользователь";
-          const initial = fullName.charAt(0).toUpperCase() || "N";
-          document.getElementById("profileName").textContent = fullName;
-          setAvatarContent(document.getElementById("profileAvatar"), tgUser.photo_url, initial);
-          setAvatarContent(headerAvatarBtn, tgUser.photo_url, initial);
-          document.getElementById("profileUsername").textContent = tgUser.username ? "@" + tgUser.username : "Без юзернейма";
-          document.getElementById("profileId").textContent = String(tgUser.id);
+    function showTab(tab) {
+      document.getElementById("pane-home").classList.toggle("show", tab === "home");
+      document.getElementById("pane-profile").classList.toggle("show", tab === "profile");
+      document.getElementById("tabBtnHome").classList.toggle("active", tab === "home");
+      document.getElementById("tabBtnProfile").classList.toggle("active", tab === "profile");
+      if (tab === "profile") {
+        renderSaved();
+      }
+    }
+
+    function toggleOpt(name) {
+      if (name === "digits") {
+        optDigits = !optDigits;
+        document.getElementById("btnDigits").classList.toggle("active", optDigits);
+      } else if (name === "under") {
+        optUnder = !optUnder;
+        document.getElementById("btnUnder").classList.toggle("active", optUnder);
+      } else if (name === "noAt") {
+        optNoAt = !optNoAt;
+        document.getElementById("btnNoAt").classList.toggle("active", optNoAt);
+      }
+    }
+
+    function setMode(mode) {
+      genMode = mode;
+      document.getElementById("btnModeUnique").classList.toggle("active", mode === "unique");
+      document.getElementById("btnModeRandom").classList.toggle("active", mode === "random");
+      document.getElementById("msgBox").textContent = "Режим: " + (mode === "unique" ? "Уникальные" : "Случайные") + ". Нажми «Сгенерировать»";
+    }
+
+    function getExcl() {
+      const parts = (document.getElementById("exclInput").value || "")
+        .toLowerCase()
+        .split(/[\s,;]+/)
+        .map(s => s.replace(/[^a-z0-9_]/g, ""))
+        .filter(Boolean);
+      return {
+        chars: new Set(parts.filter(p => p.length === 1)),
+        words: parts.filter(p => p.length > 1)
+      };
+    }
+
+    function allowedStr(str, chars) {
+      return str.split("").filter(ch => !chars.has(ch)).join("");
+    }
+
+    function okNick(plain, ex) {
+      for (const ch of plain) {
+        if (ex.chars.has(ch)) return false;
+      }
+      for (const w of ex.words) {
+        if (plain.includes(w)) return false;
+      }
+      return true;
+    }
+
+    function makeOne(len, kwRaw, ex) {
+      const letters = allowedStr("abcdefghijklmnopqrstuvwxyz", ex.chars) || "abcdefg";
+      const digits = allowedStr("0123456789", ex.chars);
+      const canUnder = optUnder && !ex.chars.has("_");
+      let kw = allowedStr((kwRaw || "").toLowerCase().replace(/[^a-z0-9_]/g, ""), ex.chars);
+      if (kw && !/^[a-z]/.test(kw)) kw = letters[0] + kw;
+
+      let out = "";
+      if (genMode === "unique") {
+        const pool = ROOTS.filter(w => okNick(w, ex));
+        const words = pool.length ? pool : [letters.slice(0, 4) || "user"];
+        const a = kw || words[Math.floor(Math.random() * words.length)];
+        const b = words[Math.floor(Math.random() * words.length)];
+        out = canUnder && Math.random() < 0.5 ? (a + "_" + b) : (a + b);
+        if (optDigits && digits.length && out.length < len) {
+          out += digits[Math.floor(Math.random() * digits.length)];
         }
-      } catch (e) {}
-
-      const FAV_STORAGE_KEY = "nicup_favorites_v1";
-      const HIST_STORAGE_KEY = "nicup_history_v1";
-
-      function loadJsonArray(key) {
-        try {
-          const raw = localStorage.getItem(key);
-          const parsed = raw ? JSON.parse(raw) : [];
-          return Array.isArray(parsed) ? parsed : [];
-        } catch (e) {
-          return [];
+        while (out.length < len) {
+          out += letters[Math.floor(Math.random() * letters.length)];
         }
-      }
-
-      function saveJsonArray(key, arr) {
-        try {
-          localStorage.setItem(key, JSON.stringify(arr));
-        } catch (e) {}
-      }
-
-      let favorites = loadJsonArray(FAV_STORAGE_KEY);
-      let genHistory = loadJsonArray(HIST_STORAGE_KEY);
-
-      function isFavorite(nick) {
-        return favorites.indexOf(nick) !== -1;
-      }
-
-      function updateFavCounter() {
-        const countEl = document.getElementById("profileFavCount");
-        if (countEl) countEl.textContent = String(favorites.length);
-      }
-
-      function toggleFavorite(nick) {
-        const idx = favorites.indexOf(nick);
-        if (idx === -1) {
-          favorites.unshift(nick);
-        } else {
-          favorites.splice(idx, 1);
-        }
-        saveJsonArray(FAV_STORAGE_KEY, favorites);
-        updateFavCounter();
-      }
-
-      function pushToHistory(nicks, modeLabel) {
-        const nowStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-        nicks.forEach(function (nick) {
-          genHistory = genHistory.filter(function (item) { return item.nick !== nick; });
-          genHistory.unshift({ nick: nick, mode: modeLabel, time: nowStr });
-        });
-        if (genHistory.length > 30) {
-          genHistory = genHistory.slice(0, 30);
-        }
-        saveJsonArray(HIST_STORAGE_KEY, genHistory);
-      }
-
-      const lenRange = document.getElementById("lenRange");
-      const lenLabel = document.getElementById("lenLabel");
-      const prefixInput = document.getElementById("prefixInput");
-      const excludeInput = document.getElementById("excludeInput");
-      const toggleDigits = document.getElementById("toggleDigits");
-      const toggleUnderscore = document.getElementById("toggleUnderscore");
-      const toggleNoAt = document.getElementById("toggleNoAt");
-      const uniqueBtn = document.getElementById("uniqueBtn");
-      const randomBtn = document.getElementById("randomBtn");
-      const resultsCard = document.getElementById("resultsCard");
-      const toastLine = document.getElementById("toastLine");
-
-      let useDigits = true;
-      let useUnderscore = false;
-      let copyWithoutAt = false;
-      let activeMode = "unique";
-
-      const WORD_ROOTS = [
-        "cyber", "neon", "void", "flux", "nova", "drift", "zen", "apex",
-        "kuro", "lux", "vibe", "echo", "orbit", "pixel", "storm", "frost",
-        "shadow", "pulse", "atlas", "hyper", "lunar", "solar", "rift", "byte",
-        "stark", "omega", "alpha", "delta", "titan", "ghost", "spark", "onyx"
-      ];
-
-      function formatForCopy(nick) {
-        return copyWithoutAt ? nick.replace(/^@/, "") : nick;
-      }
-
-      function copyNickText(nick) {
-        const textToCopy = formatForCopy(nick);
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(textToCopy).catch(function () {});
-        } else {
-          const ta = document.createElement("textarea");
-          ta.value = textToCopy;
-          ta.style.position = "fixed";
-          ta.style.opacity = "0";
-          document.body.appendChild(ta);
-          ta.select();
-          try { document.execCommand("copy"); } catch (e) {}
-          document.body.removeChild(ta);
-        }
-        if (toastLine) toastLine.textContent = "Скопировано: " + textToCopy;
-      }
-
-      function setActiveModeButton(mode) {
-        activeMode = mode;
-        if (uniqueBtn) uniqueBtn.classList.toggle("active", mode === "unique");
-        if (randomBtn) randomBtn.classList.toggle("active", mode === "random");
-      }
-
-      if (lenRange && lenLabel) {
-        lenRange.addEventListener("input", function () {
-          lenLabel.textContent = lenRange.value + " символов";
-        });
-      }
-
-      function parseExclusions(raw) {
-        const tokens = (raw || "")
-          .toLowerCase()
-          .split(/[\s,;]+/)
-          .map(function (t) { return t.replace(/[^a-z0-9_]/g, ""); })
-          .filter(Boolean);
-
-        const bannedChars = new Set();
-        const bannedWords = [];
-
-        tokens.forEach(function (tok) {
-          if (tok.length === 1) {
-            bannedChars.add(tok);
+      } else {
+        const vowels = allowedStr("aeiouy", ex.chars) || "aeo";
+        const cons = allowedStr("bcdfghjklmnpqrstvwxz", ex.chars) || "kmnrst";
+        out = kw.slice(0, len);
+        while (out.length < len) {
+          const prev = out[out.length - 1] || "";
+          if (canUnder && out.length > 1 && out.length < len - 1 && prev !== "_" && Math.random() < 0.18) {
+            out += "_";
+          } else if (optDigits && digits.length && out.length >= len - 2 && Math.random() < 0.4) {
+            out += digits[Math.floor(Math.random() * digits.length)];
           } else {
-            bannedWords.push(tok);
+            const set = vowels.includes(prev) ? cons : vowels;
+            out += set[Math.floor(Math.random() * set.length)];
           }
-        });
-
-        return { bannedChars: bannedChars, bannedWords: bannedWords };
-      }
-
-      function passesExclusions(plainNick, excl) {
-        for (let i = 0; i < plainNick.length; i++) {
-          if (excl.bannedChars.has(plainNick[i])) return false;
-        }
-        for (let j = 0; j < excl.bannedWords.length; j++) {
-          if (plainNick.indexOf(excl.bannedWords[j]) !== -1) return false;
-        }
-        return true;
-      }
-
-      function filterAllowedChars(str, bannedChars) {
-        let out = "";
-        for (let i = 0; i < str.length; i++) {
-          if (!bannedChars.has(str[i])) out += str[i];
-        }
-        return out;
-      }
-
-      function sanitizeKeyword(raw, bannedChars) {
-        let s = (raw || "").toLowerCase().replace(/[^a-z0-9_]/g, "");
-        if (bannedChars) {
-          s = filterAllowedChars(s, bannedChars);
-        }
-        if (s && !/^[a-z]/.test(s)) {
-          const safeFirst = filterAllowedChars("xna", bannedChars);
-          s = (safeFirst ? safeFirst[0] : "a") + s;
-        }
-        return s;
-      }
-
-      function pick(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-      }
-
-      function buildUniqueUsername(length, rawKeyword, excl) {
-        const allowedLetters = filterAllowedChars("abcdefghijklmnopqrstuvwxyz", excl.bannedChars) || "abcdefg";
-        const allowedDigits = filterAllowedChars("0123456789", excl.bannedChars);
-        const allowUnderscore = useUnderscore && !excl.bannedChars.has("_");
-
-        const validRoots = WORD_ROOTS.filter(function (w) {
-          return passesExclusions(w, excl);
-        });
-        const rootsPool = validRoots.length ? validRoots : [allowedLetters.slice(0, 4) || "user"];
-
-        const kw = sanitizeKeyword(rawKeyword, excl.bannedChars);
-        const w1 = kw || pick(rootsPool);
-        let w2 = pick(rootsPool);
-        if (rootsPool.length > 1) {
-          while (w2 === w1) {
-            w2 = pick(rootsPool);
-          }
-        }
-
-        let base = allowUnderscore && Math.random() < 0.5 ? (w1 + "_" + w2) : (w1 + w2);
-
-        if (useDigits && allowedDigits.length > 0 && base.length < length) {
-          const maxDig = Math.min(3, length - base.length);
-          const digCount = Math.max(1, Math.floor(Math.random() * maxDig) + 1);
-          for (let i = 0; i < digCount; i++) {
-            base += allowedDigits[Math.floor(Math.random() * allowedDigits.length)];
-          }
-        }
-
-        while (base.length < length) {
-          base += allowedLetters[Math.floor(Math.random() * allowedLetters.length)];
-        }
-
-        let trimmed = base.slice(0, length).replace(/^_+|_+$/g, "");
-        if (!trimmed || !/^[a-z]/.test(trimmed)) {
-          trimmed = allowedLetters[0] + trimmed.slice(0, Math.max(1, length - 1));
-        }
-        return "@" + trimmed;
-      }
-
-      function buildRandomUsername(length, rawKeyword, excl) {
-        const vowels = filterAllowedChars("aeiouy", excl.bannedChars) || "aeo";
-        const consonants = filterAllowedChars("bcdfghjklmnpqrstvwxz", excl.bannedChars) || "kmnrst";
-        const allowedDigits = filterAllowedChars("0123456789", excl.bannedChars);
-        const allowUnderscore = useUnderscore && !excl.bannedChars.has("_");
-
-        let res = sanitizeKeyword(rawKeyword, excl.bannedChars).slice(0, length);
-        while (res.length < length) {
-          const prev = res[res.length - 1] || "";
-          if (allowUnderscore && res.length > 1 && res.length < length - 1 && prev !== "_" && Math.random() < 0.18) {
-            res += "_";
-            continue;
-          }
-          if (useDigits && allowedDigits.length > 0 && res.length >= length - 2 && Math.random() < 0.42) {
-            res += allowedDigits[Math.floor(Math.random() * allowedDigits.length)];
-            continue;
-          }
-          const isPrevVowel = vowels.indexOf(prev) !== -1;
-          const pool = isPrevVowel ? consonants : vowels;
-          res += pool[Math.floor(Math.random() * pool.length)];
-        }
-        res = res.replace(/^_+|_+$/g, "");
-        if (!res || !/^[a-z]/.test(res)) {
-          res = consonants[0] + res.slice(0, Math.max(1, length - 1));
-        }
-        return "@" + res;
-      }
-
-      function checkNickHint(nick, chipEl) {
-        const plain = nick.replace(/^@/, "");
-        if (chipEl) {
-          chipEl.className = "status-chip";
-          chipEl.textContent = "проверка...";
-        }
-
-        fetch("https://t.me/" + encodeURIComponent(plain), {
-          method: "GET",
-          mode: "no-cors",
-          cache: "no-store"
-        })
-          .then(function () {
-            if (chipEl) {
-              chipEl.className = "status-chip busy";
-              chipEl.textContent = "проверено · t.me";
-            }
-            if (toastLine) toastLine.textContent = "Проверен " + nick + " (t.me/" + plain + ")";
-          })
-          .catch(function () {
-            if (chipEl) {
-              chipEl.className = "status-chip free";
-              chipEl.textContent = "нет отклика";
-            }
-            if (toastLine) toastLine.textContent = "Нет ответа от t.me/" + plain;
-          });
-      }
-
-      function generateTenNicknames() {
-        const len = Number(lenRange ? lenRange.value : 7) || 7;
-        const kw = prefixInput ? prefixInput.value.trim() : "";
-        const excl = parseExclusions(excludeInput ? excludeInput.value : "");
-        const list = [];
-        const seen = new Set();
-        let guard = 0;
-
-        while (list.length < 10 && guard < 400) {
-          const nick = activeMode === "random"
-            ? buildRandomUsername(len, kw, excl)
-            : buildUniqueUsername(len, kw, excl);
-          const plain = nick.replace(/^@/, "");
-          if (!seen.has(nick) && passesExclusions(plain, excl)) {
-            seen.add(nick);
-            list.push(nick);
-          }
-          guard++;
-        }
-
-        const safeLetters = filterAllowedChars("abcdefghijklmnopqrstuvwxyz", excl.bannedChars) || "abcdefg";
-        while (list.length < 10) {
-          let tail = "";
-          for (let i = 0; i < len; i++) {
-            tail += safeLetters[Math.floor(Math.random() * safeLetters.length)];
-          }
-          const fallback = "@" + tail;
-          if (!seen.has(fallback)) {
-            seen.add(fallback);
-            list.push(fallback);
-          }
-        }
-
-        const finalTen = list.slice(0, 10);
-        pushToHistory(finalTen, activeMode === "random" ? "случайные" : "уникальные");
-
-        if (!resultsCard) return;
-        resultsCard.innerHTML = "";
-        finalTen.forEach(function (nick) {
-          const row = document.createElement("div");
-          row.className = "nick-row";
-
-          const trigger = document.createElement("button");
-          trigger.type = "button";
-          trigger.className = "nick-trigger";
-          trigger.setAttribute("data-action", "check-nick");
-          trigger.setAttribute("data-nick", nick);
-
-          const span = document.createElement("span");
-          span.className = "nick-text";
-          span.textContent = nick;
-
-          const chip = document.createElement("span");
-          chip.className = "status-chip";
-          chip.textContent = "проверить";
-
-          trigger.appendChild(span);
-          trigger.appendChild(chip);
-
-          const actions = document.createElement("div");
-          actions.className = "row-actions";
-
-          const heartBtn = document.createElement("button");
-          heartBtn.type = "button";
-          heartBtn.className = "fav-heart-btn" + (isFavorite(nick) ? " liked" : "");
-          heartBtn.textContent = "♥";
-          heartBtn.title = "В избранное";
-          heartBtn.setAttribute("data-action", "toggle-fav");
-          heartBtn.setAttribute("data-nick", nick);
-
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "copy-pill";
-          btn.textContent = "Копировать";
-          btn.setAttribute("data-action", "copy-nick");
-          btn.setAttribute("data-nick", nick);
-
-          actions.appendChild(heartBtn);
-          actions.appendChild(btn);
-
-          row.appendChild(trigger);
-          row.appendChild(actions);
-          resultsCard.appendChild(row);
-        });
-
-        if (toastLine) {
-          toastLine.textContent = "Выдано 10 ников (" + (activeMode === "random" ? "случайные" : "уникальные") + ")";
         }
       }
 
-      function renderFavoritesList() {
-        const wrap = document.getElementById("favoritesListWrap");
-        if (!wrap) return;
-        updateFavCounter();
+      out = out.slice(0, len).replace(/^_+|_+$/g, "");
+      if (!out || !/^[a-z]/.test(out)) {
+        out = letters[0] + out.slice(1);
+      }
+      return "@" + out;
+    }
 
-        if (!favorites.length) {
-          wrap.innerHTML = '<div class="empty-state">Пока пусто. Нажми ♥ рядом с ником на главной, чтобы сохранить сюда.</div>';
-          return;
+    function generateTen() {
+      const len = Number(document.getElementById("lenInput").value) || 7;
+      const kw = document.getElementById("wordInput").value.trim();
+      const ex = getExcl();
+      const list = [];
+      const used = new Set();
+      let guard = 0;
+
+      while (list.length < 10 && guard < 400) {
+        const nick = makeOne(len, kw, ex);
+        if (!used.has(nick) && okNick(nick.slice(1), ex)) {
+          used.add(nick);
+          list.push(nick);
         }
-
-        const listEl = document.createElement("div");
-        listEl.className = "saved-list";
-
-        favorites.forEach(function (nick) {
-          const item = document.createElement("div");
-          item.className = "saved-item";
-
-          const nameSpan = document.createElement("span");
-          nameSpan.className = "saved-nick";
-          nameSpan.textContent = nick;
-
-          const actions = document.createElement("div");
-          actions.className = "row-actions";
-
-          const copyBtn = document.createElement("button");
-          copyBtn.type = "button";
-          copyBtn.className = "copy-pill";
-          copyBtn.textContent = "Копировать";
-          copyBtn.setAttribute("data-action", "copy-saved");
-          copyBtn.setAttribute("data-nick", nick);
-
-          const delBtn = document.createElement("button");
-          delBtn.type = "button";
-          delBtn.className = "fav-heart-btn liked";
-          delBtn.textContent = "♥";
-          delBtn.title = "Убрать из избранного";
-          delBtn.setAttribute("data-action", "remove-fav");
-          delBtn.setAttribute("data-nick", nick);
-
-          actions.appendChild(copyBtn);
-          actions.appendChild(delBtn);
-
-          item.appendChild(nameSpan);
-          item.appendChild(actions);
-          listEl.appendChild(item);
-        });
-
-        wrap.innerHTML = "";
-        wrap.appendChild(listEl);
+        guard++;
       }
 
-      function renderHistoryList() {
-        const wrap = document.getElementById("historyListWrap");
-        if (!wrap) return;
-
-        if (!genHistory.length) {
-          wrap.innerHTML = '<div class="empty-state">История генераций пока пуста.</div>';
-          return;
+      const letters = allowedStr("abcdefghijklmnopqrstuvwxyz", ex.chars) || "abcdefg";
+      while (list.length < 10) {
+        let s = "";
+        for (let i = 0; i < len; i++) s += letters[Math.floor(Math.random() * letters.length)];
+        const nick = "@" + s;
+        if (!used.has(nick)) {
+          used.add(nick);
+          list.push(nick);
         }
-
-        const listEl = document.createElement("div");
-        listEl.className = "saved-list";
-
-        genHistory.forEach(function (entry) {
-          const item = document.createElement("div");
-          item.className = "saved-item";
-
-          const left = document.createElement("div");
-          left.style.minWidth = "0";
-          left.style.display = "flex";
-          left.style.alignItems = "center";
-
-          const nameSpan = document.createElement("span");
-          nameSpan.className = "saved-nick";
-          nameSpan.textContent = entry.nick;
-
-          const metaSpan = document.createElement("span");
-          metaSpan.className = "saved-meta";
-          metaSpan.textContent = entry.time || "";
-
-          left.appendChild(nameSpan);
-          left.appendChild(metaSpan);
-
-          const actions = document.createElement("div");
-          actions.className = "row-actions";
-
-          const copyBtn = document.createElement("button");
-          copyBtn.type = "button";
-          copyBtn.className = "copy-pill";
-          copyBtn.textContent = "Копировать";
-          copyBtn.setAttribute("data-action", "copy-saved");
-          copyBtn.setAttribute("data-nick", entry.nick);
-
-          actions.appendChild(copyBtn);
-
-          item.appendChild(left);
-          item.appendChild(actions);
-          listEl.appendChild(item);
-        });
-
-        wrap.innerHTML = "";
-        wrap.appendChild(listEl);
       }
 
-      // Единый делегированный обработчик кликов по всему документу
-      document.addEventListener("click", function (event) {
-        const actionEl = event.target.closest("[data-action], [data-ext-link]");
-        if (!actionEl) return;
+      list.forEach(n => {
+        hist = [n].concat(hist.filter(x => x !== n)).slice(0, 30);
+      });
+      localStorage.setItem("nicup_hist_simple", JSON.stringify(hist));
 
-        if (actionEl.hasAttribute("data-ext-link")) {
-          const href = actionEl.getAttribute("href");
-          if (href) {
-            event.preventDefault();
-            openExternalUrl(href);
-          }
-          return;
-        }
+      const box = document.getElementById("listBox");
+      box.style.display = "block";
+      box.innerHTML = "";
 
-        const action = actionEl.getAttribute("data-action");
-        const nick = actionEl.getAttribute("data-nick") || "";
+      list.forEach(nick => {
+        const row = document.createElement("div");
+        row.className = "nick-item";
 
-        if (action === "open-profile") {
-          openTab("tabProfile");
-        } else if (action === "switch-tab") {
-          const tabId = actionEl.getAttribute("data-tab");
-          if (tabId) openTab(tabId);
-        } else if (action === "toggle-digits") {
-          useDigits = !useDigits;
-          if (toggleDigits) toggleDigits.classList.toggle("active", useDigits);
-        } else if (action === "toggle-underscore") {
-          useUnderscore = !useUnderscore;
-          if (toggleUnderscore) toggleUnderscore.classList.toggle("active", useUnderscore);
-        } else if (action === "toggle-no-at") {
-          copyWithoutAt = !copyWithoutAt;
-          if (toggleNoAt) toggleNoAt.classList.toggle("active", copyWithoutAt);
-          if (toastLine) {
-            toastLine.textContent = copyWithoutAt
-              ? "Копирование без @ включено"
-              : "Копирование с @ включено";
+        const checkBtn = document.createElement("button");
+        checkBtn.type = "button";
+        checkBtn.className = "nick-check";
+        checkBtn.innerHTML = nick + '<span class="nick-tag">[проверить]</span>';
+        checkBtn.onclick = function () {
+          const tag = checkBtn.querySelector(".nick-tag");
+          tag.textContent = "[...]";
+          fetch("https://t.me/" + nick.slice(1), { mode: "no-cors" })
+            .then(() => {
+              tag.textContent = "[t.me ок]";
+              document.getElementById("msgBox").textContent = "Проверено: https://t.me/" + nick.slice(1);
+            })
+            .catch(() => {
+              tag.textContent = "[нет отклика]";
+              document.getElementById("msgBox").textContent = "Нет отклика от t.me/" + nick.slice(1);
+            });
+        };
+
+        const heartBtn = document.createElement("button");
+        heartBtn.type = "button";
+        heartBtn.className = "heart-btn" + (favs.includes(nick) ? " on" : "");
+        heartBtn.textContent = "♥";
+        heartBtn.onclick = function () {
+          if (favs.includes(nick)) {
+            favs = favs.filter(x => x !== nick);
+            heartBtn.classList.remove("on");
+          } else {
+            favs.unshift(nick);
+            heartBtn.classList.add("on");
           }
-        } else if (action === "mode-unique") {
-          setActiveModeButton("unique");
-          if (toastLine) toastLine.textContent = "Режим: Уникальные — нажми «Сгенерировать»";
-        } else if (action === "mode-random") {
-          setActiveModeButton("random");
-          if (toastLine) toastLine.textContent = "Режим: Случайные — нажми «Сгенерировать»";
-        } else if (action === "generate") {
-          generateTenNicknames();
-        } else if (action === "check-nick") {
-          const chipEl = actionEl.querySelector(".status-chip");
-          checkNickHint(nick, chipEl);
-        } else if (action === "toggle-fav") {
-          toggleFavorite(nick);
-          const likedNow = isFavorite(nick);
-          actionEl.classList.toggle("liked", likedNow);
-          if (toastLine) {
-            toastLine.textContent = likedNow
-              ? "Добавлено в избранное: " + nick
-              : "Убрано из избранного: " + nick;
-          }
-        } else if (action === "copy-nick") {
-          copyNickText(nick);
-          const prev = actionEl.textContent;
-          actionEl.textContent = "Готово";
-          setTimeout(function () { actionEl.textContent = prev || "Копировать"; }, 1000);
-        } else if (action === "copy-saved") {
-          copyNickText(nick);
-          const prevSaved = actionEl.textContent;
-          actionEl.textContent = "Готово";
-          setTimeout(function () { actionEl.textContent = prevSaved || "Копировать"; }, 1000);
-        } else if (action === "remove-fav") {
-          toggleFavorite(nick);
-          renderFavoritesList();
-        } else if (action === "clear-fav") {
-          favorites = [];
-          saveJsonArray(FAV_STORAGE_KEY, favorites);
-          renderFavoritesList();
-        } else if (action === "clear-history") {
-          genHistory = [];
-          saveJsonArray(HIST_STORAGE_KEY, genHistory);
-          renderHistoryList();
-        }
+          localStorage.setItem("nicup_fav_simple", JSON.stringify(favs));
+        };
+
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "mini-btn";
+        copyBtn.textContent = "Копировать";
+        copyBtn.onclick = function () {
+          copyVal(nick, copyBtn);
+        };
+
+        row.appendChild(checkBtn);
+        row.appendChild(heartBtn);
+        row.appendChild(copyBtn);
+        box.appendChild(row);
       });
 
-      updateFavCounter();
-      renderFavoritesList();
-      renderHistoryList();
-    })();
-  </script>
+      document.getElementById("msgBox").textContent = "Готово: 10 вариантов";
+    }
 
-  <script>
+    function copyVal(nick, btn) {
+      const val = optNoAt ? nick.slice(1) : nick;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(val).catch(() => {});
+      }
+      document.getElementById("msgBox").textContent = "Скопировано: " + val;
+      if (btn) {
+        btn.textContent = "Ок";
+        setTimeout(() => { btn.textContent = "Копировать"; }, 900);
+      }
+    }
+
+    function toggleFavSimple(nick) {
+      if (favs.includes(nick)) favs = favs.filter(x => x !== nick);
+      else favs.unshift(nick);
+      localStorage.setItem("nicup_fav_simple", JSON.stringify(favs));
+      renderSaved();
+    }
+
+    function clearFavs() {
+      favs = [];
+      localStorage.setItem("nicup_fav_simple", "[]");
+      renderSaved();
+    }
+
+    function clearHist() {
+      hist = [];
+      localStorage.setItem("nicup_hist_simple", "[]");
+      renderSaved();
+    }
+
+    function renderSaved() {
+      const favBox = document.getElementById("favBox");
+      if (!favs.length) {
+        favBox.innerHTML = '<div style="font-size:12px;color:#94a3b8;">Пусто</div>';
+      } else {
+        favBox.innerHTML = "";
+        favs.forEach(nick => {
+          const r = document.createElement("div");
+          r.className = "saved-row";
+          r.innerHTML = '<strong>' + nick + '</strong><div style="display:flex;gap:6px;"><button class="mini-btn" type="button">Копировать</button><button class="heart-btn on" type="button">♥</button></div>';
+          r.querySelectorAll("button")[0].onclick = function () { copyVal(nick, this); };
+          r.querySelectorAll("button")[1].onclick = function () { toggleFavSimple(nick); };
+          favBox.appendChild(r);
+        });
+      }
+
+      const histBox = document.getElementById("histBox");
+      if (!hist.length) {
+        histBox.innerHTML = '<div style="font-size:12px;color:#94a3b8;">Пусто</div>';
+      } else {
+        histBox.innerHTML = "";
+        hist.forEach(nick => {
+          const r = document.createElement("div");
+          r.className = "saved-row";
+          r.innerHTML = '<span>' + nick + '</span><button class="mini-btn" type="button">Копировать</button>';
+          r.querySelector("button").onclick = function () { copyVal(nick, this); };
+          histBox.appendChild(r);
+        });
+      }
+    }
+
+    // Статистика JSONBin.io и ad.json
     (function () {
       const BIN_ID = "6b0938883957a11c13b6397b";
       const API_KEY = "$2a$10$nbho.No3FFfEiqFA5FQcwuYL/kMVR1KOPuHPv0vsFdgk9eEiLbAVa";
       const BIN_URL = "https://api.jsonbin.io/v3/b/" + BIN_ID;
 
-      let writeQueue = Promise.resolve();
-
-      function todayKey() {
+      function dayStr() {
         const d = new Date();
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        const day = String(d.getDate()).padStart(2, "0");
-        return y + "-" + m + "-" + day;
+        return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
       }
 
-      function getUserId() {
+      function uidStr() {
         try {
-          const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-          const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+          const u = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user;
           if (u && u.id) return String(u.id);
         } catch (e) {}
-        try {
-          let localId = localStorage.getItem("nicup_local_uid");
-          if (!localId) {
-            localId = "web_" + Math.random().toString(36).slice(2, 10);
-            localStorage.setItem("nicup_local_uid", localId);
-          }
-          return localId;
-        } catch (e) {
-          return "web_anon";
+        let id = localStorage.getItem("nicup_uid_simple");
+        if (!id) {
+          id = "u_" + Math.random().toString(36).slice(2, 9);
+          localStorage.setItem("nicup_uid_simple", id);
         }
+        return id;
       }
 
-      function fetchLatestRecord() {
-        return fetch(BIN_URL + "/latest?t=" + Date.now(), {
+      function saveStat(incAd) {
+        fetch(BIN_URL + "/latest?t=" + Date.now(), {
           cache: "no-store",
-          headers: {
-            "X-Master-Key": API_KEY
-          }
+          headers: { "X-Master-Key": API_KEY }
         })
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (body) {
-            if (!body || typeof body !== "object") return {};
-            if (body.record && typeof body.record === "object") return body.record;
-            return body;
-          })
-          .catch(function () { return {}; });
-      }
-
-      function mutateBin(updater) {
-        writeQueue = writeQueue
-          .then(function () { return fetchLatestRecord(); })
-          .then(function (rec) {
-            const base = (rec && typeof rec === "object") ? rec : {};
+          .then(r => r.ok ? r.json() : null)
+          .then(body => {
+            const rec = (body && body.record && typeof body.record === "object") ? body.record : (body || {});
             const data = {
-              users: (base.users && typeof base.users === "object") ? base.users : {},
-              days: (base.days && typeof base.days === "object") ? base.days : {},
-              ad_clicks: typeof base.ad_clicks === "number" ? base.ad_clicks : 0
+              users: (rec.users && typeof rec.users === "object") ? rec.users : {},
+              days: (rec.days && typeof rec.days === "object") ? rec.days : {},
+              ad_clicks: typeof rec.ad_clicks === "number" ? rec.ad_clicks : 0
             };
-            updater(data);
+            const uid = uidStr();
+            const day = dayStr();
+            if (!data.users[uid]) data.users[uid] = { first_seen: day, last_seen: day };
+            else data.users[uid].last_seen = day;
+            if (!data.days[day]) data.days[day] = { new_users: 0, active_users: [] };
+            if (!Array.isArray(data.days[day].active_users)) data.days[day].active_users = [];
+            if (!data.days[day].active_users.includes(uid)) data.days[day].active_users.push(uid);
+            if (incAd) data.ad_clicks += 1;
+
             return fetch(BIN_URL, {
               method: "PUT",
               headers: {
@@ -1608,64 +757,28 @@
                 "X-Master-Key": API_KEY
               },
               body: JSON.stringify(data)
-            }).then(function () { return undefined; });
+            });
           })
-          .catch(function () { return undefined; });
-        return writeQueue;
+          .catch(() => {});
       }
 
-      try {
-        const now = Date.now();
-        if (now - Number(sessionStorage.getItem("nicup_open_ts") || 0) > 1500) {
-          sessionStorage.setItem("nicup_open_ts", String(now));
-          const uid = getUserId();
-          const day = todayKey();
-          mutateBin(function (data) {
-            if (!data.users[uid]) {
-              data.users[uid] = { first_seen: day, last_seen: day };
-            } else {
-              data.users[uid].last_seen = day;
-            }
-            if (!data.days[day]) {
-              data.days[day] = { new_users: 0, active_users: [] };
-            }
-            if (!Array.isArray(data.days[day].active_users)) {
-              data.days[day].active_users = [];
-            }
-            if (data.days[day].active_users.indexOf(uid) === -1) {
-              data.days[day].active_users.push(uid);
-            }
-          });
-        }
-      } catch (e) {}
+      saveStat(false);
 
       fetch("./ad.json?t=" + Date.now(), { cache: "no-store" })
-        .then(function (r) { return r.json(); })
-        .then(function (cfg) {
-          const banner = document.getElementById("adBanner");
-          if (!banner) return;
-
+        .then(r => r.json())
+        .then(cfg => {
+          const adEl = document.getElementById("adLink");
+          if (!adEl || !cfg) return;
           if (cfg.enabled === false) {
-            banner.style.setProperty("display", "none", "important");
+            adEl.style.display = "none";
             return;
           }
-
-          const titleEl = document.getElementById("adTitle");
-          const descEl = document.getElementById("adDesc");
-
-          if (titleEl && cfg.title) titleEl.textContent = cfg.title;
-          if (descEl && cfg.desc) descEl.textContent = cfg.desc;
-          if (cfg.url) banner.href = cfg.url;
-
-          banner.addEventListener("click", function () {
-            mutateBin(function (data) {
-              data.ad_clicks = (typeof data.ad_clicks === "number" ? data.ad_clicks : 0) + 1;
-            });
-          });
-
-          banner.style.setProperty("display", "block", "important");
+          if (cfg.title) document.getElementById("adTitle").textContent = cfg.title;
+          if (cfg.desc) document.getElementById("adDesc").textContent = cfg.desc;
+          if (cfg.url) adEl.href = cfg.url;
+          adEl.addEventListener("click", () => saveStat(true));
         })
-        .catch(function () {});
+        .catch(() => {});
     })();
   </script>
 </body>
