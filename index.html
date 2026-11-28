@@ -297,7 +297,7 @@
       border-color: var(--blue-bright);
     }
 
-    /* Чуть уменьшенные переключатели опций */
+    /* Компактные переключатели опций */
     .toggles-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -329,48 +329,48 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
 
-    /* Две аккуратные кнопки генерации: Уникальные и Случайные */
+    /* Две кнопки генерации с плавным переключением активного состояния */
     .gen-actions-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(4, 9, 22, 0.58);
+      border: 1px solid rgba(96, 165, 250, 0.18);
     }
 
-    .btn-unique {
+    .mode-pill-btn {
       width: 100%;
-      padding: 11px 12px;
-      border: none;
+      padding: 10px 12px;
+      border: 1px solid transparent;
       border-radius: 999px;
+      background: transparent;
+      color: var(--text-sec);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transform: scale(0.98);
+      transition:
+        background 0.26s var(--ios-spring),
+        color 0.22s ease,
+        border-color 0.24s ease,
+        box-shadow 0.26s var(--ios-spring),
+        transform 0.24s var(--ios-spring);
+    }
+
+    .mode-pill-btn.active {
       background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border-color: rgba(147, 197, 253, 0.55);
       color: #ffffff;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
+      transform: scale(1);
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.32),
-        0 8px 18px rgba(37, 99, 235, 0.4);
-      transition: transform 0.2s var(--ios-spring);
+        inset 0 1px 0 rgba(255, 255, 255, 0.36),
+        0 6px 18px rgba(37, 99, 235, 0.45);
     }
 
-    .btn-random {
-      width: 100%;
-      padding: 11px 12px;
-      border: 1px solid rgba(96, 165, 250, 0.42);
-      border-radius: 999px;
-      background: rgba(15, 29, 64, 0.85);
-      color: #e0f2fe;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.18),
-        0 6px 14px rgba(0, 0, 0, 0.32);
-      transition: transform 0.2s var(--ios-spring), background 0.2s ease;
-    }
-
-    .btn-unique:active,
-    .btn-random:active {
-      transform: scale(0.97);
+    .mode-pill-btn:active {
+      transform: scale(0.94);
     }
 
     .toast-line {
@@ -480,7 +480,7 @@
       color: #ffffff;
     }
 
-    /* Нижняя плавающая панель с чуть более компактными кнопками */
+    /* Нижняя плавающая панель с компактными кнопками */
     .bottom-dock-wrap {
       position: fixed;
       left: 0;
@@ -586,8 +586,8 @@
         </div>
 
         <div class="gen-actions-row">
-          <button id="uniqueBtn" type="button" class="btn-unique">Уникальные</button>
-          <button id="randomBtn" type="button" class="btn-random">Случайные</button>
+          <button id="uniqueBtn" type="button" class="mode-pill-btn active">Уникальные</button>
+          <button id="randomBtn" type="button" class="mode-pill-btn">Случайные</button>
         </div>
       </section>
 
@@ -666,6 +666,7 @@
 
       let useDigits = true;
       let useUnderscore = false;
+      let activeMode = "unique";
 
       const WORD_ROOTS = [
         "cyber", "neon", "void", "flux", "nova", "drift", "zen", "apex",
@@ -673,6 +674,12 @@
         "shadow", "pulse", "atlas", "hyper", "lunar", "solar", "rift", "byte",
         "stark", "omega", "alpha", "delta", "titan", "ghost", "spark", "onyx"
       ];
+
+      function setActiveModeButton(mode) {
+        activeMode = mode;
+        uniqueBtn.classList.toggle("active", mode === "unique");
+        randomBtn.classList.toggle("active", mode === "random");
+      }
 
       lenRange.addEventListener("input", function () {
         lenLabel.textContent = lenRange.value + " символов";
@@ -759,12 +766,15 @@
       }
 
       function renderNicknames(mode) {
+        const chosenMode = mode || activeMode;
+        setActiveModeButton(chosenMode);
+
         const len = Number(lenRange.value) || 7;
         const kw = prefixInput.value.trim();
         const set = new Set();
         let guard = 0;
         while (set.size < 6 && guard < 120) {
-          const nick = mode === "random"
+          const nick = chosenMode === "random"
             ? buildRandomUsername(len, kw)
             : buildUniqueUsername(len, kw);
           set.add(nick);
